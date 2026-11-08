@@ -37,6 +37,8 @@ export interface FormState {
   params?: Record<string, string | number>;
   fieldErrors?: Record<string, string>;
   step?: number;
+  /** Echo of submitted text so a failed submit does not wipe what the learner typed. */
+  values?: Record<string, string>;
 }
 
 async function ip() {
@@ -57,15 +59,17 @@ function otpErrorState(code: string, retryAfterSec = 0): FormState {
 
 /** /start: send a code to the number. */
 export async function requestCodeAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const phoneE164 = normaliseSaMobile(String(formData.get("phone") ?? ""));
-  if (!phoneE164) return { fieldErrors: { phone: "phoneInvalid" } };
+  const raw = String(formData.get("phone") ?? "").slice(0, 25);
+  const values = { phone: raw };
+  const phoneE164 = normaliseSaMobile(raw);
+  if (!phoneE164) return { fieldErrors: { phone: "phoneInvalid" }, values };
   const t = await getTranslations("sms");
   const result = await requestOtp({
     phoneE164,
     ip: await ip(),
     message: (code) => t("otp", { code }),
   });
-  if (!result.ok) return otpErrorState(result.code, result.retryAfterSec);
+  if (!result.ok) return { ...otpErrorState(result.code, result.retryAfterSec), values };
   const store = await cookies();
   store.set(OTP_PHONE_COOKIE, phoneE164, shortCookie);
   store.set(TRUST_COOKIE, formData.get("trustDevice") ? "1" : "0", shortCookie);

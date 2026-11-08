@@ -20,6 +20,7 @@ export function PhoneForm() {
         label={t("start.phoneLabel")}
         hint={t("start.phoneHint")}
         error={err(state.fieldErrors?.phone)}
+        defaultValue={state.values?.phone}
         required
       />
       <label className="flex min-h-11 items-center gap-3 text-sm">
