@@ -150,3 +150,29 @@ h4 {
 .fade-up {
   animation: fade-up 400ms ease both;
 }
+
+/* Brand motion art (components/brand/orbit-art.tsx, D-022). Transform-only; stops under reduced motion. */
+.orbit-spin {
+  transform-box: view-box;
+  transform-origin: 400px 400px;
+  animation: orbit-spin 60s linear infinite;
+}
+.orbit-reverse {
+  animation-direction: reverse;
+}
+.orbit-pulse {
+  transform-box: view-box;
+  transform-origin: 400px 400px;
+  animation: orbit-pulse 4s ease-in-out infinite;
+}
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orbit-pulse {
+  50% {
+    transform: scale(1.3);
+    opacity: 0.5;
+  }
+}

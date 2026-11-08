@@ -1,6 +1,7 @@
 {
   "app": {
-    "tagline": "Ngena emsebenzini. Wufunde. Wufakazele. Umenywe."
+    "tagline": "Ngena emsebenzini. Wufunde. Wufakazele. Umenywe.",
+    "org": "Veza"
   },
   "nav": {
     "home": "Ikhaya",
@@ -72,7 +73,15 @@
     "goToCompass": "Iya ku-Career Compass yami",
     "stepOf": "Isinyathelo {step} kwezi-{total}",
     "devCodeTitle": "Imodi yokuhlola: i-SMS ayikaxhunywa",
-    "devCodeBody": "Ikhodi yakho ngu"
+    "devCodeBody": "Ikhodi yakho ngu",
+    "steps": {
+      "title": "Izinyathelo zokubhalisa",
+      "label": "Isinyathelo {n}",
+      "phone": "Inombolo yakho",
+      "verify": "Qinisekisa ikhodi yakho",
+      "profile": "Mayelana nawe",
+      "consent": "Imvume"
+    }
   },
   "profile": {
     "title": "Mayelana nawe",

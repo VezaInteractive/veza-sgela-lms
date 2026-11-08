@@ -1,6 +1,7 @@
 {
   "app": {
-    "tagline": "Kena mosebetsing. O ithute. O o paka. O memelwe ho wona."
+    "tagline": "Kena mosebetsing. O ithute. O o paka. O memelwe ho wona.",
+    "org": "Veza"
   },
   "nav": {
     "home": "Lehae",
@@ -72,7 +73,15 @@
     "goToCompass": "Eya ho Career Compass ya ka",
     "stepOf": "Mohato wa {step} ho tse {total}",
     "devCodeTitle": "Mokgwa wa teko: SMS ha e so hokelwe",
-    "devCodeBody": "Khoutu ya hao ke"
+    "devCodeBody": "Khoutu ya hao ke",
+    "steps": {
+      "title": "Mehato ya ho ingodisa",
+      "label": "Mohato wa {n}",
+      "phone": "Nomoro ya hao",
+      "verify": "Netefatsa khoutu ya hao",
+      "profile": "Ka wena",
+      "consent": "Tumello"
+    }
   },
   "profile": {
     "title": "Ka wena",

@@ -133,3 +133,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Alternatives:** keep dark default with the new layouts (rejected by stakeholder preference for the reference look); copy the reference yellow and logo pattern (rejected, CLAUDE.md: reference is functional only).
 - **Constraints kept:** white text on lime fails contrast, so sidebar text is ink (`#231F20`, about 9:1 on `#ABCF37`); dark-theme muted text raised to `#A3ACB8` so small text on pastel tints clears 4.5:1 (new dark-theme axe test on Home); no backdrop blur.
 - **Reason:** stakeholder feedback that D-020 looked poor and should follow the reference screens.
+
+## D-022 · 2026-11-09 · Split sign-up layout with animated brand panel
+
+- **Decision:** Sign-up (`/start*`) and public pages (claim, guardian consent) use a half-and-half layout like the reference sign-up screens: the form card on one half, a deep-space brand panel on the other with the "Veza Sgela" wordmark (small spaced VEZA over a bold Sgela, replacing the reference logo), a vertical sign-up stepper (`start.steps.*`, en/zu/st) and the tagline. The panel art is an original SVG (compass needle, rings, radar sweep and five career-world orbits) animated with CSS transforms only. Phones get a slim banner version above the form. The learner sidebar wordmark gains the same VEZA line.
+- **Not changed:** sign-in stays phone number + SMS code (D-012); no password field was added even though the reference shows one.
+- **Constraints kept:** art is `aria-hidden`; motion stops under prefers-reduced-motion (global rule in tokens.css); no images or video, so it is cheap on data and low-end phones; axe-clean in light and dark.
+- **Reason:** stakeholder asked for the reference sign-up layout with a subtle, futuristic motion graphic and the Veza Sgela name.

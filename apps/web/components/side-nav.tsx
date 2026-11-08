@@ -77,8 +77,11 @@ export function SideNav({ userName }: { userName: string }) {
           <Compass className="size-6" />
         </span>
         {collapsed ? null : (
-          <span className="font-heading text-2xl font-extrabold tracking-tight">
-            {tApp("name")}
+          <span className="flex flex-col leading-none">
+            <span className="text-[11px] font-bold tracking-[0.32em] uppercase">{tApp("org")}</span>
+            <span className="font-heading text-2xl font-extrabold tracking-tight">
+              {tApp("name")}
+            </span>
           </span>
         )}
       </div>

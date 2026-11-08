@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Sgela",
-    "tagline": "Step inside a career. Learn it. Prove it. Get invited in."
+    "tagline": "Step inside a career. Learn it. Prove it. Get invited in.",
+    "org": "Veza"
   },
   "nav": {
     "home": "Home",
@@ -98,7 +99,15 @@
     "goToCompass": "Go to my Career Compass",
     "stepOf": "Step {step} of {total}",
     "devCodeTitle": "Test mode: SMS is not connected yet",
-    "devCodeBody": "Your code is"
+    "devCodeBody": "Your code is",
+    "steps": {
+      "title": "Sign-up steps",
+      "label": "Step {n}",
+      "phone": "Your number",
+      "verify": "Verify your code",
+      "profile": "About you",
+      "consent": "Consent"
+    }
   },
   "profile": {
     "title": "About you",
