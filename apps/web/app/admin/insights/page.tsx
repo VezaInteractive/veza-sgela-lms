@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PROVINCES } from "@sgela/geo";
-import { Card, CardTitle } from "@sgela/ui";
-import { Button } from "@sgela/ui";
+import { Activity, BarChart3, Baby, LogOut, ShieldCheck, Ticket, Users } from "lucide-react";
+import { Button, CardTitle } from "@sgela/ui";
 import { signOutAction } from "@/app/(auth)/start/actions";
 import { BarList, StatTile } from "@/components/demo/ui";
 import { SimpleShellWide } from "@/components/simple-shell";
@@ -28,35 +28,57 @@ export default async function InsightsPage() {
 
   return (
     <SimpleShellWide>
-      <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-3xl font-bold md:text-4xl">{t("title")}</h1>
-        <p className="text-muted">{t("intro")}</p>
+      <div className="glass fade-up flex flex-col gap-5 rounded-3xl p-6 md:flex-row md:items-center md:p-8">
+        <span
+          aria-hidden="true"
+          className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_0_32px_-6px_var(--primary)]"
+        >
+          <BarChart3 className="size-7" />
+        </span>
+        <div className="flex flex-1 flex-col gap-1">
+          <h1 className="font-heading text-3xl font-bold md:text-4xl">
+            <span className="text-gradient">{t("title")}</span>
+          </h1>
+          <p className="max-w-2xl text-muted">{t("intro")}</p>
+        </div>
+        <form action={signOutAction} className="self-start md:self-center">
+          <Button type="submit" variant="secondary" size="sm">
+            <LogOut className="size-4" aria-hidden="true" />
+            {tc("signOut")}
+          </Button>
+        </form>
       </div>
-      <form action={signOutAction} className="self-start">
-        <Button type="submit" variant="secondary" size="sm">
-          {tc("signOut")}
-        </Button>
-      </form>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <StatTile label={t("learners")} value={k.learners.toLocaleString("en-ZA")} />
+        <StatTile icon={Users} label={t("learners")} value={k.learners.toLocaleString("en-ZA")} />
         <StatTile
+          icon={Baby}
+          accent="#4FA3FF"
           label={t("minors")}
           value={k.minors.toLocaleString("en-ZA")}
           hint={pct(k.minors)}
         />
         <StatTile
+          icon={ShieldCheck}
+          accent="#3FD1B5"
           label={t("restricted")}
           value={k.restricted.toLocaleString("en-ZA")}
           hint={pct(k.restricted)}
         />
-        <StatTile label={t("claims")} value={k.claimed.toLocaleString("en-ZA")} />
         <StatTile
+          icon={Ticket}
+          accent="#FFB547"
+          label={t("claims")}
+          value={k.claimed.toLocaleString("en-ZA")}
+        />
+        <StatTile
+          icon={Activity}
+          accent="#FF6B5A"
           label={t("sessions")}
           value={k.sessions.toLocaleString("en-ZA")}
           hint={t("simulatedHint", { n: k.simulatedSessions })}
         />
       </div>
-      <Card className="flex flex-col gap-2">
+      <section className="glass flex flex-col gap-2 rounded-3xl p-5 md:p-6">
         <CardTitle>{t("funnelTitle")}</CardTitle>
         <p className="text-sm text-muted">{t("funnelNote")}</p>
         <BarList
@@ -67,9 +89,9 @@ export default async function InsightsPage() {
             value: f.count,
           }))}
         />
-      </Card>
+      </section>
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="flex flex-col gap-2">
+        <section className="glass flex flex-col gap-2 rounded-3xl p-5 md:p-6">
           <CardTitle>{t("provinceTitle")}</CardTitle>
           {data.provinces.length === 0 ? (
             <p className="text-sm text-muted">{t("noData")}</p>
@@ -84,8 +106,8 @@ export default async function InsightsPage() {
               }))}
             />
           )}
-        </Card>
-        <Card className="flex flex-col gap-2">
+        </section>
+        <section className="glass flex flex-col gap-2 rounded-3xl p-5 md:p-6">
           <CardTitle>{t("worldTitle")}</CardTitle>
           <p className="text-sm text-muted">{t("worldNote")}</p>
           {data.worlds.length === 0 ? (
@@ -101,7 +123,7 @@ export default async function InsightsPage() {
               }))}
             />
           )}
-        </Card>
+        </section>
       </div>
     </SimpleShellWide>
   );

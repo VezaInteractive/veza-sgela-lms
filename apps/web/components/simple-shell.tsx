@@ -1,6 +1,10 @@
+import { Compass } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { WorldIcon } from "./demo/world-visuals";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
+
+const WORLD_CODES = ["AVI", "ENG", "CUL", "MED", "AGR"] as const;
 
 /** Minimal chrome for public and onboarding pages: brand, language, theme. Mobile-first. */
 export async function SimpleShell({
@@ -19,8 +23,16 @@ export async function SimpleShell({
       >
         {t("common.skipToContent")}
       </a>
-      <header className="flex h-16 items-center justify-between gap-3 border-b border-border px-4 md:px-8">
-        <span className="font-heading text-lg font-bold">{t("app.name")}</span>
+      <header className="flex h-16 items-center justify-between gap-3 px-4 md:px-8">
+        <span className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[0_0_24px_-4px_var(--primary)]"
+          >
+            <Compass className="size-5" />
+          </span>
+          <span className="font-heading text-xl font-bold">{t("app.name")}</span>
+        </span>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
@@ -32,7 +44,20 @@ export async function SimpleShell({
           "mx-auto flex w-full flex-1 flex-col gap-6 px-4 py-8 " + (wide ? "max-w-6xl" : "max-w-md")
         }
       >
-        {children}
+        {wide ? (
+          children
+        ) : (
+          <>
+            <div aria-hidden="true" className="fade-up flex justify-center gap-2 pt-2">
+              {WORLD_CODES.map((code) => (
+                <WorldIcon key={code} code={code} size="sm" />
+              ))}
+            </div>
+            <div className="glass flex flex-col gap-6 rounded-3xl p-6 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.6)] md:p-8">
+              {children}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

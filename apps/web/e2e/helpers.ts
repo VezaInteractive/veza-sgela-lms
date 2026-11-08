@@ -38,7 +38,20 @@ export async function waitForSms(
   return found!;
 }
 
+/** Let entrance animations (fade-up) finish so axe measures the colours people actually see. */
+export async function settleAnimations(page: Page) {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
+}
+
 export async function expectNoA11yViolations(page: Page) {
+  await settleAnimations(page);
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
   const serious = results.violations.filter(
     (v) => v.impact === "serious" || v.impact === "critical",

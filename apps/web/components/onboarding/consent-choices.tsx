@@ -20,7 +20,7 @@ export async function ConsentChoices({
     <fieldset className="flex flex-col gap-3">
       <legend className="sr-only">{tc("title")}</legend>
       {platformRequired ? (
-        <label className="flex gap-3 rounded-md border border-border bg-surface p-4">
+        <label className="flex cursor-pointer gap-3 rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-primary has-checked:border-primary">
           <input
             type="checkbox"
             name="PLATFORM"
@@ -35,7 +35,10 @@ export async function ConsentChoices({
         </label>
       ) : null}
       {scopes.map((scope) => (
-        <label key={scope} className="flex gap-3 rounded-md border border-border bg-surface p-4">
+        <label
+          key={scope}
+          className="flex cursor-pointer gap-3 rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-primary has-checked:border-primary"
+        >
           <input
             type="checkbox"
             name={scope}

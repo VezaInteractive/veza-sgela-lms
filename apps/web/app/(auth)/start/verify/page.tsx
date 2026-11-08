@@ -36,7 +36,7 @@ export default async function VerifyPage() {
         <div
           role="note"
           data-testid="dev-otp"
-          className="rounded-md border-2 border-dashed border-warning bg-surface px-4 py-3 text-sm"
+          className="rounded-2xl border-2 border-dashed border-warning bg-surface px-4 py-3 text-sm"
         >
           <p className="font-semibold">{t("devCodeTitle")}</p>
           <p className="mt-1">

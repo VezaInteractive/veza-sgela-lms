@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { settleAnimations } from "./helpers";
 
 test("root redirects to home", async ({ page }) => {
   await page.goto("/");
@@ -36,6 +37,7 @@ test("coach entry point is on every learner page", async ({ page }) => {
 
 test("home has no serious a11y violations", async ({ page }) => {
   await page.goto("/home");
+  await settleAnimations(page);
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
   const serious = results.violations.filter(
     (v) => v.impact === "serious" || v.impact === "critical",
