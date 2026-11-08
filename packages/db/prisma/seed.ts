@@ -4,6 +4,7 @@
  * Sponsor/partner names must be fictional; Bantu and Veza are the only real orgs.
  */
 import "dotenv/config";
+import { DISTRICTS } from "@sgela/geo";
 import { getDb } from "../src/index";
 
 const db = getDb();
@@ -86,12 +87,35 @@ async function main() {
     await db.organisation.upsert({ where: { id: o.id }, update: { name: o.name }, create: o });
   }
 
-  // Dev admin (PRD §18.1). OTP is printed to the console by the dev SMS provider (M1).
+  // Dev admin (PRD §18.1). Sign in at /start with 060 000 0001; the OTP prints to the dev server console.
   await db.user.upsert({
-    where: { phoneE164: "+27000000001" },
+    where: { phoneE164: "+27600000001" },
     update: { role: "SUPER_ADMIN" },
-    create: { phoneE164: "+27000000001", role: "SUPER_ADMIN" },
+    create: { phoneE164: "+27600000001", role: "SUPER_ADMIN" },
   });
+
+  // Sample schools so the searchable school list works in dev (D-017). Names are generic
+  // placeholders, not real schools; a real EMIS import replaces them before pilot.
+  const kinds = ["Secondary School", "High School", "Technical High School"];
+  let schoolCount = 0;
+  for (const dist of DISTRICTS) {
+    for (const [i, kind] of kinds.entries()) {
+      const id = "sch_" + dist.code.toLowerCase() + "_" + (i + 1);
+      const name = dist.name + " " + kind + " (sample)";
+      await db.school.upsert({
+        where: { id },
+        update: { name },
+        create: {
+          id,
+          name,
+          provinceCode: dist.provinceCode,
+          districtCode: dist.code,
+          quintile: (i % 5) + 1,
+        },
+      });
+      schoolCount += 1;
+    }
+  }
 
   const settings: Record<string, unknown> = {
     "privacy.minCellSize": 20,
@@ -107,7 +131,7 @@ async function main() {
   }
 
   console.info(
-    `Seeded ${INDUSTRIES.length} industries, ${SUBJECTS.length} subjects, ${orgs.length} orgs, 1 admin.`,
+    `Seeded ${INDUSTRIES.length} industries, ${SUBJECTS.length} subjects, ${orgs.length} orgs, ${schoolCount} sample schools, 1 admin.`,
   );
 }
 

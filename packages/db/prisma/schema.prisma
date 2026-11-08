@@ -255,6 +255,7 @@ model AuthSession {
   id            String   @id @default(cuid())
   userId        String
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// sha256 of the cookie value; the raw token only lives in the browser cookie
   sessionToken  String   @unique
   expiresAt     DateTime
   trustedDevice Boolean  @default(false)
@@ -340,9 +341,14 @@ model Guardian {
   name           String
   phoneE164      String
   relationship   String?
+  /// sha256 of the token sent in the consent link; the raw token is never stored
   consentToken   String   @unique
   tokenExpiresAt DateTime
+  /// when the current consent request was sent (reminders are due 48 h and 7 d after this)
+  requestedAt    DateTime @default(now())
   remindersSent  Int      @default(0)
+  lastReminderAt DateTime?
+  respondedAt    DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -748,15 +754,36 @@ model ExpoEvent {
 model KioskDevice {
   id           String        @id @default(cuid())
   label        String
-  apiKeyHash   String
+  /// sha256 of the bearer key (vk_live_… / vk_test_…); never store the raw key
+  apiKeyHash   String        @unique
   unitCode     String?
   /// QUEST_3 | QUEST_2 (docs/DECISIONS.md D-008)
   headsetModel String?
+  appVersion   String?
+  battery      Int?
+  queueDepth   Int?
   lastSeenAt   DateTime?
   active       Boolean       @default(true)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   sessions     ExpoSession[]
+  idempotency  IdempotencyRecord[]
+}
+
+/// Replay store for device POSTs carrying an Idempotency-Key (PRD 12.1, D-014).
+model IdempotencyRecord {
+  id           String      @id @default(cuid())
+  deviceId     String
+  device       KioskDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  key          String
+  route        String
+  requestHash  String
+  statusCode   Int
+  responseBody Json
+  createdAt    DateTime    @default(now())
+
+  @@unique([deviceId, key])
+  @@index([createdAt])
 }
 
 model ExpoSession {
