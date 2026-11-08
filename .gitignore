@@ -12,3 +12,4 @@ apps/web/test-results
 apps/web/playwright-report
 .lighthouseci
 .DS_Store
+apps/web/next-env.d.ts
