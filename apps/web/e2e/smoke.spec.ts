@@ -44,3 +44,15 @@ test("home has no serious a11y violations", async ({ page }) => {
   );
   expect(serious).toEqual([]);
 });
+
+test("home in dark theme has no serious a11y violations", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("theme", "dark"));
+  await page.goto("/home");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await settleAnimations(page);
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+  const serious = results.violations.filter(
+    (v) => v.impact === "serious" || v.impact === "critical",
+  );
+  expect(serious).toEqual([]);
+});

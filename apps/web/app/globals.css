@@ -28,60 +28,72 @@ h4 {
   outline-offset: 2px;
 }
 
-/* ── Brand surfaces (D-020): immersive night-sky look from the pitch deck ── */
+/* ── Brand surfaces (D-021): clean light-first cards, pastel world tints, lime brand panel ── */
 :root,
 [data-theme="dark"] {
-  --glow-a: color-mix(in oklab, #abcf37 16%, transparent);
-  --glow-b: color-mix(in oklab, #4fa3ff 14%, transparent);
-  --glass: color-mix(in oklab, #11161d 86%, transparent);
-  --glass-border: color-mix(in oklab, #ffffff 9%, transparent);
-  --tint-strength: 34%;
+  --glass: #151b23;
+  --glass-border: #263040;
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --tint-mix: 16%;
+  --icon-mix: 100%;
 }
 [data-theme="light"] {
-  --glow-a: color-mix(in oklab, #abcf37 22%, transparent);
-  --glow-b: color-mix(in oklab, #4fa3ff 14%, transparent);
-  --glass: color-mix(in oklab, #ffffff 82%, transparent);
-  --glass-border: color-mix(in oklab, #231f20 10%, transparent);
-  --tint-strength: 22%;
+  --glass: #ffffff;
+  --glass-border: #e3e8ef;
+  --card-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 4px 16px -6px rgb(16 24 40 / 0.08);
+  --tint-mix: 13%;
+  --icon-mix: 62%;
 }
 
-body {
-  background:
-    radial-gradient(60rem 40rem at 10% -10%, var(--glow-a), transparent 60%),
-    radial-gradient(50rem 36rem at 100% 0%, var(--glow-b), transparent 60%), var(--background);
-}
-
+/* Plain card: white on light, raised slate on dark. Name kept from D-020 for call sites. */
 .glass {
   background: var(--glass);
   border: 1px solid var(--glass-border);
+  box-shadow: var(--card-shadow);
 }
 
-/* World tint: set --w to a world colour (inline style) and add this class. */
+/* World tint: flat pastel card in the world colour. Set --w inline. */
 .world-tint {
-  background:
-    linear-gradient(
-      140deg,
-      color-mix(in oklab, var(--w) var(--tint-strength), transparent) 0%,
-      transparent 65%
-    ),
-    var(--glass);
-  border: 1px solid color-mix(in oklab, var(--w) 35%, var(--glass-border));
+  background: color-mix(in oklab, var(--w) var(--tint-mix), var(--glass));
+  border: 1px solid color-mix(in oklab, var(--w) 28%, var(--glass-border));
+  box-shadow: var(--card-shadow);
 }
 .world-icon {
-  color: var(--w);
-  background: color-mix(in oklab, var(--w) 18%, transparent);
+  color: color-mix(in oklab, var(--w) var(--icon-mix), #000);
+  background: color-mix(in oklab, var(--w) 20%, var(--glass));
 }
 
-.text-gradient {
-  background: linear-gradient(90deg, #abcf37, #4fa3ff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Accent headline colour (solid; replaces the D-020 gradient). */
+.text-accent {
+  color: #c8e070;
 }
-[data-theme="light"] .text-gradient {
-  background: linear-gradient(90deg, #4d5f18, #1f6fc4);
-  -webkit-background-clip: text;
-  background-clip: text;
+[data-theme="light"] .text-accent {
+  color: #4d5f18;
+}
+
+/* Brand panel pattern: original Veza compass-rings motif, drawn in ink at low opacity. */
+.brand-pattern {
+  background-color: var(--color-lime-500);
+  background-image:
+    radial-gradient(
+      circle at 0 0,
+      transparent 38px,
+      rgb(35 31 32 / 0.08) 39px 41px,
+      transparent 42px
+    ),
+    radial-gradient(
+      circle at 0 0,
+      transparent 58px,
+      rgb(35 31 32 / 0.06) 59px 61px,
+      transparent 62px
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      transparent 38px,
+      rgb(35 31 32 / 0.08) 39px 41px,
+      transparent 42px
+    );
+  background-size: 64px 64px;
 }
 
 .lift {
@@ -92,7 +104,7 @@ body {
 }
 .lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px -16px color-mix(in oklab, var(--w, #abcf37) 60%, transparent);
+  box-shadow: 0 12px 28px -14px rgb(16 24 40 / 0.25);
 }
 
 @keyframes fade-up {

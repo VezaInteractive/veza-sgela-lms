@@ -31,7 +31,7 @@ export async function StepHeader({
         </div>
       ) : null}
       <h1 className="font-heading text-3xl leading-tight font-bold md:text-4xl">
-        <span className="text-gradient">{title}</span>
+        <span className="text-accent">{title}</span>
       </h1>
       {intro ? <p className="text-muted">{intro}</p> : null}
     </div>

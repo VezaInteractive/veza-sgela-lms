@@ -39,7 +39,7 @@ export default async function DonePage({ searchParams }: PageProps<"/start/done"
         <PartyPopper className="size-7" />
       </span>
       <h1 className="font-heading text-3xl leading-tight font-bold md:text-4xl">
-        <span className="text-gradient">{t("start.doneTitle", { name: learner!.firstName })}</span>
+        <span className="text-accent">{t("start.doneTitle", { name: learner!.firstName })}</span>
       </h1>
       <p className="text-muted" data-testid="restricted-note">
         {learner!.restricted ? t("start.doneRestricted") : t("start.doneReady")}

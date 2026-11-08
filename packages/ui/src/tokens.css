@@ -1,6 +1,6 @@
 /*
  * Veza design tokens for Tailwind v4 (PRD 14.1).
- * Dark-first: :root is the dark theme; [data-theme="light"] overrides.
+ * Light is the default theme (D-021); :root holds dark values, [data-theme="light"] overrides.
  * Keep in sync with src/tokens.ts.
  */
 @theme {
@@ -55,7 +55,7 @@
   --foreground: #f5f7fa;
   --surface: #11161d;
   --surface-raised: #1a2029;
-  --muted: #8b95a3;
+  --muted: #a3acb8;
   --border: #2a3340;
   --primary: #abcf37;
   --primary-foreground: #0b0f14;
@@ -66,7 +66,7 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  --background: #f5f7fa;
+  --background: #f3f5f8;
   --foreground: #231f20;
   --surface: #ffffff;
   --surface-raised: #ffffff;

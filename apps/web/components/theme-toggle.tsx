@@ -18,7 +18,7 @@ export function ThemeToggle() {
     () => false,
   );
 
-  const isDark = !mounted || resolvedTheme !== "light";
+  const isDark = mounted && resolvedTheme === "dark";
   const next = isDark ? "light" : "dark";
   const Icon = isDark ? Sun : Moon;
 

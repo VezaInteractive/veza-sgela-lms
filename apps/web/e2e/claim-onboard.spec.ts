@@ -177,8 +177,18 @@ test("an unknown code shows a friendly error with Sign up anyway", async ({ page
   await expect(page).toHaveURL(/\/start$/);
 });
 
+test("light is the default theme, even when the device prefers dark", async ({ browser }) => {
+  const context = await browser.newContext({ colorScheme: "dark" });
+  const page = await context.newPage();
+  await page.goto("/start");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await context.close();
+});
+
 test.describe("dark theme", () => {
-  test.use({ colorScheme: "dark" });
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "dark"));
+  });
 
   test("onboarding and claim pages have no serious a11y violations", async ({ page }) => {
     for (const path of ["/start", "/claim/ZZZ-ZZZ", "/consent/unknown-token-000000000000"]) {

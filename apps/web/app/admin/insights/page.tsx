@@ -37,7 +37,7 @@ export default async function InsightsPage() {
         </span>
         <div className="flex flex-1 flex-col gap-1">
           <h1 className="font-heading text-3xl font-bold md:text-4xl">
-            <span className="text-gradient">{t("title")}</span>
+            <span className="text-accent">{t("title")}</span>
           </h1>
           <p className="max-w-2xl text-muted">{t("intro")}</p>
         </div>

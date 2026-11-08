@@ -42,7 +42,7 @@ export default async function HomePage() {
           <h1 className="font-heading text-4xl leading-tight font-bold md:text-5xl">
             {t("home.greeting", { name: learner.firstName })}
             <br />
-            <span className="text-gradient">{t("home.heroLine")}</span>
+            <span className="text-accent">{t("home.heroLine")}</span>
           </h1>
           <div className="flex flex-wrap gap-3">
             <span className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-sm font-bold text-primary-foreground">

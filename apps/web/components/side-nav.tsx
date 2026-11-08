@@ -38,7 +38,18 @@ function subscribe(listener: () => void) {
   };
 }
 
-export function SideNav() {
+function initials(name: string) {
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]!.toUpperCase())
+      .join("") || "?"
+  );
+}
+
+export function SideNav({ userName }: { userName: string }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const tApp = useTranslations("app");
@@ -54,18 +65,22 @@ export function SideNav() {
     <aside
       data-testid="side-nav"
       className={cn(
-        "sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-border bg-surface md:flex",
+        "brand-pattern sticky top-0 hidden h-dvh shrink-0 flex-col text-ink md:flex",
         collapsed ? "w-20" : "w-64",
       )}
     >
-      <div className="flex h-16 items-center gap-2 px-5">
+      <div className={cn("flex h-20 items-center gap-2.5", collapsed ? "justify-center" : "px-6")}>
         <span
           aria-hidden
-          className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[0_0_24px_-4px_var(--primary)]"
+          className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-ink text-lime-500"
         >
-          <Compass className="size-5" />
+          <Compass className="size-6" />
         </span>
-        {collapsed ? null : <span className="font-heading text-xl font-bold">{tApp("name")}</span>}
+        {collapsed ? null : (
+          <span className="font-heading text-2xl font-extrabold tracking-tight">
+            {tApp("name")}
+          </span>
+        )}
       </div>
       <nav aria-label={t("primary")} className="flex-1 px-3 py-4">
         <ul className="flex flex-col gap-1">
@@ -78,10 +93,11 @@ export function SideNav() {
                   aria-current={active ? "page" : undefined}
                   title={collapsed ? t(key) : undefined}
                   className={cn(
-                    "flex h-11 items-center gap-3 rounded-md px-3 font-medium transition-colors",
+                    "flex h-11 items-center gap-3 rounded-xl px-3 font-semibold transition-colors",
+                    collapsed && "justify-center",
                     active
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted hover:bg-surface-raised hover:text-foreground",
+                      ? "bg-white text-ink shadow-sm"
+                      : "text-ink/85 hover:bg-ink/10 hover:text-ink",
                   )}
                 >
                   <Icon aria-hidden className="size-5 shrink-0" />
@@ -96,13 +112,32 @@ export function SideNav() {
         type="button"
         onClick={toggle}
         aria-expanded={!collapsed}
-        className="m-3 flex h-11 items-center gap-3 rounded-md px-3 text-muted hover:bg-surface-raised hover:text-foreground"
+        className={cn(
+          "mx-3 flex h-11 items-center gap-3 rounded-xl px-3 font-medium text-ink/85 hover:bg-ink/10 hover:text-ink",
+          collapsed && "justify-center",
+        )}
       >
         <ToggleIcon aria-hidden className="size-5" />
         <span className={collapsed ? "sr-only" : undefined}>
           {collapsed ? t("expand") : t("collapse")}
         </span>
       </button>
+      <div
+        className={cn(
+          "m-3 flex items-center gap-3 rounded-xl bg-ink/10 p-2.5",
+          collapsed && "justify-center",
+        )}
+      >
+        <span
+          aria-hidden
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink font-heading text-sm font-bold text-lime-500"
+        >
+          {initials(userName)}
+        </span>
+        <span className={cn("truncate text-sm font-semibold", collapsed && "sr-only")}>
+          {userName}
+        </span>
+      </div>
     </aside>
   );
 }
