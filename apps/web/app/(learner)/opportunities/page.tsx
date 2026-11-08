@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Badge, Button, Card } from "@sgela/ui";
 import { SampleNote, ScoreRing } from "@/components/demo/ui";
+import { worldStyle } from "@/components/demo/world-visuals";
 import { requireLearnerPage } from "@/lib/auth/rbac";
 import { OPPORTUNITIES } from "@/lib/demo/data";
 
@@ -26,7 +27,7 @@ export default async function OpportunitiesPage() {
   return (
     <section className="mx-auto flex max-w-4xl flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-3xl font-bold md:text-4xl">{t("opps.title")}</h1>
+        <h1 className="font-heading text-4xl font-bold md:text-5xl">{t("opps.title")}</h1>
         <p className="text-muted">{t("opps.intro")}</p>
       </div>
       {learner.restricted ? (
@@ -38,7 +39,10 @@ export default async function OpportunitiesPage() {
       <ul className="flex flex-col gap-4">
         {OPPORTUNITIES.map((o) => (
           <li key={o.id}>
-            <Card className="flex flex-col gap-4">
+            <Card
+              style={worldStyle(o.world)}
+              className="world-tint flex flex-col gap-4 rounded-2xl"
+            >
               <div className="flex items-start gap-4">
                 <ScoreRing value={o.score} label={t("opps.match", { score: o.score })} />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">

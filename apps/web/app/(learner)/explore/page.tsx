@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Badge } from "@sgela/ui";
+import { ArrowRight } from "lucide-react";
 import { SampleNote } from "@/components/demo/ui";
+import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
 import { WORLDS } from "@/lib/demo/data";
 
 export async function generateMetadata() {
@@ -16,7 +17,7 @@ export default async function ExplorePage() {
   return (
     <section className="mx-auto flex max-w-5xl flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-3xl font-bold md:text-4xl">{t("explore.title")}</h1>
+        <h1 className="font-heading text-4xl font-bold md:text-5xl">{t("explore.title")}</h1>
         <p className="text-muted">{t("explore.intro")}</p>
       </div>
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -24,23 +25,19 @@ export default async function ExplorePage() {
           <li key={w.code}>
             <Link
               href={"/explore/" + w.code.toLowerCase()}
-              className="group flex h-full flex-col gap-3 overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-primary"
+              style={worldStyle(w.code)}
+              className="world-tint lift group flex h-full flex-col gap-4 rounded-3xl p-6"
             >
-              <div
-                className="h-2 w-full"
-                style={{ background: "var(--color-" + w.code.toLowerCase() + ")" }}
-                aria-hidden="true"
-              />
-              <div className="flex flex-col gap-2 px-5 pb-5">
-                <span className="flex items-center gap-2">
-                  <Badge tone={w.code}>{w.code}</Badge>
-                  <span className="font-heading text-xl font-semibold">{tw(w.code)}</span>
-                </span>
-                <p className="text-sm text-muted">{w.tagline}</p>
-                <span className="mt-auto text-sm font-semibold text-link group-hover:underline">
-                  {t("explore.careerCount", { count: w.careers.length })}
-                </span>
-              </div>
+              <WorldIcon code={w.code} size="xl" />
+              <span className="font-heading text-2xl font-bold">{tw(w.code)}</span>
+              <span className="text-sm text-muted">{w.tagline}</span>
+              <span className="mt-auto flex items-center gap-1 text-sm font-semibold text-link">
+                {t("explore.careerCount", { count: w.careers.length })}
+                <ArrowRight
+                  className="size-4 transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </span>
             </Link>
           </li>
         ))}

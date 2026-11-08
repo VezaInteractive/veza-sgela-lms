@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@sgela/ui";
+import { WorldIcon, worldStyle } from "./demo/world-visuals";
 
 const TONES = ["AVI", "ENG", "CUL", "MED", "AGR"] as const;
 type Tone = (typeof TONES)[number];
@@ -23,17 +24,21 @@ export async function WorldResults({
         return (
           <li
             key={r.worldCode + i}
-            className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface px-4 py-3"
+            style={worldStyle(r.worldCode)}
+            className="world-tint flex items-center justify-between gap-3 rounded-2xl px-4 py-3"
             aria-label={t("claim.scoreLabel", { world, score: r.score })}
           >
             <span className="flex items-center gap-2">
-              <Badge tone={tone}>{r.worldCode}</Badge>
+              <WorldIcon code={r.worldCode} size="sm" />
+              <Badge tone={tone} className="sr-only">
+                {r.worldCode}
+              </Badge>
               <span className="font-semibold">{world}</span>
               {r.simulated && simulatedLabel ? (
                 <span className="text-xs text-muted">({simulatedLabel})</span>
               ) : null}
             </span>
-            <span className="font-heading text-xl font-bold" aria-hidden="true">
+            <span className="font-heading text-2xl font-bold tabular-nums" aria-hidden="true">
               {r.score}
             </span>
           </li>

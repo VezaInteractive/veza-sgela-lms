@@ -272,7 +272,10 @@
       "nextCta": "Start",
       "continueTitle": "Continue learning",
       "topMatch": "Top match for you",
-      "seeAll": "See all"
+      "seeAll": "See all",
+      "compassLabel": "Your Career Compass",
+      "heroLine": "Where will you go next?",
+      "compassAlt": "Career Compass: how strongly each career world fits you, based on your expo scores"
     },
     "explore": {
       "title": "Explore career worlds",

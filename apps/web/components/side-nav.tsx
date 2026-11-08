@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, Compass } from "lucide-react";
 import { cn } from "@sgela/ui";
 import { NAV_ITEMS, isActive } from "./nav-items";
 
@@ -59,7 +59,12 @@ export function SideNav() {
       )}
     >
       <div className="flex h-16 items-center gap-2 px-5">
-        <span aria-hidden className="size-8 shrink-0 rounded-md bg-primary" />
+        <span
+          aria-hidden
+          className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[0_0_24px_-4px_var(--primary)]"
+        >
+          <Compass className="size-5" />
+        </span>
         {collapsed ? null : <span className="font-heading text-xl font-bold">{tApp("name")}</span>}
       </div>
       <nav aria-label={t("primary")} className="flex-1 px-3 py-4">

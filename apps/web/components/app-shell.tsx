@@ -17,7 +17,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <SideNav />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/90 px-4 backdrop-blur md:justify-end md:px-8">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/60 px-4 backdrop-blur-md md:justify-end md:px-8">
           <span className="font-heading text-lg font-bold md:hidden">{t("app.name")}</span>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />

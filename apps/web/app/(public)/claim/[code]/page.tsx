@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Button, Card } from "@sgela/ui";
+import { Sparkles } from "lucide-react";
+import { Button } from "@sgela/ui";
 import { formatClaimCode } from "@sgela/contracts";
 import { startClaimAction } from "@/app/(auth)/start/actions";
 import { SubmitButton } from "@/components/onboarding/submit-button";
@@ -77,16 +78,18 @@ export default async function ClaimPage({ params }: PageProps<"/claim/[code]">) 
 
   return (
     <>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-semibold text-muted">
+      <div className="fade-up flex flex-col gap-3">
+        <span className="inline-flex items-center gap-2 self-start rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
+          <Sparkles className="size-3.5" aria-hidden="true" />
           {t("codeLabel", { code: formatClaimCode(preview.code) })}
-        </p>
-        <h1 className="font-heading text-2xl font-bold md:text-3xl">{hero}</h1>
+        </span>
+        <p className="sr-only">{t("codeLabel", { code: formatClaimCode(preview.code) })}</p>
+        <h1 className="font-heading text-3xl leading-tight font-bold md:text-4xl">
+          <span className="text-gradient">{hero}</span>
+        </h1>
         <p className="text-muted">{t("subtitle")}</p>
       </div>
-      <Card>
-        <WorldResults results={preview.worlds} />
-      </Card>
+      <WorldResults results={preview.worlds} />
       <form action={startClaimAction}>
         <input type="hidden" name="code" value={preview.code} />
         <SubmitButton className="w-full">{t("save")}</SubmitButton>

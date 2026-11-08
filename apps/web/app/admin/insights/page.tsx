@@ -2,6 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PROVINCES } from "@sgela/geo";
 import { Card, CardTitle } from "@sgela/ui";
+import { Button } from "@sgela/ui";
+import { signOutAction } from "@/app/(auth)/start/actions";
 import { BarList, StatTile } from "@/components/demo/ui";
 import { SimpleShellWide } from "@/components/simple-shell";
 import { getCurrentSession } from "@/lib/auth/session";
@@ -18,6 +20,7 @@ export default async function InsightsPage() {
 
   const t = await getTranslations("demo.insights");
   const tw = await getTranslations("worlds");
+  const tc = await getTranslations("common");
   const data = await loadInsights();
   const k = data.kpis;
   const provinceName = (code: string) => PROVINCES.find((p) => p.code === code)?.name ?? code;
@@ -29,6 +32,11 @@ export default async function InsightsPage() {
         <h1 className="font-heading text-3xl font-bold md:text-4xl">{t("title")}</h1>
         <p className="text-muted">{t("intro")}</p>
       </div>
+      <form action={signOutAction} className="self-start">
+        <Button type="submit" variant="secondary" size="sm">
+          {tc("signOut")}
+        </Button>
+      </form>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <StatTile label={t("learners")} value={k.learners.toLocaleString("en-ZA")} />
         <StatTile

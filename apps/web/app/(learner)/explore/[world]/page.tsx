@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getDb } from "@sgela/db";
 import { Badge, Card, CardTitle } from "@sgela/ui";
 import { ProgressBar, SampleNote } from "@/components/demo/ui";
+import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
 import { requireLearnerPage } from "@/lib/auth/rbac";
 import { COURSES, getWorld } from "@/lib/demo/data";
 
@@ -38,16 +39,22 @@ export default async function WorldPage({ params }: PageProps<"/explore/[world]"
       <Link href="/explore" className="text-sm text-link underline">
         {t("explore.back")}
       </Link>
-      <div className="flex flex-col gap-2">
-        <span className="flex items-center gap-2">
-          <Badge tone={w.code}>{w.code}</Badge>
-        </span>
-        <h1 className="font-heading text-3xl font-bold md:text-4xl">{tw(w.code)}</h1>
-        <p className="text-lg text-muted">{w.tagline}</p>
+      <div
+        style={worldStyle(w.code)}
+        className="world-tint fade-up flex flex-col gap-5 rounded-3xl p-6 sm:flex-row sm:items-center md:p-10"
+      >
+        <WorldIcon code={w.code} size="xl" />
+        <div className="flex flex-col gap-2">
+          <Badge tone={w.code} className="self-start">
+            {w.code}
+          </Badge>
+          <h1 className="font-heading text-4xl font-bold md:text-5xl">{tw(w.code)}</h1>
+          <p className="text-lg text-muted">{w.tagline}</p>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="flex flex-col gap-2">
+        <Card className="glass flex flex-col gap-2 rounded-2xl">
           <CardTitle>{t("explore.why")}</CardTitle>
           <ul className="list-disc space-y-1 pl-5 text-sm">
             {w.why.map((x) => (
@@ -55,7 +62,7 @@ export default async function WorldPage({ params }: PageProps<"/explore/[world]"
             ))}
           </ul>
         </Card>
-        <Card className="flex flex-col gap-2">
+        <Card className="glass flex flex-col gap-2 rounded-2xl">
           <CardTitle>{t("explore.subjectsTitle")}</CardTitle>
           <ul className="flex flex-col gap-2 text-sm">
             {w.subjects.map((s) => {
@@ -84,7 +91,10 @@ export default async function WorldPage({ params }: PageProps<"/explore/[world]"
         <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {w.careers.map((c) => (
             <li key={c.slug}>
-              <Card className="flex h-full flex-col gap-2">
+              <Card
+                style={worldStyle(w.code)}
+                className="world-tint lift flex h-full flex-col gap-2 rounded-2xl"
+              >
                 <CardTitle>{c.title}</CardTitle>
                 <p className="text-sm">{c.summary}</p>
                 <p className="text-xs text-muted">

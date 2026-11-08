@@ -119,3 +119,9 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 
 - **Decision:** The working repo now lives at `C:\Users\mrmaf\dev\veza-sgela` (supersedes the location in D-001). The copy under `OneDrive/.../Experience Enablement Platform/veza-sgela` is stale and can be deleted once the new one is confirmed.
 - **Reason:** inside OneDrive, `next dev` reloaded every page in a loop (183 reloads in 10 s vs 2 outside OneDrive) because sync touched the `.next` folder, as D-001 warned. Docker volume `veza-sgela_pgdata` is unchanged (same compose project name), so the database carried over.
+
+## D-020 · 2026-11-08 · Visual direction: night-sky career constellation
+
+- **Decision:** Brand surfaces in `apps/web/app/globals.css`: soft lime and aviation-blue glows on the deep-space background, translucent "glass" panels, and world-tinted cards (`.world-tint` with `--w` set to the world colour) with large world icons (lucide: plane, bolt, chef hat, stethoscope, sprout). Home leads with a 2D Career Compass (SVG radar of the five worlds sized by the learner real expo scores, PRD 7.2 fallback) and a gradient headline. Explore, world pages, Learn, Opportunities and claim results use the same tinted cards.
+- **Constraints kept:** text stays in foreground/muted ink on tints (axe-clean in light and dark); world identity always has a text label; no backdrop blur or fixed backgrounds (cost on low-end Android); motion is a 400 ms fade-up, disabled under reduced motion.
+- **Reason:** stakeholder feedback that the first pass was dull; the pitch deck look is immersive and dark-first.

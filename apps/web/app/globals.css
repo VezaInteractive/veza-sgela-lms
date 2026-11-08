@@ -27,3 +27,84 @@ h4 {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+
+/* ── Brand surfaces (D-020): immersive night-sky look from the pitch deck ── */
+:root,
+[data-theme="dark"] {
+  --glow-a: color-mix(in oklab, #abcf37 16%, transparent);
+  --glow-b: color-mix(in oklab, #4fa3ff 14%, transparent);
+  --glass: color-mix(in oklab, #11161d 86%, transparent);
+  --glass-border: color-mix(in oklab, #ffffff 9%, transparent);
+  --tint-strength: 34%;
+}
+[data-theme="light"] {
+  --glow-a: color-mix(in oklab, #abcf37 22%, transparent);
+  --glow-b: color-mix(in oklab, #4fa3ff 14%, transparent);
+  --glass: color-mix(in oklab, #ffffff 82%, transparent);
+  --glass-border: color-mix(in oklab, #231f20 10%, transparent);
+  --tint-strength: 22%;
+}
+
+body {
+  background:
+    radial-gradient(60rem 40rem at 10% -10%, var(--glow-a), transparent 60%),
+    radial-gradient(50rem 36rem at 100% 0%, var(--glow-b), transparent 60%), var(--background);
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+}
+
+/* World tint: set --w to a world colour (inline style) and add this class. */
+.world-tint {
+  background:
+    linear-gradient(
+      140deg,
+      color-mix(in oklab, var(--w) var(--tint-strength), transparent) 0%,
+      transparent 65%
+    ),
+    var(--glass);
+  border: 1px solid color-mix(in oklab, var(--w) 35%, var(--glass-border));
+}
+.world-icon {
+  color: var(--w);
+  background: color-mix(in oklab, var(--w) 18%, transparent);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #abcf37, #4fa3ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="light"] .text-gradient {
+  background: linear-gradient(90deg, #4d5f18, #1f6fc4);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.lift {
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -16px color-mix(in oklab, var(--w, #abcf37) 60%, transparent);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fade-up {
+  animation: fade-up 400ms ease both;
+}
