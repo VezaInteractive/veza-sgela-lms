@@ -275,7 +275,27 @@
       "seeAll": "See all",
       "compassLabel": "Your Career Compass",
       "heroLine": "Where will you go next?",
-      "compassAlt": "Career Compass: how strongly each career world fits you, based on your expo scores"
+      "compassAlt": "Career Compass: how strongly each career world fits you, based on your expo scores",
+      "welcome": "Welcome back, {name}",
+      "welcomeBody": "Here is where you are on your career journey this week.",
+      "statLevel": "Your level",
+      "statLevelValue": "Level {level}",
+      "statStreak": "Day streak",
+      "statXp": "XP to next level",
+      "statXpValue": "{xp}/{next}",
+      "statBadges": "Badges earned",
+      "progressTitle": "Course progress: {course}",
+      "progressCaption": "Progress",
+      "progressAlt": "{course}: {n}% complete",
+      "upNextTitle": "Up next",
+      "upNextMeta": "{course} · {n} min",
+      "noticeTitle": "Notice board",
+      "compassTitle": "Your Career Compass",
+      "compassBody": "Built from your expo scores. Play more worlds to fill it in.",
+      "exploreWorlds": "Explore",
+      "matchTitle": "Your top match",
+      "viewAll": "View all",
+      "closes": "Closes {date}"
     },
     "explore": {
       "title": "Explore career worlds",
@@ -290,10 +310,14 @@
       "back": "All worlds",
       "courses": "Courses for this world",
       "open": "Explore {world}",
-      "careerCount": "{count} careers"
+      "careerCount": "{count} careers",
+      "statWorlds": "Career worlds",
+      "statPlayed": "Played at the expo",
+      "statCareers": "Careers to explore",
+      "statBest": "Your best score"
     },
     "learn": {
-      "title": "Learn",
+      "title": "My course progress",
       "intro": "Short courses with 3D models you can turn and take apart.",
       "accredited": "Accredited via Bantu",
       "minutes": "{n} min",
@@ -305,7 +329,14 @@
       "has3d": "3D",
       "back": "All courses",
       "continue": "Continue",
-      "lessonsSoon": "Lessons with 3D models and quizzes open in the next release."
+      "lessonsSoon": "Lessons with 3D models and quizzes open in the next release.",
+      "statEnrolled": "Courses started",
+      "statTopicsDone": "Topics completed",
+      "statAccredited": "Accredited courses",
+      "statMinutes": "Minutes of learning",
+      "topicCount": "{n, plural, one {# topic} other {# topics}}",
+      "complete": "{n}% complete",
+      "allCourses": "All courses"
     },
     "opps": {
       "title": "Opportunities",
@@ -318,7 +349,11 @@
       "save": "Save for later",
       "demoAction": "Applying opens in the next release.",
       "restrictedTitle": "Locked until your guardian agrees",
-      "restrictedBody": "You can see what is out there, but sponsors cannot invite you yet. We sent your guardian a link."
+      "restrictedBody": "You can see what is out there, but sponsors cannot invite you yet. We sent your guardian a link.",
+      "statMatches": "Matches for you",
+      "statBest": "Best match",
+      "statClosing": "Closing in 3 months",
+      "statTypes": "Types of opportunity"
     },
     "me": {
       "badges": "Badges",

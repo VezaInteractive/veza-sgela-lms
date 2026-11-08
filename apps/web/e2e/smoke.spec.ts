@@ -56,3 +56,13 @@ test("home in dark theme has no serious a11y violations", async ({ page }) => {
   );
   expect(serious).toEqual([]);
 });
+
+test("learner pages never scroll sideways", async ({ page }) => {
+  for (const path of ["/home", "/explore", "/learn", "/opportunities", "/me"]) {
+    await page.goto(path);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow, path).toBeLessThanOrEqual(0);
+  }
+});

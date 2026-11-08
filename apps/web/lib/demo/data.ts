@@ -399,3 +399,22 @@ export const CREDENTIALS = [
 ];
 
 export const LEARNER_STATS = { xp: 340, level: 3, nextLevelXp: 500, streakDays: 4 };
+
+/** Notice board items (sample; real notices arrive with messaging in M5/M6). */
+export const NOTICES = [
+  {
+    id: "n-1",
+    title: "Veza expo near you",
+    body: "Try all five worlds at the Polokwane schools expo on 21 November. Bring a friend.",
+  },
+  {
+    id: "n-2",
+    title: "New bursary match",
+    body: "Ubuntu Skies Aviation Trust opened its Grade 10-12 bursary. You match 82 out of 100.",
+  },
+  {
+    id: "n-3",
+    title: "Badge unlocked: First topic",
+    body: "You finished Soil health and testing. Learn 3 more days for your 7-day streak.",
+  },
+];

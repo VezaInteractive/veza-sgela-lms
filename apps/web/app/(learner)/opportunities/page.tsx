@@ -1,8 +1,11 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Badge, Button, Card } from "@sgela/ui";
+import { CalendarClock, Layers, Star, Target } from "lucide-react";
+import { PageIntro, StatStrip } from "@/components/dashboard/parts";
 import { SampleNote, ScoreRing } from "@/components/demo/ui";
 import { worldStyle } from "@/components/demo/world-visuals";
 import { requireLearnerPage } from "@/lib/auth/rbac";
+import { systemClock } from "@/lib/clock";
 import { OPPORTUNITIES } from "@/lib/demo/data";
 
 export async function generateMetadata() {
@@ -24,24 +27,51 @@ export default async function OpportunitiesPage() {
     year: "numeric",
   });
 
+  const soon = new Date(systemClock().getTime() + 90 * 24 * 60 * 60 * 1000);
+
   return (
-    <section className="mx-auto flex max-w-4xl flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-4xl font-bold md:text-5xl">{t("opps.title")}</h1>
-        <p className="text-muted">{t("opps.intro")}</p>
-      </div>
+    <section className="mx-auto flex max-w-7xl flex-col gap-6">
+      <PageIntro title={t("opps.title")} intro={t("opps.intro")} />
+      <StatStrip
+        stats={[
+          {
+            label: t("opps.statMatches"),
+            value: String(OPPORTUNITIES.length),
+            icon: Target,
+            accent: "#ABCF37",
+          },
+          {
+            label: t("opps.statBest"),
+            value: String(Math.max(...OPPORTUNITIES.map((o) => o.score))),
+            icon: Star,
+            accent: "#FFB547",
+          },
+          {
+            label: t("opps.statClosing"),
+            value: String(OPPORTUNITIES.filter((o) => new Date(o.closes) < soon).length),
+            icon: CalendarClock,
+            accent: "#FF6B5A",
+          },
+          {
+            label: t("opps.statTypes"),
+            value: String(new Set(OPPORTUNITIES.map((o) => o.type)).size),
+            icon: Layers,
+            accent: "#4FA3FF",
+          },
+        ]}
+      />
       {learner.restricted ? (
         <Card className="flex flex-col gap-1 border-warning" data-testid="opps-restricted">
           <p className="font-semibold">{t("opps.restrictedTitle")}</p>
           <p className="text-sm">{t("opps.restrictedBody")}</p>
         </Card>
       ) : null}
-      <ul className="flex flex-col gap-4">
+      <ul className="grid gap-5 lg:grid-cols-2">
         {OPPORTUNITIES.map((o) => (
           <li key={o.id}>
             <Card
               style={worldStyle(o.world)}
-              className="world-tint flex flex-col gap-4 rounded-2xl"
+              className="course-card flex h-full flex-col gap-4 rounded-2xl"
             >
               <div className="flex items-start gap-4">
                 <ScoreRing value={o.score} label={t("opps.match", { score: o.score })} />

@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Badge } from "@sgela/ui";
-import { ProgressBar, SampleNote } from "@/components/demo/ui";
-import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
+import { BookOpen, CheckCircle2, Clock, GraduationCap } from "lucide-react";
+import { CourseCard, PageIntro, StatStrip } from "@/components/dashboard/parts";
+import { SampleNote } from "@/components/demo/ui";
 import { COURSES } from "@/lib/demo/data";
 
 export async function generateMetadata() {
@@ -10,42 +9,54 @@ export async function generateMetadata() {
   return { title: t("learn") };
 }
 
-/** Learn index (demo shell for M3). */
+/** Learn index (demo shell for M3; reference "MyCourses" layout, D-021). */
 export default async function LearnPage() {
   const t = await getTranslations("demo");
+  const started = COURSES.filter((c) => c.progress > 0).length;
+  const topicsDone = COURSES.flatMap((c) => c.topics).filter((tp) => tp.status === "done").length;
+  const minutes = COURSES.flatMap((c) => c.topics)
+    .filter((tp) => tp.status === "done")
+    .reduce((sum, tp) => sum + tp.minutes, 0);
   return (
-    <section className="mx-auto flex max-w-5xl flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-4xl font-bold md:text-5xl">{t("learn.title")}</h1>
-        <p className="text-muted">{t("learn.intro")}</p>
-      </div>
-      <ul className="grid gap-4 md:grid-cols-2">
+    <section className="mx-auto flex max-w-7xl flex-col gap-6">
+      <PageIntro title={t("learn.title")} intro={t("learn.intro")} />
+      <StatStrip
+        stats={[
+          {
+            label: t("learn.statEnrolled"),
+            value: String(started),
+            icon: BookOpen,
+            accent: "#FF6B5A",
+          },
+          {
+            label: t("learn.statTopicsDone"),
+            value: String(topicsDone),
+            icon: CheckCircle2,
+            accent: "#9B7BFF",
+          },
+          { label: t("learn.statMinutes"), value: String(minutes), icon: Clock, accent: "#4FA3FF" },
+          {
+            label: t("learn.statAccredited"),
+            value: String(COURSES.filter((c) => c.accredited).length),
+            icon: GraduationCap,
+            accent: "#3FD1B5",
+          },
+        ]}
+      />
+      <h2 className="sr-only">{t("learn.allCourses")}</h2>
+      <ul className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {COURSES.map((c) => (
           <li key={c.slug}>
-            <Link
-              href={"/learn/" + c.slug}
-              style={worldStyle(c.world ?? "AGR")}
-              className="world-tint lift flex h-full flex-col gap-3 rounded-2xl p-5"
-            >
-              <WorldIcon code={c.world ?? "AGR"} size="lg" />
-              <span className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="font-semibold text-muted">{c.code}</span>
-                {c.world ? <Badge tone={c.world}>{c.world}</Badge> : null}
-                {c.accredited ? <Badge tone="lime">{t("learn.accredited")}</Badge> : null}
-              </span>
-              <span className="font-heading text-lg font-semibold">{c.title}</span>
-              <span className="text-sm text-muted">{c.summary}</span>
-              <span className="mt-auto flex flex-col gap-1.5 pt-2">
-                <span className="flex justify-between text-xs text-muted">
-                  <span>{t("learn.minutes", { n: c.minutes })}</span>
-                  <span>{t("learn.progress", { n: c.progress })}</span>
-                </span>
-                <ProgressBar
-                  value={c.progress}
-                  label={c.title + ": " + t("learn.progress", { n: c.progress })}
-                />
-              </span>
-            </Link>
+            <CourseCard
+              course={c}
+              labels={{
+                minutes: t("learn.minutes", { n: c.minutes }),
+                topics: t("learn.topicCount", { n: c.topics.length }),
+                complete: t("learn.complete", { n: c.progress }),
+                accredited: t("learn.accredited"),
+                progressLabel: c.title + ": " + t("learn.complete", { n: c.progress }),
+              }}
+            />
           </li>
         ))}
       </ul>
