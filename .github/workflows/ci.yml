@@ -46,7 +46,7 @@ jobs:
         run: pnpm --filter @sgela/web exec playwright install --with-deps chromium
       - name: Playwright smoke
         run: pnpm e2e
-      - name: Lighthouse CI (/home, /explore, /learn)
+      - name: Lighthouse CI (/start, /claim, /consent)
         working-directory: apps/web
         run: npx --yes @lhci/cli@0.15.1 autorun
       - uses: actions/upload-artifact@v4

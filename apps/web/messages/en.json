@@ -13,7 +13,10 @@
     "collapse": "Collapse menu",
     "expand": "Expand menu"
   },
-  "coach": { "open": "Ask your coach", "comingSoon": "Your AI Career Coach arrives soon." },
+  "coach": {
+    "open": "Ask your coach",
+    "comingSoon": "Your AI Career Coach arrives soon."
+  },
   "settings": {
     "language": "Language",
     "theme": "Theme",
@@ -21,7 +24,11 @@
     "themeLight": "Light",
     "themeSystem": "Match my phone"
   },
-  "languages": { "en": "English", "zu": "isiZulu", "st": "Sesotho" },
+  "languages": {
+    "en": "English",
+    "zu": "isiZulu",
+    "st": "Sesotho"
+  },
   "pages": {
     "home": {
       "title": "Your Career Compass",
@@ -31,12 +38,214 @@
       "title": "Explore career worlds",
       "body": "Aviation, Engineering, Culinary, Medical and Agriculture are on their way."
     },
-    "learn": { "title": "Learn", "body": "Courses with 3D models and AR will appear here." },
+    "learn": {
+      "title": "Learn",
+      "body": "Courses with 3D models and AR will appear here."
+    },
     "opportunities": {
       "title": "Opportunities",
       "body": "Bursaries, learnerships and invites matched to you will appear here."
     },
-    "me": { "title": "Me", "body": "Your profile, credentials and privacy settings." }
+    "me": {
+      "title": "Me",
+      "body": "Your profile, credentials and privacy settings."
+    }
   },
-  "common": { "skipToContent": "Skip to content", "comingSoon": "Coming soon" }
+  "common": {
+    "skipToContent": "Skip to content",
+    "comingSoon": "Coming soon",
+    "continue": "Continue",
+    "back": "Back",
+    "optional": "optional",
+    "saving": "Saving...",
+    "signOut": "Sign out",
+    "signOutEverywhere": "Sign out on all devices"
+  },
+  "worlds": {
+    "AVI": "Aviation",
+    "ENG": "Engineering",
+    "CUL": "Culinary",
+    "MED": "Medical",
+    "AGR": "Agriculture"
+  },
+  "sms": {
+    "otp": "Your Sgela code is {code}. It expires in 5 minutes. Never share it.",
+    "guardianInvite": "Hi {guardian}, {learner} joined Sgela, a free careers learning app by Veza. Please read and give consent here: {link}",
+    "guardianReminder": "Reminder: {learner} is waiting for your consent to use Sgela fully. Read and reply here: {link}"
+  },
+  "start": {
+    "title": "Save your results",
+    "intro": "Sign up with your phone number. We will SMS you a 6-digit code. No password needed.",
+    "phoneLabel": "Mobile number",
+    "phoneHint": "South African number, e.g. 071 234 5678",
+    "trustDevice": "Keep me signed in on this phone for 30 days",
+    "sendCode": "Send my code",
+    "verifyTitle": "Enter your code",
+    "verifyIntro": "We sent a 6-digit code to {phone}.",
+    "codeLabel": "6-digit code",
+    "resendIn": "You can ask for a new code in {seconds} s",
+    "resend": "Send a new code",
+    "changeNumber": "Use a different number",
+    "verifying": "Checking your code...",
+    "doneTitle": "You are all set, {name}!",
+    "doneRestricted": "You can start learning now. Opportunities and invites open once your guardian says yes.",
+    "doneReady": "Your account is ready.",
+    "doneResults": "Your expo results are saved",
+    "doneNoResults": "Played at a Veza expo? Add your code any time from Me.",
+    "goToCompass": "Go to my Career Compass",
+    "stepOf": "Step {step} of {total}"
+  },
+  "profile": {
+    "title": "About you",
+    "titleSchool": "Where you live and study",
+    "firstName": "First name",
+    "lastName": "Last name (optional)",
+    "dateOfBirth": "Date of birth",
+    "gender": "Gender (optional)",
+    "genderFemale": "Female",
+    "genderMale": "Male",
+    "genderNonBinary": "Non-binary",
+    "genderPreferNot": "Prefer not to say",
+    "genderNone": "Choose",
+    "language": "Preferred language",
+    "province": "Province",
+    "provinceChoose": "Choose your province",
+    "district": "District or metro",
+    "districtChoose": "Choose your district",
+    "inSchool": "I am in school",
+    "notInSchool": "I am not in school",
+    "school": "School",
+    "schoolHint": "Start typing to search. If your school is not listed, type its name.",
+    "grade": "Grade",
+    "gradeChoose": "Choose your grade",
+    "gradeN": "Grade {n}",
+    "qualification": "Highest qualification",
+    "qualificationChoose": "Choose",
+    "qualNone": "No matric yet",
+    "qualMatric": "Matric (NSC)",
+    "qualTvet": "TVET certificate (NCV or N-level)",
+    "qualDiploma": "Diploma",
+    "qualDegree": "Degree",
+    "qualOther": "Other",
+    "subjects": "Subjects you take",
+    "subjectsHint": "Choose all that apply."
+  },
+  "subjects": {
+    "MATHEMATICS": "Mathematics",
+    "MATHEMATICAL_LITERACY": "Mathematical Literacy",
+    "PHYSICAL_SCIENCE": "Physical Sciences",
+    "LIFE_SCIENCES": "Life Sciences",
+    "AGRICULTURAL_SCIENCES": "Agricultural Sciences",
+    "EGD": "Engineering Graphics and Design",
+    "HOSPITALITY_STUDIES": "Hospitality Studies",
+    "CONSUMER_STUDIES": "Consumer Studies",
+    "ACCOUNTING": "Accounting",
+    "IT": "Information Technology",
+    "CAT": "Computer Applications Technology",
+    "ENGLISH": "English"
+  },
+  "errors": {
+    "required": "Please fill this in.",
+    "phoneInvalid": "Enter a South African mobile number, e.g. 071 234 5678.",
+    "codeInvalid": "Enter the 6 digits from the SMS.",
+    "codeWrong": "That code is not right. {left} tries left.",
+    "codeExpired": "That code has expired. Ask for a new one.",
+    "codeLocked": "Too many tries. Ask for a new code.",
+    "codeMissing": "Ask for a code first.",
+    "resendTooSoon": "Please wait {seconds} s before asking again.",
+    "rateLimited": "Too many codes asked for. Try again in {minutes} min.",
+    "dobInvalid": "Enter a real date of birth.",
+    "tooYoung": "You must be at least 10 years old to sign up.",
+    "districtInvalid": "Choose a district in your province.",
+    "gradeInvalid": "Choose a grade from 8 to 12.",
+    "tooLong": "That is too long.",
+    "guardianSamePhone": "Use the number of your parent or guardian, not your own.",
+    "generic": "Something went wrong. Please try again."
+  },
+  "guardian": {
+    "title": "Your parent or guardian",
+    "intro": "Because you are under 18, a parent or guardian must agree before we can match you with opportunities. We will send them a link.",
+    "name": "Their name",
+    "phone": "Their mobile number",
+    "relationship": "They are my",
+    "relMother": "Mother",
+    "relFather": "Father",
+    "relGuardian": "Guardian",
+    "relOther": "Other family member",
+    "send": "Send the link",
+    "sentNote": "Until they agree you can learn, but sponsors cannot see you and you get no invites."
+  },
+  "consent": {
+    "title": "Your privacy choices",
+    "intro": "Choose how Sgela may use your information. You can change this any time in Me, Privacy and consent.",
+    "PLATFORM": "Use Sgela to learn and track my progress",
+    "PLATFORMHelp": "Needed to use the app. We keep your profile, progress and expo results.",
+    "MATCHING": "Match me with bursaries, learnerships and jobs",
+    "MATCHINGHelp": "We compare your profile with opportunities. Sponsors only see your details when you apply.",
+    "PARTNER_CONTACT": "Let partners contact me after I accept an invite",
+    "PARTNER_CONTACTHelp": "Only for opportunities you accept.",
+    "MARKETING": "Send me news and tips",
+    "MARKETINGHelp": "Occasional SMS or WhatsApp. No spam.",
+    "save": "Save and continue",
+    "version": "Consent text version {version}",
+    "guardianTitle": "Consent for {name}",
+    "guardianIntro": "{name} has joined Sgela, a free app by Veza that helps young South Africans explore careers, learn skills and find bursaries and jobs.",
+    "guardianWhatTitle": "What we collect and why",
+    "guardianWhat1": "Name, date of birth, phone number, province, district, school and grade, so we can show the right courses.",
+    "guardianWhat2": "Learning progress and VR expo results, so we can recommend next steps.",
+    "guardianWhat3": "We never sell data. Sponsors only see totals, unless {name} applies for an opportunity you allowed.",
+    "guardianWhat4": "You can withdraw consent at any time by contacting Veza.",
+    "guardianChoose": "Please choose",
+    "agree": "I agree",
+    "decline": "I do not agree",
+    "guardianThanks": "Thank you. Your choice has been saved.",
+    "guardianThanksAgree": "{name} can now use Sgela fully.",
+    "guardianThanksDecline": "{name} can still learn on Sgela but will not be matched with opportunities.",
+    "invalidTitle": "This link does not work",
+    "invalidBody": "It may have expired or been replaced by a newer SMS. Ask the learner to send it again from the app."
+  },
+  "claim": {
+    "heroOne": "Welcome! You explored {world} today.",
+    "heroMany": "Welcome! You explored {count} career worlds today.",
+    "subtitle": "Save your results to unlock your Career Compass.",
+    "save": "Save my results",
+    "scoreLabel": "{world}: score {score} out of 100",
+    "codeLabel": "Code {code}",
+    "invalidTitle": "We could not find that code",
+    "invalidBody": "Check the code on your card or kiosk screen. You can still sign up and add it later.",
+    "expiredTitle": "This code has expired",
+    "expiredBody": "Codes last 30 days. You can still sign up and explore careers.",
+    "usedTitle": "This code was already used - ask a facilitator",
+    "usedBody": "Each code can be saved by one person only.",
+    "mineTitle": "These results are already saved to your account",
+    "signUpAnyway": "Sign up anyway",
+    "openCompass": "Open my Career Compass",
+    "addTitle": "Add expo results",
+    "addIntro": "Played at a Veza expo? Enter the 6-character code from your card.",
+    "addLabel": "Expo code",
+    "addButton": "Add results"
+  },
+  "me": {
+    "greeting": "Hi {name}",
+    "restrictedTitle": "Waiting for your guardian",
+    "restrictedBody": "We sent {guardian} a link. Until they agree, you can learn but you will not get opportunity invites.",
+    "resendGuardian": "Change or resend",
+    "resultsTitle": "My expo results",
+    "resultsEmpty": "No expo results yet.",
+    "simulated": "demo",
+    "privacy": "Privacy and consent",
+    "account": "Account"
+  },
+  "privacy": {
+    "title": "Privacy and consent",
+    "intro": "These are your current choices. Each change is saved as a new record.",
+    "granted": "On",
+    "notGranted": "Off",
+    "byGuardian": "set by your guardian",
+    "byYou": "set by you",
+    "minorNote": "Because you are under 18, only your guardian can switch these on. You can switch them off.",
+    "platformLocked": "Needed to use Sgela. To stop using Sgela, ask us to delete your account.",
+    "turnOn": "Switch on",
+    "turnOff": "Switch off"
+  }
 }

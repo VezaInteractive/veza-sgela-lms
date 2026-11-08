@@ -3,8 +3,22 @@ import en from "../messages/en.json";
 import zu from "../messages/zu.json";
 import st from "../messages/st.json";
 
-// Namespaces that must be fully translated in zu/st at every milestone (CLAUDE.md).
-const REQUIRED = ["nav", "settings", "coach"] as const;
+// Namespaces that must be fully translated in zu/st (CLAUDE.md: onboarding, consent, nav).
+const REQUIRED = [
+  "nav",
+  "settings",
+  "coach",
+  "worlds",
+  "sms",
+  "start",
+  "profile",
+  "errors",
+  "guardian",
+  "consent",
+  "claim",
+  "me",
+  "privacy",
+] as const;
 
 function keys(obj: object, prefix = ""): string[] {
   return Object.entries(obj).flatMap(([k, v]) =>
