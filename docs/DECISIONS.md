@@ -72,3 +72,38 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 
 - **Decision:** client `track()` batches events and flushes with `navigator.sendBeacon` to `POST /api/v1/events` (zod-validated, max 50 per batch, names must exist in `packages/analytics/src/events.ts`). Server `trackEvent()` writes `Event` rows and never throws.
 - **Follow-up:** rate limiting and user attribution once auth lands (M1).
+
+## D-012 · 2026-11-08 · Own phone-OTP auth with database sessions (not Auth.js)
+
+- **Decision:** Phone OTP and sessions are implemented directly (`apps/web/lib/auth`): `OtpChallenge` rows (HMAC-hashed code, 5-min TTL, 5 attempts, atomic consume), `AuthSession` rows storing only sha256 of a random cookie token, httpOnly `sgela_session` cookie (SameSite=Lax). Trusted device = 30 days; otherwise a browser-session cookie backed by a 12 h row. "Log out everywhere" deletes all rows. Route guards: `requireSession` / `requireRole` / `requireLearnerPage` in `lib/auth/rbac.ts`.
+- **Alternatives:** Auth.js v5 with a custom credentials provider (PRD 13.1).
+- **Reason:** Auth.js credentials providers only work with JWT sessions, so PRD's DB sessions, 30-day trusted device and logout-everywhere would need workarounds; Auth.js adds no value for a phone-only flow with no OAuth. Revisit if social/SSO login is ever needed.
+- **Rate limits:** counted from `OtpChallenge` rows (5 sends/hour/number, 20/hour/IP via salted IP hash, 30 s resend), no Redis needed yet. Per-hour limits are env-configurable (`OTP_MAX_SENDS_PER_*`); e2e raises the IP limit because all traffic comes from one IP.
+
+## D-013 · 2026-11-08 · Dev SMS outbox for tests
+
+- **Decision:** Console SMS/WhatsApp providers keep the last 200 messages in memory; `GET /api/dev/sms-outbox` exposes them when the console provider is active and dev pages are on (or `ENABLE_SMS_OUTBOX=1` under `next start` in CI). Never available with a real vendor.
+- **Alternatives:** fixed test OTP; DB `Notification` rows (needs a user, which does not exist before sign-up).
+- **Reason:** e2e reads real OTPs and consent links without weakening the OTP path.
+
+## D-014 · 2026-11-08 · Kiosk idempotency store
+
+- **Decision:** `IdempotencyRecord` (unique per device + key) stores request hash, status and response. The key is reserved before the handler runs, so concurrent retries get `409 IDEMPOTENCY_IN_PROGRESS` or a replay and never a second session. Same key + different body = `422`. 5xx results are not stored. Device keys `vk_live_`/`vk_test_` are stored as sha256 (`KioskDevice.apiKeyHash`, unique) and registered with `pnpm kiosk:create-device`. Added `KioskDevice.appVersion`, `battery`, `queueDepth` for heartbeat. Claim-code pre-allocation stays P1 (D-008).
+- **Reason:** PRD 12.1/12.3 require retries never to duplicate; hotspot drops make retries common.
+
+## D-015 · 2026-11-08 · Consent storage and rules
+
+- **Decision:** `Consent` is append-only, enforced by a Postgres trigger that rejects `UPDATE` (deletes stay possible for account erasure). Resolution (`packages/matching/src/consent.ts`): latest row per scope wins; for minors, learner-granted rows are ignored but learner withdrawals count. `Learner.restricted` = no effective `PLATFORM` consent, recomputed in the same transaction as each consent write. Consent text version `2026-11-v1` lives in the `consent.*` message keys (en/zu/st); markdown copies in `packages/content/consent` follow when legal review lands.
+- **Matching gate:** `isMatchable` (pure) plus `findMatchableLearnerIds` (query filters `restricted = false` and then applies the pure gate) so M5 can never see a restricted minor.
+
+## D-016 · 2026-11-08 · Guardian links and reminders
+
+- **Decision:** The consent link token is an HMAC of learner id + request time (`AUTH_SECRET`); the DB stores only its sha256. Reminders can therefore resend the same link without storing it, and re-inviting invalidates old links. Links last 30 days. `guardian.reminders` runs via `POST /api/cron/guardian-reminders` (Bearer `CRON_SECRET`, every 15 min from the host scheduler) or `pnpm --filter @sgela/web job:guardian-reminders`; it claims each reminder with a conditional update so parallel runs never double-send, and after downtime sends only the latest due reminder.
+- **Alternatives:** Inngest/BullMQ now (PRD 13.1).
+- **Reason:** one cron job does not justify a queue yet; pick the job runner with hosting in M8.
+
+## D-017 · 2026-11-08 · Onboarding shape
+
+- **Decision:** Routes `/start` (phone), `/start/verify` (auto-submits on the 6th digit), `/start/profile` (two screens in one form), then `/start/guardian` (under 18) or `/start/consent` (18+, L-ON-6; route added beyond PRD 7.1), then `/start/done`. A claim code from `/claim/[code]` waits in a 24 h `sgela_claim` cookie and is linked at the end of onboarding; claiming uses a conditional update so two accounts can never both win. Claims create initial `InterestSignal` rows (salted quarterly learner hash, no FK). Learner area requires finished onboarding; restricted minors are let in. Lighthouse CI now audits `/start`, `/claim/:code` and `/consent/:token` because learner routes need a session.
+- **Seed:** 156 sample schools (3 per district, names marked "(sample)") until a real EMIS import; dev admin is `+27600000001` (valid mobile format).
+- **Follow-up:** native-speaker review of new zu/st strings (D-006); real EMIS school list; learner career interests land with Compass (M2).
