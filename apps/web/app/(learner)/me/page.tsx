@@ -3,7 +3,9 @@ import { getTranslations } from "next-intl/server";
 import { Button, Card, CardTitle } from "@sgela/ui";
 import { signOutAction, signOutEverywhereAction } from "@/app/(auth)/start/actions";
 import { AddExpoCode } from "@/components/add-expo-code";
+import { SampleNote } from "@/components/demo/ui";
 import { WorldResults } from "@/components/world-results";
+import { BADGES, CREDENTIALS } from "@/lib/demo/data";
 import { requireLearnerPage } from "@/lib/auth/rbac";
 import { linkedResults } from "@/lib/claim/service";
 import { isMinor } from "@/lib/onboarding/steps";
@@ -16,6 +18,7 @@ export async function generateMetadata() {
 export default async function MePage() {
   const { learner } = await requireLearnerPage();
   const t = await getTranslations();
+  const td = await getTranslations("demo");
   const results = await linkedResults(learner.id);
   const waiting = learner.restricted && isMinor(learner.dateOfBirth) && learner.guardian;
 
@@ -44,6 +47,38 @@ export default async function MePage() {
         )}
       </Card>
 
+      <Card className="flex flex-col gap-3">
+        <CardTitle>{td("me.badges")}</CardTitle>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {BADGES.map((b) => (
+            <li
+              key={b.code}
+              className={
+                "flex flex-col items-center gap-1 rounded-md border p-3 text-center text-xs " +
+                (b.earned ? "border-primary" : "border-dashed border-border text-muted")
+              }
+            >
+              <span aria-hidden="true" className="text-2xl">
+                {b.earned ? "★" : "☆"}
+              </span>
+              <span className="font-semibold">{b.name}</span>
+              <span>{b.earned ? td("me.earned") : td("me.notYet")}</span>
+            </li>
+          ))}
+        </ul>
+        <CardTitle className="mt-2">{td("me.credentials")}</CardTitle>
+        <ul className="flex flex-col gap-2 text-sm">
+          {CREDENTIALS.map((c) => (
+            <li key={c.title} className="rounded-md border border-border p-3">
+              <p className="font-semibold">{c.title}</p>
+              <p className="text-xs text-muted">
+                {c.issuer} · {c.issued} · {c.kind}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <SampleNote>{td("sample")}</SampleNote>
+      </Card>
       <Card className="flex flex-col gap-3">
         <CardTitle>{t("claim.addTitle")}</CardTitle>
         <p className="text-sm text-muted">{t("claim.addIntro")}</p>

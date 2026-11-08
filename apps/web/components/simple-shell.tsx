@@ -3,7 +3,13 @@ import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
 /** Minimal chrome for public and onboarding pages: brand, language, theme. Mobile-first. */
-export async function SimpleShell({ children }: { children: React.ReactNode }) {
+export async function SimpleShell({
+  children,
+  wide = false,
+}: {
+  children: React.ReactNode;
+  wide?: boolean;
+}) {
   const t = await getTranslations();
   return (
     <div className="flex min-h-dvh flex-col">
@@ -20,9 +26,19 @@ export async function SimpleShell({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
         </div>
       </header>
-      <main id="main" className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-8">
+      <main
+        id="main"
+        className={
+          "mx-auto flex w-full flex-1 flex-col gap-6 px-4 py-8 " + (wide ? "max-w-6xl" : "max-w-md")
+        }
+      >
         {children}
       </main>
     </div>
   );
+}
+
+/** Wider variant for admin pages. */
+export function SimpleShellWide({ children }: { children: React.ReactNode }) {
+  return <SimpleShell wide>{children}</SimpleShell>;
 }

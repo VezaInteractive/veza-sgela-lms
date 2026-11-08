@@ -256,5 +256,99 @@
     "platformLocked": "Needed to use Sgela. To stop using Sgela, ask us to delete your account.",
     "turnOn": "Switch on",
     "turnOff": "Switch off"
+  },
+  "demo": {
+    "sample": "Sample content - preview",
+    "home": {
+      "greeting": "Hi {name}",
+      "level": "Level {level}",
+      "xp": "{xp} of {next} XP",
+      "streak": "{days}-day streak",
+      "worldsTitle": "Your career worlds",
+      "fromExpo": "Expo score {score}",
+      "notPlayed": "Not played yet",
+      "nextTitle": "Your next step",
+      "nextBody": "Explore what {world} careers study - 4 min",
+      "nextCta": "Start",
+      "continueTitle": "Continue learning",
+      "topMatch": "Top match for you",
+      "seeAll": "See all"
+    },
+    "explore": {
+      "title": "Explore career worlds",
+      "intro": "Five worlds you can try at a Veza expo. Tap one to see careers, subjects and study routes.",
+      "careers": "Careers",
+      "why": "Why it matters",
+      "subjectsTitle": "Subjects you need",
+      "have": "You take this",
+      "missing": "Not in your subjects yet",
+      "routes": "Study routes",
+      "salary": "Typical pay",
+      "back": "All worlds",
+      "courses": "Courses for this world",
+      "open": "Explore {world}",
+      "careerCount": "{count} careers"
+    },
+    "learn": {
+      "title": "Learn",
+      "intro": "Short courses with 3D models you can turn and take apart.",
+      "accredited": "Accredited via Bantu",
+      "minutes": "{n} min",
+      "progress": "{n}% done",
+      "topics": "Topics",
+      "done": "Done",
+      "current": "Up next",
+      "locked": "Locked",
+      "has3d": "3D",
+      "back": "All courses",
+      "continue": "Continue",
+      "lessonsSoon": "Lessons with 3D models and quizzes open in the next release."
+    },
+    "opps": {
+      "title": "Opportunities",
+      "intro": "Bursaries, learnerships and job shadows matched to your profile, results and location.",
+      "why": "Why you match",
+      "gaps": "To improve your match",
+      "closes": "Closes {date}",
+      "match": "{score} out of 100 match",
+      "accept": "Accept invite",
+      "save": "Save for later",
+      "demoAction": "Applying opens in the next release.",
+      "restrictedTitle": "Locked until your guardian agrees",
+      "restrictedBody": "You can see what is out there, but sponsors cannot invite you yet. We sent your guardian a link."
+    },
+    "me": {
+      "badges": "Badges",
+      "credentials": "Credentials",
+      "earned": "Earned",
+      "notYet": "Not yet earned"
+    },
+    "insights": {
+      "title": "Platform insights",
+      "intro": "Live numbers from this server. Groups smaller than 20 learners are hidden to protect privacy.",
+      "learners": "Learners",
+      "minors": "Under 18",
+      "restricted": "Waiting for guardian",
+      "claims": "Expo results claimed",
+      "sessions": "Expo sessions",
+      "simulatedHint": "{n} simulated",
+      "funnelTitle": "Funnel: expo to consent",
+      "funnelNote": "Count of each step (all time)",
+      "provinceTitle": "Learners by province",
+      "worldTitle": "Interest by career world",
+      "worldNote": "Interest signals from expo results and browsing",
+      "count": "Count",
+      "suppressed": "Hidden: fewer than 20",
+      "noData": "No data yet",
+      "steps": {
+        "expo_session": "Expo sessions",
+        "claim_viewed": "Claim pages opened",
+        "claim_started": "Save my results tapped",
+        "account_created": "Accounts created",
+        "profile_completed": "Profiles completed",
+        "claim_linked": "Results linked",
+        "consent_complete": "Consent complete"
+      }
+    }
   }
 }

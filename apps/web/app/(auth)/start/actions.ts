@@ -144,6 +144,12 @@ export async function verifyCodeAction(_prev: FormState, formData: FormData): Pr
     where: { userId: result.userId },
     include: { guardian: true },
   });
+  // Staff accounts (no learner profile) go to the admin area instead of onboarding.
+  const user = await getDb().user.findUniqueOrThrow({
+    where: { id: result.userId },
+    select: { role: true },
+  });
+  if (!learner && user.role !== "LEARNER") redirect("/admin/insights");
   const next = onboardingPath(learner);
   if (next) redirect(next);
   const claim = await linkPendingClaim(learner!.id);

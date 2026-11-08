@@ -11,6 +11,9 @@ export async function generateMetadata() {
 
 export default async function StartPage() {
   const session = await getCurrentSession();
+  if (session && !session.user.learner && session.user.role !== "LEARNER") {
+    redirect("/admin/insights");
+  }
   if (session) redirect(onboardingPath(session.user.learner) ?? "/home");
   const t = await getTranslations("start");
   return (
