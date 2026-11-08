@@ -1,0 +1,9 @@
+{
+  "name": "Sgela by Veza",
+  "short_name": "Sgela",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#0B0F14",
+  "theme_color": "#0B0F14",
+  "icons": []
+}

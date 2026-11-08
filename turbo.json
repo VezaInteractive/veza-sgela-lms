@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_ENV", "DATABASE_URL", "NEXT_PUBLIC_*", "SENTRY_*", "LOG_LEVEL"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "^generate"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "generate": { "cache": false, "outputs": ["src/generated/**"] },
+    "dev": { "dependsOn": ["^generate"], "cache": false, "persistent": true },
+    "lint": { "dependsOn": ["^generate"] },
+    "typecheck": { "dependsOn": ["^generate"] },
+    "test": { "dependsOn": ["^generate"], "outputs": ["coverage/**"] }
+  }
+}

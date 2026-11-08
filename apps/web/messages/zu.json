@@ -1,0 +1,26 @@
+{
+  "app": { "tagline": "Ngena emsebenzini. Wufunde. Wufakazele. Umenywe." },
+  "nav": {
+    "home": "Ikhaya",
+    "explore": "Hlola",
+    "learn": "Funda",
+    "opportunities": "Amathuba",
+    "me": "Mina",
+    "primary": "Uhla lokuzulazula oluyinhloko",
+    "collapse": "Goqa imenyu",
+    "expand": "Vula imenyu"
+  },
+  "coach": {
+    "open": "Buza umqeqeshi wakho",
+    "comingSoon": "Umqeqeshi wakho wemisebenzi uzofika maduze."
+  },
+  "settings": {
+    "language": "Ulimi",
+    "theme": "Ukubukeka",
+    "themeDark": "Okumnyama",
+    "themeLight": "Okukhanyayo",
+    "themeSystem": "Njengocingo lwami"
+  },
+  "languages": { "en": "English", "zu": "isiZulu", "st": "Sesotho" },
+  "common": { "skipToContent": "Yeqela kokuqukethwe", "comingSoon": "Kuyeza maduze" }
+}

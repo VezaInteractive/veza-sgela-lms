@@ -1,0 +1,13 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "tools/*"
+allowBuilds:
+  "@prisma/engines": true
+  prisma: true
+  esbuild: true
+  sharp: true
+  "@parcel/watcher": true
+  "@swc/core": true
+  "@sentry/cli": true
+  unrs-resolver: true

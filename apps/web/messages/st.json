@@ -1,0 +1,26 @@
+{
+  "app": { "tagline": "Kena mosebetsing. O ithute. O o paka. O memelwe ho wona." },
+  "nav": {
+    "home": "Lehae",
+    "explore": "Hlahloba",
+    "learn": "Ithute",
+    "opportunities": "Menyetla",
+    "me": "Nna",
+    "primary": "Tsamaiso e kgolo",
+    "collapse": "Kwala lenane",
+    "expand": "Bula lenane"
+  },
+  "coach": {
+    "open": "Botsa mokoetlisi wa hao",
+    "comingSoon": "Mokoetlisi wa hao wa mesebetsi o tla haufinyane."
+  },
+  "settings": {
+    "language": "Puo",
+    "theme": "Ponahalo",
+    "themeDark": "Lefifi",
+    "themeLight": "Kganya",
+    "themeSystem": "Jwalo ka fono ya ka"
+  },
+  "languages": { "en": "English", "zu": "isiZulu", "st": "Sesotho" },
+  "common": { "skipToContent": "Tlolela dikahare", "comingSoon": "E tla haufinyane" }
+}

@@ -1,0 +1,42 @@
+{
+  "app": {
+    "name": "Sgela",
+    "tagline": "Step inside a career. Learn it. Prove it. Get invited in."
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "learn": "Learn",
+    "opportunities": "Opportunities",
+    "me": "Me",
+    "primary": "Main navigation",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu"
+  },
+  "coach": { "open": "Ask your coach", "comingSoon": "Your AI Career Coach arrives soon." },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "themeSystem": "Match my phone"
+  },
+  "languages": { "en": "English", "zu": "isiZulu", "st": "Sesotho" },
+  "pages": {
+    "home": {
+      "title": "Your Career Compass",
+      "body": "Your personal career map will light up here once you claim your expo results."
+    },
+    "explore": {
+      "title": "Explore career worlds",
+      "body": "Aviation, Engineering, Culinary, Medical and Agriculture are on their way."
+    },
+    "learn": { "title": "Learn", "body": "Courses with 3D models and AR will appear here." },
+    "opportunities": {
+      "title": "Opportunities",
+      "body": "Bursaries, learnerships and invites matched to you will appear here."
+    },
+    "me": { "title": "Me", "body": "Your profile, credentials and privacy settings." }
+  },
+  "common": { "skipToContent": "Skip to content", "comingSoon": "Coming soon" }
+}

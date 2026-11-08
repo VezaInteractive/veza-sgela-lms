@@ -1,0 +1,21 @@
+{
+  "name": "@sgela/messaging",
+  "version": "0.0.0",
+  "private": true,
+  "description": "SMS/WhatsApp provider abstractions (M1)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@sgela/config": "workspace:*",
+    "eslint": "^9.39.0",
+    "typescript": "5.9.3",
+    "vitest": "^5.1.0"
+  }
+}

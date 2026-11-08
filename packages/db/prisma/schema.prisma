@@ -1,0 +1,1070 @@
+// Veza Sgela EEP — normative data model (PRD §11).
+// Field-level deviations from the PRD are recorded in docs/DECISIONS.md.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────── Enums ─────────────────────────
+
+enum UserRole {
+  LEARNER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETION_PENDING
+}
+
+enum OtpPurpose {
+  SIGN_UP
+  SIGN_IN
+  CHANGE_PHONE
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+enum LangCode {
+  EN
+  ZU
+  ST
+  TN
+  XH
+  AF
+}
+
+enum IdentityStatus {
+  NONE
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ConsentScope {
+  PLATFORM
+  MATCHING
+  PARTNER_CONTACT
+  MARKETING
+  PUBLIC_PORTFOLIO
+  ACCREDITATION_SHARE
+}
+
+enum ConsentActor {
+  LEARNER
+  GUARDIAN
+}
+
+enum OrgType {
+  SPONSOR
+  OPPORTUNITY_PARTNER
+  CONTENT_PARTNER
+  ACCREDITATION_PARTNER
+  SCHOOL
+  FUNDER
+  VEZA
+}
+
+enum OrgRole {
+  OWNER
+  MANAGER
+  VIEWER
+  ASSESSOR
+  FACILITATOR
+  TEACHER
+}
+
+enum CourseLevel {
+  INTRO
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BlockType {
+  TEXT
+  IMAGE
+  VIDEO
+  MODEL3D
+  AR
+  HOTSPOT_TOUR
+  PROCEDURE_SIM
+  QUIZ
+  SCENARIO
+  CALLOUT
+  DOWNLOAD
+}
+
+enum AssetStatus {
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  CAPTIONS
+}
+
+enum EnrolStatus {
+  ACTIVE
+  COMPLETED
+  WITHDRAWN
+  PENDING_VERIFICATION
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  IMAGE_HOTSPOT
+  ORDERING
+}
+
+enum EvidenceKind {
+  PHOTO
+  PDF
+  VIDEO
+  TEXT
+}
+
+enum EvidenceStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  COMPETENT
+  NOT_YET_COMPETENT
+}
+
+enum CredentialKind {
+  COMPLETION
+  ACCREDITED
+  BADGE
+}
+
+enum AccredStatus {
+  ENROLLED
+  ASSESSED
+  MODERATED
+  SUBMITTED
+  RECORDED
+}
+
+enum VenueType {
+  SCHOOL
+  MALL
+  CAMPUS
+  CAREER_FAIR
+  OTHER
+}
+
+enum OppType {
+  BURSARY
+  LEARNERSHIP
+  INTERNSHIP
+  YES_PLACEMENT
+  JOB_SHADOW
+  JOB
+  SHORT_COURSE
+  COMPETITION
+}
+
+enum ApplyMode {
+  IN_PLATFORM
+  EXTERNAL_LINK
+}
+
+enum OppStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum MatchStatus {
+  ELIGIBLE
+  NEAR_MISS
+  SUGGESTED
+  INVITED
+  DISMISSED
+}
+
+enum InviteResponse {
+  ACCEPTED
+  SAVED
+  DECLINED
+}
+
+enum AppStatus {
+  APPLIED
+  SHORTLISTED
+  INTERVIEW
+  OFFERED
+  PLACED
+  UNSUCCESSFUL
+  WITHDRAWN
+}
+
+// ─────────────────── 11.1 Identity, consent & orgs ───────────────────
+
+model User {
+  id             String          @id @default(cuid())
+  phoneE164      String          @unique
+  email          String?         @unique
+  role           UserRole        @default(LEARNER)
+  status         UserStatus      @default(ACTIVE)
+  lastLoginAt    DateTime?
+  deletedAt      DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  learner        Learner?
+  memberships    Membership[]
+  sessions       AuthSession[]
+  notifications  Notification[]
+  supportTickets SupportTicket[]
+}
+
+model AuthSession {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken  String   @unique
+  expiresAt     DateTime
+  trustedDevice Boolean  @default(false)
+  userAgent     String?
+  ipHash        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model OtpChallenge {
+  id         String     @id @default(cuid())
+  phoneE164  String
+  codeHash   String
+  purpose    OtpPurpose
+  attempts   Int        @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  ipHash     String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([phoneE164, createdAt])
+}
+
+model Learner {
+  id                   String         @id @default(cuid())
+  userId               String         @unique
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName            String
+  lastName             String?
+  dateOfBirth          DateTime       @db.Date
+  gender               Gender?
+  provinceCode         String
+  districtCode         String
+  schoolId             String?
+  school               School?        @relation(fields: [schoolId], references: [id])
+  schoolNameFree       String?
+  inSchool             Boolean
+  grade                Int?
+  highestQualification String?
+  language             LangCode       @default(EN)
+  handle               String?        @unique
+  restricted           Boolean        @default(true)
+  xp                   Int            @default(0)
+  level                Int            @default(1)
+  streakDays           Int            @default(0)
+  lastActiveAt         DateTime?
+  dataSaver            Boolean        @default(false)
+  notifyChannels       Json
+  quietHours           Json
+  identityStatus       IdentityStatus @default(NONE)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  deletedAt            DateTime?
+
+  subjects           LearnerSubject[]
+  guardian           Guardian?
+  consents           Consent[]
+  enrolments         Enrolment[]
+  sectionProgress    SectionProgress[]
+  topicProgress      TopicProgress[]
+  attempts           Attempt[]
+  evidence           EvidenceItem[]
+  credentials        Credential[]
+  badges             LearnerBadge[]
+  xpEvents           XpEvent[]
+  expoSessions       ExpoSession[]
+  vrResults          VRSessionResult[]
+  matches            Match[]
+  applications       Application[]
+  wallet             Wallet?
+  coachConversations CoachConversation[]
+
+  @@index([provinceCode, districtCode])
+}
+
+model Guardian {
+  id             String   @id @default(cuid())
+  learnerId      String   @unique
+  learner        Learner  @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  name           String
+  phoneE164      String
+  relationship   String?
+  consentToken   String   @unique
+  tokenExpiresAt DateTime
+  remindersSent  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+/// Append-only; latest row per (learnerId, scope) wins.
+model Consent {
+  id          String       @id @default(cuid())
+  learnerId   String
+  learner     Learner      @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  scope       ConsentScope
+  granted     Boolean
+  grantedBy   ConsentActor
+  textVersion String
+  language    LangCode
+  ipHash      String?
+  createdAt   DateTime     @default(now())
+
+  @@index([learnerId, scope, createdAt])
+}
+
+model Organisation {
+  id          String       @id @default(cuid())
+  name        String
+  type        OrgType
+  logoUrl     String?
+  website     String?
+  bbbeeLevel  Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  memberships Membership[]
+}
+
+model Membership {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orgId     String
+  org       Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  role      OrgRole
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([userId, orgId])
+}
+
+model School {
+  id           String    @id @default(cuid())
+  emisNumber   String?   @unique
+  name         String
+  provinceCode String
+  districtCode String
+  quintile     Int?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  learners     Learner[]
+
+  @@index([provinceCode, districtCode])
+}
+
+model Subject {
+  code     String           @id
+  name     String
+  learners LearnerSubject[]
+}
+
+model LearnerSubject {
+  learnerId   String
+  learner     Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  subjectCode String
+  subject     Subject @relation(fields: [subjectCode], references: [code])
+
+  @@id([learnerId, subjectCode])
+}
+
+// ─────────────────── 11.2 Industries, careers, content ───────────────────
+
+model Industry {
+  code         String   @id
+  name         String
+  tagline      String
+  whyItMatters Json
+  heroAssetId  String?
+  color        String
+  sponsorOrgId String?
+  sortOrder    Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  careers      Career[]
+  courses      Course[]
+}
+
+model Career {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  industryCode        String
+  industry            Industry @relation(fields: [industryCode], references: [code])
+  title               String
+  summary             String
+  dayInLife           Json
+  studyRoutes         Json
+  subjectsRequired    String[]
+  subjectsRecommended String[]
+  salaryBandNote      String?
+  roleModel           Json?
+  heroAssetId         String?
+  translations        Json?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Course {
+  id                     String        @id @default(cuid())
+  slug                   String        @unique
+  code                   String        @unique
+  industryCode           String?
+  industry               Industry?     @relation(fields: [industryCode], references: [code])
+  title                  String
+  summary                String
+  level                  CourseLevel
+  durationMins           Int
+  creditBearing          Boolean       @default(false)
+  accreditationPartnerId String?
+  qualificationRef       String?
+  nqfLevel               Int?
+  credits                Int?
+  contentPartnerId       String?
+  objectives             Json
+  prerequisites          Json
+  assessmentInfo         Json
+  status                 PublishStatus @default(DRAFT)
+  version                Int           @default(1)
+  publishedAt            DateTime?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  topics                 Topic[]
+  enrolments             Enrolment[]
+}
+
+model Topic {
+  id                 String          @id @default(cuid())
+  courseId           String
+  course             Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  slug               String
+  title              String
+  summary            String?
+  order              Int
+  estMins            Int
+  assessmentCriteria Json
+  hasAr              Boolean         @default(false)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  sections           Section[]
+  progress           TopicProgress[]
+  evidence           EvidenceItem[]
+
+  @@unique([courseId, slug])
+}
+
+model Section {
+  id             String            @id @default(cuid())
+  topicId        String
+  topic          Topic             @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  slug           String
+  title          String
+  order          Int
+  estMins        Int
+  completionRule Json
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  blocks         ContentBlock[]
+  progress       SectionProgress[]
+
+  @@unique([topicId, slug])
+}
+
+/// `id` is stable across course versions.
+model ContentBlock {
+  id           String    @id @default(cuid())
+  sectionId    String
+  section      Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  order        Int
+  type         BlockType
+  data         Json
+  assetId      String?
+  asset        Asset3D?  @relation(fields: [assetId], references: [id])
+  translations Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Asset3D {
+  id               String         @id @default(cuid())
+  /// Shared with Unity: IND/object/v# (PRD §13.5)
+  assetKey         String?        @unique
+  name             String
+  industryCode     String?
+  glbUrl           String
+  glbSizeBytes     Int
+  glbLiteUrl       String?
+  glbLiteSizeBytes Int?
+  usdzUrl          String?
+  posterUrl        String
+  hotspots         Json
+  explodeGroups    Json
+  components       Json
+  license          String
+  sourceNote       String?
+  processingStatus AssetStatus    @default(UPLOADED)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  blocks           ContentBlock[]
+}
+
+model MediaAsset {
+  id          String    @id @default(cuid())
+  kind        MediaKind
+  url         String
+  sizeBytes   Int
+  variants    Json?
+  captionsUrl String?
+  alt         String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ───────────── 11.3 Learning, assessment, credentials, gamification ─────────────
+
+model Enrolment {
+  id            String      @id @default(cuid())
+  learnerId     String
+  learner       Learner     @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  courseId      String
+  course        Course      @relation(fields: [courseId], references: [id])
+  courseVersion Int
+  status        EnrolStatus
+  enrolledAt    DateTime
+  completedAt   DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([learnerId, courseId])
+}
+
+model SectionProgress {
+  learnerId    String
+  learner      Learner        @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  sectionId    String
+  section      Section        @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  status       ProgressStatus
+  blocksDone   String[]
+  timeSpentSec Int            @default(0)
+  completedAt  DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@id([learnerId, sectionId])
+}
+
+model TopicProgress {
+  learnerId   String
+  learner     Learner   @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  topicId     String
+  topic       Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  percent     Int
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@id([learnerId, topicId])
+}
+
+model Question {
+  id            String       @id @default(cuid())
+  type          QuestionType
+  prompt        Json
+  options       Json
+  answer        Json
+  feedback      Json?
+  criterionTags String[]
+  summative     Boolean      @default(false)
+  industryCode  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Quiz {
+  id          String    @id @default(cuid())
+  title       String
+  questionIds String[]
+  passMark    Int       @default(70)
+  maxAttempts Int?
+  summative   Boolean   @default(false)
+  shuffle     Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  attempts    Attempt[]
+}
+
+model Attempt {
+  id          String    @id @default(cuid())
+  learnerId   String
+  learner     Learner   @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  quizId      String
+  quiz        Quiz      @relation(fields: [quizId], references: [id])
+  answers     Json
+  score       Int
+  passed      Boolean
+  startedAt   DateTime
+  submittedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model EvidenceItem {
+  id           String         @id @default(cuid())
+  learnerId    String
+  learner      Learner        @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  topicId      String
+  topic        Topic          @relation(fields: [topicId], references: [id])
+  criterionRef String
+  kind         EvidenceKind
+  fileUrl      String?
+  text         String?
+  status       EvidenceStatus @default(SUBMITTED)
+  reviewerId   String?
+  feedback     String?
+  reviewedAt   DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Credential {
+  id                  String         @id @default(cuid())
+  publicId            String         @unique
+  learnerId           String
+  learner             Learner        @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  courseId            String?
+  kind                CredentialKind
+  title               String
+  issuerOrgId         String
+  partnerOrgId        String?
+  issuedAt            DateTime
+  revokedAt           DateTime?
+  pdfUrl              String?
+  accreditationStatus AccredStatus?
+  statusHistory       Json
+  obv3                Json?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+}
+
+model Badge {
+  code        String         @id
+  name        String
+  description String
+  icon        String
+  criteria    Json
+  learners    LearnerBadge[]
+}
+
+model LearnerBadge {
+  learnerId String
+  learner   Learner  @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  badgeCode String
+  badge     Badge    @relation(fields: [badgeCode], references: [code])
+  awardedAt DateTime
+
+  @@id([learnerId, badgeCode])
+}
+
+model XpEvent {
+  id        String   @id @default(cuid())
+  learnerId String
+  learner   Learner  @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  reason    String
+  amount    Int
+  refType   String?
+  refId     String?
+  createdAt DateTime @default(now())
+
+  @@index([learnerId, createdAt])
+}
+
+// ─────────────────────────── 11.4 Expo & VR ───────────────────────────
+
+model ExpoEvent {
+  id           String        @id @default(cuid())
+  name         String
+  startsAt     DateTime
+  endsAt       DateTime
+  venueType    VenueType
+  venueName    String
+  schoolId     String?
+  provinceCode String
+  districtCode String
+  sponsorOrgId String?
+  unitCode     String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  sessions     ExpoSession[]
+}
+
+model KioskDevice {
+  id           String        @id @default(cuid())
+  label        String
+  apiKeyHash   String
+  unitCode     String?
+  /// QUEST_3 | QUEST_2 (docs/DECISIONS.md D-008)
+  headsetModel String?
+  lastSeenAt   DateTime?
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  sessions     ExpoSession[]
+}
+
+model ExpoSession {
+  id                 String            @id @default(cuid())
+  expoEventId        String?
+  expoEvent          ExpoEvent?        @relation(fields: [expoEventId], references: [id])
+  deviceId           String
+  device             KioskDevice       @relation(fields: [deviceId], references: [id])
+  /// 6 chars Crockford base32, no ambiguous chars
+  claimCode          String            @unique
+  claimExpiresAt     DateTime
+  claimedByLearnerId String?
+  claimedBy          Learner?          @relation(fields: [claimedByLearnerId], references: [id])
+  claimedAt          DateTime?
+  startedAt          DateTime
+  endedAt            DateTime
+  ageBand            String?
+  gradeBand          String?
+  clarityPre         Int?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  results            VRSessionResult[]
+}
+
+model VRSessionResult {
+  id            String       @id @default(cuid())
+  expoSessionId String?
+  expoSession   ExpoSession? @relation(fields: [expoSessionId], references: [id], onDelete: Cascade)
+  learnerId     String?
+  learner       Learner?     @relation(fields: [learnerId], references: [id])
+  worldCode     String
+  scenarioId    String
+  appVersion    String
+  score         Int
+  durationSec   Int
+  accuracy      Int?
+  safetyErrors  Int?
+  decisionScore Int?
+  rubric        Json
+  events        Json?
+  completed     Boolean
+  /// true when produced by kiosk:simulate rather than a real headset
+  simulated     Boolean      @default(false)
+  recordedAt    DateTime
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([worldCode, recordedAt])
+}
+
+// ─────────────────────────── 11.5 Opportunities ───────────────────────────
+
+model Opportunity {
+  id            String        @id @default(cuid())
+  partnerOrgId  String
+  sponsorOrgId  String?
+  type          OppType
+  title         String
+  summary       String
+  description   String
+  industryCodes String[]
+  provinceCodes String[]
+  remote        Boolean       @default(false)
+  eligibility   Json
+  valueNote     String?
+  stipendNote   String?
+  opensAt       DateTime
+  closesAt      DateTime
+  slots         Int?
+  maxInvites    Int?
+  applyMode     ApplyMode
+  externalUrl   String?
+  formSchema    Json?
+  autoInvite    Boolean       @default(false)
+  status        OppStatus     @default(DRAFT)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  matches       Match[]
+  applications  Application[]
+}
+
+model Match {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  learnerId     String
+  learner       Learner     @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  score         Int
+  status        MatchStatus
+  reasons       Json
+  gaps          Json
+  computedAt    DateTime
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  invitation    Invitation?
+
+  @@unique([opportunityId, learnerId])
+}
+
+model Invitation {
+  id            String          @id @default(cuid())
+  matchId       String          @unique
+  match         Match           @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  sentAt        DateTime
+  channels      String[]
+  respondedAt   DateTime?
+  response      InviteResponse?
+  declineReason String?
+  expiresAt     DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  applications  Application[]
+}
+
+model Application {
+  id               String      @id @default(cuid())
+  opportunityId    String
+  opportunity      Opportunity @relation(fields: [opportunityId], references: [id])
+  learnerId        String
+  learner          Learner     @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  invitationId     String?
+  invitation       Invitation? @relation(fields: [invitationId], references: [id])
+  answers          Json
+  attachments      Json
+  status           AppStatus   @default(APPLIED)
+  history          Json
+  consentToShareAt DateTime
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  placement        Placement?
+
+  @@unique([opportunityId, learnerId])
+}
+
+model Placement {
+  id            String      @id @default(cuid())
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  startDate     DateTime
+  endDate       DateTime?
+  type          OppType
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+// ─────────────────── 11.6 Coach, heatmap, wallet, ops ───────────────────
+
+model CoachConversation {
+  id        String         @id @default(cuid())
+  learnerId String
+  learner   Learner        @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  language  LangCode
+  context   Json
+  startedAt DateTime
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  messages  CoachMessage[]
+}
+
+model CoachMessage {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   CoachConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  toolCalls      Json?
+  rating         Int?
+  ratingComment  String?
+  flagged        Boolean           @default(false)
+  tokensIn       Int?
+  tokensOut      Int?
+  createdAt      DateTime          @default(now())
+}
+
+model KnowledgeDoc {
+  id           String        @id @default(cuid())
+  title        String
+  body         String
+  language     LangCode
+  industryCode String?
+  status       PublishStatus @default(DRAFT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Embedding {
+  id         String                       @id @default(cuid())
+  sourceType String
+  sourceId   String
+  chunk      String
+  language   LangCode
+  meta       Json
+  vector     Unsupported("vector(1024)")?
+  createdAt  DateTime                     @default(now())
+
+  @@index([sourceType, sourceId])
+}
+
+/// Anonymised. NEVER add a learner foreign key here (PRD §9.3).
+model InterestSignal {
+  id             BigInt   @id @default(autoincrement())
+  learnerHash    String?
+  industryCode   String
+  careerId       String?
+  signalType     String
+  weight         Int
+  provinceCode   String
+  districtCode   String
+  ageBand        String
+  gradeBand      String?
+  schoolQuintile Int?
+  source         String
+  expoEventId    String?
+  sponsorOrgId   String?
+  occurredAt     DateTime
+
+  @@index([occurredAt, districtCode, industryCode])
+}
+
+model Wallet {
+  id        String        @id @default(cuid())
+  learnerId String        @unique
+  learner   Learner       @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  currency  String        @default("ZAR")
+  status    String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  entries   LedgerEntry[]
+}
+
+model LedgerEntry {
+  id             String   @id @default(cuid())
+  walletId       String
+  wallet         Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  amountCents    Int
+  direction      String
+  kind           String
+  reference      String
+  programmeOrgId String?
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      String
+  title     String
+  body      String
+  deepLink  String?
+  channels  String[]
+  sentAt    DateTime?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId, readAt])
+}
+
+model SupportTicket {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  source     String
+  summary    String
+  priority   String
+  status     String
+  assigneeId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+/// Product analytics — source of truth (PRD §13.1).
+model Event {
+  id         BigInt   @id @default(autoincrement())
+  userId     String?
+  anonId     String?
+  name       String
+  props      Json
+  requestId  String?
+  occurredAt DateTime
+
+  @@index([name, occurredAt])
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  actorId    String
+  action     String
+  targetType String
+  targetId   String
+  meta       Json?
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  @@index([targetType, targetId])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model FeatureFlag {
+  key       String   @id
+  enabled   Boolean
+  rules     Json?
+  updatedAt DateTime @updatedAt
+}
