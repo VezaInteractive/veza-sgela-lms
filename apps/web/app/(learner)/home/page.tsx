@@ -94,11 +94,11 @@ export default async function HomePage() {
         ]}
       />
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
         <Panel
           title={t("home.progressTitle", { course: course.title })}
           action={{ href: "/learn/" + course.slug, label: t("learn.continue") }}
-          className="xl:col-span-2"
+          className="xl:col-span-7"
         >
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
             <ProgressRing
@@ -129,6 +129,7 @@ export default async function HomePage() {
         </Panel>
 
         <Panel
+          className="xl:col-span-5"
           title={t("home.compassTitle")}
           action={{ href: "/explore", label: t("home.exploreWorlds") }}
         >
@@ -146,7 +147,11 @@ export default async function HomePage() {
           </div>
         </Panel>
 
-        <Panel title={t("home.upNextTitle")} action={{ href: "/learn", label: t("home.viewAll") }}>
+        <Panel
+          className="xl:col-span-4"
+          title={t("home.upNextTitle")}
+          action={{ href: "/learn", label: t("home.viewAll") }}
+        >
           <ul className="flex flex-col gap-3">
             {upNext.map(({ course: c, topic }) => (
               <li key={c.slug + topic.title}>
@@ -167,7 +172,7 @@ export default async function HomePage() {
           </ul>
         </Panel>
 
-        <Panel title={t("home.noticeTitle")}>
+        <Panel className="xl:col-span-4" title={t("home.noticeTitle")}>
           <ul className="flex flex-col gap-3">
             {NOTICES.map((n) => (
               <li key={n.id} className="flex gap-3 rounded-xl border border-border p-3">
@@ -182,6 +187,7 @@ export default async function HomePage() {
         </Panel>
 
         <Panel
+          className="xl:col-span-4"
           title={t("home.matchTitle")}
           action={{ href: "/opportunities", label: t("home.viewAll") }}
         >

@@ -76,8 +76,8 @@ export function CareerCompass({
       ...w,
       x: c + Math.cos(angle) * r,
       y: c + Math.sin(angle) * r,
-      lx: c + Math.cos(angle) * (rMax + 26),
-      ly: c + Math.sin(angle) * (rMax + 26),
+      lx: c + Math.cos(angle) * (rMax + 30),
+      ly: c + Math.sin(angle) * (rMax + 30) - (Math.sin(angle) < -0.9 ? 18 : 0),
       ex: c + Math.cos(angle) * rMax,
       ey: c + Math.sin(angle) * rMax,
       nodeR: w.score === null ? 5 : 7 + (s / 100) * 9,
@@ -87,10 +87,10 @@ export function CareerCompass({
 
   return (
     <svg
-      viewBox={`-56 -16 ${size + 112} ${size + 32}`}
+      viewBox={`-100 -30 ${size + 200} ${size + 64}`}
       role="img"
       aria-label={label}
-      className="h-auto w-full max-w-[400px] overflow-visible"
+      className="h-auto w-full max-w-[480px] overflow-visible"
     >
       <defs>
         <radialGradient id="compass-core" cx="50%" cy="50%" r="50%">
@@ -136,28 +136,28 @@ export function CareerCompass({
             y={p.ly}
             textAnchor={Math.abs(p.lx - c) < 8 ? "middle" : p.lx > c ? "start" : "end"}
             dominantBaseline="middle"
-            className="fill-foreground text-[12px] font-semibold"
+            className="fill-foreground text-[19px] font-semibold"
           >
             {p.name}
           </text>
           <text
             x={p.lx}
-            y={p.ly + 15}
+            y={p.ly + 22}
             textAnchor={Math.abs(p.lx - c) < 8 ? "middle" : p.lx > c ? "start" : "end"}
             dominantBaseline="middle"
-            className="fill-muted text-[11px]"
+            className="fill-muted text-[17px] font-bold"
           >
             {p.score === null ? "–" : p.score}
           </text>
         </g>
       ))}
-      <circle cx={c} cy={c} r={20} fill="#ABCF37" />
+      <circle cx={c} cy={c} r={24} fill="#ABCF37" />
       <text
         x={c}
         y={c + 1}
         textAnchor="middle"
         dominantBaseline="middle"
-        className="text-[16px] font-bold"
+        className="text-[20px] font-bold"
         fill="#0B0F14"
       >
         {initial}

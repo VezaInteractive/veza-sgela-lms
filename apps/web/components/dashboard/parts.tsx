@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ChevronRight, Clock, Layers, type LucideIcon } from "lucide-react";
-import { Badge, cn } from "@sgela/ui";
+import { BadgeCheck, ChevronRight, Clock, Layers, type LucideIcon } from "lucide-react";
+import { cn } from "@sgela/ui";
 import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
 
 /**
@@ -181,7 +181,6 @@ export interface CourseCardData {
   code: string;
   world: string | null;
   title: string;
-  summary: string;
   progress: number;
   accredited: boolean;
 }
@@ -205,20 +204,14 @@ export function CourseCard({
     <Link
       href={"/learn/" + course.slug}
       style={worldStyle(world)}
-      className="course-card lift flex h-full flex-col gap-4 rounded-2xl p-5 md:p-6"
+      className="course-card lift flex h-full min-h-72 flex-col rounded-3xl p-6 md:min-h-80 md:p-7"
     >
       <span className="flex items-start justify-between gap-3">
-        <WorldIcon code={world} className="course-card-icon" />
-        <span className="flex flex-wrap justify-end gap-1.5 text-xs">
-          <Badge tone="neutral">{course.code}</Badge>
-          {course.accredited ? <Badge tone="lime">{labels.accredited}</Badge> : null}
-        </span>
+        <WorldIcon code={world} size="lg" className="course-card-icon" />
+        <span className="pt-1 text-xs font-semibold tracking-wide text-muted">{course.code}</span>
       </span>
-      <span className="flex flex-col gap-1.5">
-        <span className="font-heading text-xl leading-snug font-semibold">{course.title}</span>
-        <span className="text-sm text-muted">{course.summary}</span>
-      </span>
-      <span className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+      <span className="mt-6 font-heading text-2xl leading-tight font-semibold">{course.title}</span>
+      <span className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm font-medium text-muted">
         <span className="flex items-center gap-1.5">
           <Clock aria-hidden="true" className="size-4" />
           {labels.minutes}
@@ -227,15 +220,21 @@ export function CourseCard({
           <Layers aria-hidden="true" className="size-4" />
           {labels.topics}
         </span>
+        {course.accredited ? (
+          <span className="flex items-center gap-1.5">
+            <BadgeCheck aria-hidden="true" className="size-4" />
+            {labels.accredited}
+          </span>
+        ) : null}
       </span>
-      <span className="mt-auto flex flex-col gap-1.5 pt-1">
+      <span className="mt-auto flex flex-col gap-2 pt-8">
         <ColourBar
           value={course.progress}
           colour="var(--w-strong)"
           label={labels.progressLabel}
           className="course-card-track h-2.5"
         />
-        <span className="text-xs font-medium text-muted">{labels.complete}</span>
+        <span className="text-sm font-medium text-muted">{labels.complete}</span>
       </span>
     </Link>
   );

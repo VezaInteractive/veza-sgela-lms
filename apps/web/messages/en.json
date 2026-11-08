@@ -353,7 +353,8 @@
       "statMatches": "Matches for you",
       "statBest": "Best match",
       "statClosing": "Closing in 3 months",
-      "statTypes": "Types of opportunity"
+      "statTypes": "Types of opportunity",
+      "details": "Why you match and how to improve"
     },
     "me": {
       "badges": "Badges",

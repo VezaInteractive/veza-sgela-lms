@@ -32,6 +32,9 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             >
               <Compass className="size-5" />
             </span>
+            <span className="font-heading text-xl font-extrabold tracking-tight md:hidden">
+              {t("app.name")}
+            </span>
             <PageTitle />
           </div>
           <div className="flex items-center gap-2">

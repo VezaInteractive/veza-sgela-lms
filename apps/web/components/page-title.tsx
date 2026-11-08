@@ -10,7 +10,7 @@ export function PageTitle() {
   const t = useTranslations("nav");
   const item = NAV_ITEMS.find((i) => isActive(pathname, i.href));
   return (
-    <span className="truncate font-heading text-xl font-bold md:text-2xl">
+    <span className="hidden truncate font-heading text-2xl font-bold md:inline">
       {item ? t(item.key) : null}
     </span>
   );
