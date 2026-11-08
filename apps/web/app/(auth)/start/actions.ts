@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies, headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getDb } from "@sgela/db";
@@ -89,6 +90,8 @@ export async function resendCodeAction(_prev: FormState): Promise<FormState> {
   });
   if (!result.ok) return otpErrorState(result.code, result.retryAfterSec);
   await trackEvent({ name: "otp_requested", props: { channel: "sms", resend: true } });
+  // Re-render the verify page so the test-mode code box shows the new code.
+  revalidatePath("/start/verify");
   return {};
 }
 

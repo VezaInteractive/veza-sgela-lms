@@ -70,7 +70,9 @@
     "doneResults": "Imiphumela yakho ye-expo ilondoloziwe",
     "doneNoResults": "Ubudlale e-expo ye-Veza? Engeza ikhodi yakho noma nini ku-Mina.",
     "goToCompass": "Iya ku-Career Compass yami",
-    "stepOf": "Isinyathelo {step} kwezi-{total}"
+    "stepOf": "Isinyathelo {step} kwezi-{total}",
+    "devCodeTitle": "Imodi yokuhlola: i-SMS ayikaxhunywa",
+    "devCodeBody": "Ikhodi yakho ngu"
   },
   "profile": {
     "title": "Mayelana nawe",

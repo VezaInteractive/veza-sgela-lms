@@ -96,7 +96,9 @@
     "doneResults": "Your expo results are saved",
     "doneNoResults": "Played at a Veza expo? Add your code any time from Me.",
     "goToCompass": "Go to my Career Compass",
-    "stepOf": "Step {step} of {total}"
+    "stepOf": "Step {step} of {total}",
+    "devCodeTitle": "Test mode: SMS is not connected yet",
+    "devCodeBody": "Your code is"
   },
   "profile": {
     "title": "About you",

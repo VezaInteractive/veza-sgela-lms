@@ -70,7 +70,9 @@
     "doneResults": "Diphetho tsa hao tsa expo di bolokilwe",
     "doneNoResults": "O bapetse expo ya Veza? Kenya khoutu ya hao neng kapa neng ho Nna.",
     "goToCompass": "Eya ho Career Compass ya ka",
-    "stepOf": "Mohato wa {step} ho tse {total}"
+    "stepOf": "Mohato wa {step} ho tse {total}",
+    "devCodeTitle": "Mokgwa wa teko: SMS ha e so hokelwe",
+    "devCodeBody": "Khoutu ya hao ke"
   },
   "profile": {
     "title": "Ka wena",
