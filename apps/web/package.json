@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "kiosk:simulate": "tsx --env-file-if-exists=.env scripts/kiosk-simulate.ts",
+    "job:guardian-reminders": "tsx --env-file-if-exists=.env scripts/guardian-reminders.ts",
+    "kiosk:create-device": "tsx --env-file-if-exists=.env scripts/kiosk-create-device.ts"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
@@ -25,7 +28,11 @@
     "pino": "^10.4.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "@sgela/contracts": "workspace:*",
+    "@sgela/matching": "workspace:*",
+    "@sgela/messaging": "workspace:*",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
@@ -39,6 +46,9 @@
     "eslint-config-next": "16.4.5",
     "tailwindcss": "4.3.5",
     "typescript": "5.9.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "@types/qrcode": "^1.5.5",
+    "dotenv": "^17.2.0",
+    "tsx": "^4.20.0"
   }
 }

@@ -19,7 +19,9 @@
     "db:seed": "pnpm --filter @sgela/db seed",
     "db:studio": "pnpm --filter @sgela/db studio",
     "db:generate": "pnpm --filter @sgela/db generate",
-    "prepare": "husky"
+    "prepare": "husky",
+    "kiosk:simulate": "pnpm --filter @sgela/web kiosk:simulate",
+    "kiosk:create-device": "pnpm --filter @sgela/web kiosk:create-device"
   },
   "devDependencies": {
     "husky": "^9.1.7",

@@ -1,2 +1,2 @@
-// Placeholder — implemented in a later milestone (PRD §17).
-export {};
+export * from "./consent";
+export * from "./eligibility";

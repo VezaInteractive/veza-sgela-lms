@@ -27,7 +27,25 @@ export const UI_EVENTS = [
   "data_saver_toggled",
 ] as const;
 
-export const EVENT_NAMES = [...FUNNEL_EVENTS, ...UI_EVENTS] as const;
+/** M1: auth, onboarding, consent and claim actions. */
+export const ONBOARDING_EVENTS = [
+  "otp_requested",
+  "otp_verified",
+  "otp_failed",
+  "signed_out",
+  "signed_out_everywhere",
+  "profile_completed",
+  "guardian_invited",
+  "guardian_reminder_sent",
+  "guardian_consent_responded",
+  "consent_updated",
+  "claim_viewed",
+  "claim_linked",
+  "claim_failed",
+  "expo_code_entered",
+] as const;
+
+export const EVENT_NAMES = [...FUNNEL_EVENTS, ...UI_EVENTS, ...ONBOARDING_EVENTS] as const;
 
 export type FunnelEventName = (typeof FUNNEL_EVENTS)[number];
 export type EventName = (typeof EVENT_NAMES)[number];
