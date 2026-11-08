@@ -32,7 +32,10 @@
   "pages": {
     "home": {
       "title": "Your Career Compass",
-      "body": "Your personal career map will light up here once you claim your expo results."
+      "body": "Your personal career map will light up here once you claim your expo results.",
+      "bodyClaimed": "Your expo worlds are saved. Your full career map, with next steps for these worlds, arrives soon.",
+      "resultsTitle": "Your expo worlds",
+      "addCode": "Add expo results"
     },
     "explore": {
       "title": "Explore career worlds",
@@ -202,7 +205,11 @@
     "guardianThanksAgree": "{name} can now use Sgela fully.",
     "guardianThanksDecline": "{name} can still learn on Sgela but will not be matched with opportunities.",
     "invalidTitle": "This link does not work",
-    "invalidBody": "It may have expired or been replaced by a newer SMS. Ask the learner to send it again from the app."
+    "invalidBody": "It may have expired or been replaced by a newer SMS. Ask the learner to send it again from the app.",
+    "guardianMATCHING": "Match {name} with bursaries, learnerships and jobs",
+    "guardianMATCHINGHelp": "We compare the profile of {name} with opportunities. Sponsors only see details when {name} applies.",
+    "guardianPARTNER_CONTACT": "Let partners contact {name} after an invite is accepted",
+    "guardianPARTNER_CONTACTHelp": "Only for opportunities {name} accepts."
   },
   "claim": {
     "heroOne": "Welcome! You explored {world} today.",

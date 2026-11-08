@@ -212,6 +212,7 @@ export function ProfileForm({ subjects }: { subjects: string[] }) {
                 value={value}
                 checked={inSchool === (value === "yes")}
                 onChange={() => setInSchool(value === "yes")}
+                aria-label={label}
                 className="size-5 accent-primary"
               />
               {label}
@@ -276,6 +277,7 @@ export function ProfileForm({ subjects }: { subjects: string[] }) {
                     type="checkbox"
                     name="subjects"
                     value={code}
+                    aria-label={ts(code as never)}
                     className="size-5 accent-primary"
                   />
                   {ts(code as never)}

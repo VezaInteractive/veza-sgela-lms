@@ -165,7 +165,11 @@
     "guardianThanksAgree": "{name} jwale a ka sebedisa Sgela ka botlalo.",
     "guardianThanksDecline": "{name} a ntse a ka ithuta ho Sgela empa a ke ke a hokahanngwa le menyetla.",
     "invalidTitle": "Sehokelo sena ha se sebetse",
-    "invalidBody": "Mohlomong se felletswe ke nako kapa se nkeletswe sebaka ke SMS e ntjha. Kopa moithuti hore a se romele hape ho tswa ho app."
+    "invalidBody": "Mohlomong se felletswe ke nako kapa se nkeletswe sebaka ke SMS e ntjha. Kopa moithuti hore a se romele hape ho tswa ho app.",
+    "guardianMATCHING": "Hokahanya {name} le dibasari, di-learnership le mesebetsi",
+    "guardianMATCHINGHelp": "Re bapisa profaele ya {name} le menyetla. Batshehetsi ba bona dintlha feela ha {name} a etsa kopo.",
+    "guardianPARTNER_CONTACT": "Dumella balekane ho ikopanya le {name} ka mor'a hore memo e amohelwe",
+    "guardianPARTNER_CONTACTHelp": "Feela bakeng sa menyetla eo {name} a e amohelang."
   },
   "claim": {
     "heroOne": "Re a o amohela! O hlahlobile {world} kajeno.",
@@ -210,5 +214,30 @@
     "platformLocked": "Ho a hlokahala ho sebedisa Sgela. Ho emisa ho sebedisa Sgela, re kope hore re hlakole akhaonte ya hao.",
     "turnOn": "Bula",
     "turnOff": "Kwala"
+  },
+  "pages": {
+    "home": {
+      "title": "Career Compass ya hao",
+      "body": "Mmapa wa hao wa mesebetsi o tla kganya mona ha o boloka diphetho tsa hao tsa expo.",
+      "bodyClaimed": "Mafatshe a hao a expo a bolokilwe. Mmapa o feletseng wa mesebetsi, o nang le mehato e latelang, o tla haufinyane.",
+      "resultsTitle": "Mafatshe a hao a expo",
+      "addCode": "Kenya diphetho tsa expo"
+    },
+    "explore": {
+      "title": "Hlahloba mafatshe a mesebetsi",
+      "body": "Difofane, Boenjinere, Ho pheha, Bophelo le Temo di a tla."
+    },
+    "learn": {
+      "title": "Ithute",
+      "body": "Dithuto tse nang le dimmotlolo tsa 3D le AR di tla hlaha mona."
+    },
+    "opportunities": {
+      "title": "Menyetla",
+      "body": "Dibasari, di-learnership le memo tse o tshwanelang di tla hlaha mona."
+    },
+    "me": {
+      "title": "Nna",
+      "body": "Profaele ya hao, mangolo le disetting tsa lekunutu."
+    }
   }
 }

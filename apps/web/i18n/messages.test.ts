@@ -18,6 +18,7 @@ const REQUIRED = [
   "claim",
   "me",
   "privacy",
+  "pages",
 ] as const;
 
 function keys(obj: object, prefix = ""): string[] {

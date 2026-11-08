@@ -64,7 +64,11 @@ export default async function GuardianConsentPage({
       <form action={guardianRespondAction} className="flex flex-col gap-5">
         <input type="hidden" name="token" value={token} />
         <h2 className="font-heading text-lg font-semibold">{t("guardianChoose")}</h2>
-        <ConsentChoices scopes={["MATCHING", "PARTNER_CONTACT"]} platformRequired={false} />
+        <ConsentChoices
+          scopes={["MATCHING", "PARTNER_CONTACT"]}
+          platformRequired={false}
+          forLearner={name}
+        />
         <p className="text-xs text-muted">{t("version", { version: CONSENT_TEXT_VERSION })}</p>
         <SubmitButton name="decision" value="agree">
           {t("agree")}

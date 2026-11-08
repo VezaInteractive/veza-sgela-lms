@@ -165,7 +165,11 @@
     "guardianThanksAgree": "U-{name} manje angayisebenzisa i-Sgela ngokugcwele.",
     "guardianThanksDecline": "U-{name} usengafunda ku-Sgela kodwa ngeke axhunyaniswe namathuba.",
     "invalidTitle": "Lesi sixhumanisi asisebenzi",
-    "invalidBody": "Kungenzeka ukuthi siphelelwe yisikhathi noma sithathelwe indawo yi-SMS entsha. Cela umfundi ukuthi asithumele futhi kusuka ohlelweni."
+    "invalidBody": "Kungenzeka ukuthi siphelelwe yisikhathi noma sithathelwe indawo yi-SMS entsha. Cela umfundi ukuthi asithumele futhi kusuka ohlelweni.",
+    "guardianMATCHING": "Xhumanisa u-{name} nemifundaze, ama-learnership nemisebenzi",
+    "guardianMATCHINGHelp": "Siqhathanisa iphrofayela ka-{name} namathuba. Abaxhasi babona imininingwane kuphela uma u-{name} efaka isicelo.",
+    "guardianPARTNER_CONTACT": "Vumela abalingani ukuthi baxhumane no-{name} ngemva kokwamukelwa kwesimemo",
+    "guardianPARTNER_CONTACTHelp": "Kuphela kumathuba u-{name} awamukelayo."
   },
   "claim": {
     "heroOne": "Siyakwamukela! Uhlole i-{world} namuhla.",
@@ -210,5 +214,30 @@
     "platformLocked": "Kuyadingeka ukuze usebenzise i-Sgela. Ukuze uyeke ukusebenzisa i-Sgela, sicele ukuthi sisuse i-akhawunti yakho.",
     "turnOn": "Vula",
     "turnOff": "Vala"
+  },
+  "pages": {
+    "home": {
+      "title": "I-Career Compass yakho",
+      "body": "Imephu yakho yemisebenzi izokhanya lapha uma ulondoloza imiphumela yakho ye-expo.",
+      "bodyClaimed": "Imikhakha yakho ye-expo ilondoloziwe. Imephu yakho ephelele yemisebenzi, enezinyathelo ezilandelayo, izofika maduze.",
+      "resultsTitle": "Imikhakha yakho ye-expo",
+      "addCode": "Engeza imiphumela ye-expo"
+    },
+    "explore": {
+      "title": "Hlola imikhakha yemisebenzi",
+      "body": "Ezindiza, Ubunjiniyela, Ukupheka, Ezempilo kanye Nezolimo kuyeza."
+    },
+    "learn": {
+      "title": "Funda",
+      "body": "Izifundo ezinamamodeli e-3D ne-AR zizovela lapha."
+    },
+    "opportunities": {
+      "title": "Amathuba",
+      "body": "Imifundaze, ama-learnership nezimemo ezihambisana nawe zizovela lapha."
+    },
+    "me": {
+      "title": "Mina",
+      "body": "Iphrofayela yakho, iziqu kanye nezilungiselelo zobumfihlo."
+    }
   }
 }
