@@ -114,3 +114,8 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Charts:** bars use one lime hue with text labels; the brand world colours fail the dataviz validator (lightness band; AGR vs MED normal-vision ΔE 14.8), so colour is never the only identity cue.
 - **Reason:** stakeholders asked to see every section before M2-M7 are built. Each milestone replaces its block of sample data with DB-backed data.
 - **Dev note:** `next dev` reloads in a loop when the repo sits in OneDrive (sync touches `.next`). Run the demo with `pnpm build` then `pnpm --filter @sgela/web start`, or move the repo out of OneDrive (see D-001).
+
+## D-019 · 2026-11-08 · Repo moved out of OneDrive
+
+- **Decision:** The working repo now lives at `C:\Users\mrmaf\dev\veza-sgela` (supersedes the location in D-001). The copy under `OneDrive/.../Experience Enablement Platform/veza-sgela` is stale and can be deleted once the new one is confirmed.
+- **Reason:** inside OneDrive, `next dev` reloaded every page in a loop (183 reloads in 10 s vs 2 outside OneDrive) because sync touched the `.next` folder, as D-001 warned. Docker volume `veza-sgela_pgdata` is unchanged (same compose project name), so the database carried over.
