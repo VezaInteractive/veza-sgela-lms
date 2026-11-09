@@ -13,7 +13,8 @@
     "e2e": "playwright test",
     "kiosk:simulate": "tsx --env-file-if-exists=.env scripts/kiosk-simulate.ts",
     "job:guardian-reminders": "tsx --env-file-if-exists=.env scripts/guardian-reminders.ts",
-    "kiosk:create-device": "tsx --env-file-if-exists=.env scripts/kiosk-create-device.ts"
+    "kiosk:create-device": "tsx --env-file-if-exists=.env scripts/kiosk-create-device.ts",
+    "models:seed": "tsx scripts/make-seed-models.ts"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
@@ -23,6 +24,7 @@
     "@sgela/geo": "workspace:*",
     "@sgela/matching": "workspace:*",
     "@sgela/messaging": "workspace:*",
+    "@sgela/three": "workspace:*",
     "@sgela/ui": "workspace:*",
     "lucide-react": "^1.70.0",
     "next": "16.4.5",
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
+    "@gltf-transform/core": "^4.5.1",
     "@playwright/test": "^1.65.0",
     "@sgela/config": "workspace:*",
     "@tailwindcss/postcss": "4.3.5",

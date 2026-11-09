@@ -24,6 +24,13 @@ enum UserStatus {
   DELETION_PENDING
 }
 
+enum LearnerInterestKind {
+  WORLD_TOGGLE
+  CAREER_TOGGLE
+  WORLD_VIEW
+  CAREER_VIEW
+}
+
 enum OtpPurpose {
   SIGN_UP
   SIGN_IN
@@ -333,27 +340,28 @@ model Learner {
   applications       Application[]
   wallet             Wallet?
   coachConversations CoachConversation[]
+  interests          LearnerInterest[]
 
   @@index([provinceCode, districtCode])
 }
 
 model Guardian {
-  id             String   @id @default(cuid())
-  learnerId      String   @unique
-  learner        Learner  @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  id             String    @id @default(cuid())
+  learnerId      String    @unique
+  learner        Learner   @relation(fields: [learnerId], references: [id], onDelete: Cascade)
   name           String
   phoneE164      String
   relationship   String?
   /// sha256 of the token sent in the consent link; the raw token is never stored
-  consentToken   String   @unique
+  consentToken   String    @unique
   tokenExpiresAt DateTime
   /// when the current consent request was sent (reminders are due 48 h and 7 d after this)
-  requestedAt    DateTime @default(now())
-  remindersSent  Int      @default(0)
+  requestedAt    DateTime  @default(now())
+  remindersSent  Int       @default(0)
   lastReminderAt DateTime?
   respondedAt    DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 /// Append-only; latest row per (learnerId, scope) wins.
@@ -382,6 +390,7 @@ model Organisation {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   memberships Membership[]
+  sponsoring  Industry[]   @relation("IndustrySponsor")
 }
 
 model Membership {
@@ -429,16 +438,22 @@ model LearnerSubject {
 // ─────────────────── 11.2 Industries, careers, content ───────────────────
 
 model Industry {
-  code         String   @id
+  code         String        @id
   name         String
   tagline      String
   whyItMatters Json
   heroAssetId  String?
+  heroAsset    Asset3D?      @relation("IndustryHero", fields: [heroAssetId], references: [id], onDelete: SetNull)
   color        String
   sponsorOrgId String?
+  sponsorOrg   Organisation? @relation("IndustrySponsor", fields: [sponsorOrgId], references: [id], onDelete: SetNull)
   sortOrder    Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  /// What the learner does in this world's VR expo scenario (L-EX-2 VR preview, M2).
+  vrSummary    String?
+  /// { zu: { tagline, whyItMatters, vrSummary }, st: {...} } (D-032)
+  translations Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   careers      Career[]
   courses      Course[]
 }
@@ -457,9 +472,13 @@ model Career {
   salaryBandNote      String?
   roleModel           Json?
   heroAssetId         String?
+  heroAsset           Asset3D? @relation("CareerHero", fields: [heroAssetId], references: [id], onDelete: SetNull)
   translations        Json?
+  sortOrder           Int      @default(0)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  @@index([industryCode, sortOrder])
 }
 
 model Course {
@@ -563,6 +582,8 @@ model Asset3D {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   blocks           ContentBlock[]
+  industries       Industry[]     @relation("IndustryHero")
+  careers          Career[]       @relation("CareerHero")
 }
 
 model MediaAsset {
@@ -755,10 +776,10 @@ model ExpoEvent {
 }
 
 model KioskDevice {
-  id           String        @id @default(cuid())
+  id           String              @id @default(cuid())
   label        String
   /// sha256 of the bearer key (vk_live_… / vk_test_…); never store the raw key
-  apiKeyHash   String        @unique
+  apiKeyHash   String              @unique
   unitCode     String?
   /// QUEST_3 | QUEST_2 (docs/DECISIONS.md D-008)
   headsetModel String?
@@ -766,9 +787,9 @@ model KioskDevice {
   battery      Int?
   queueDepth   Int?
   lastSeenAt   DateTime?
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  active       Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
   sessions     ExpoSession[]
   idempotency  IdempotencyRecord[]
 }
@@ -986,6 +1007,25 @@ model Embedding {
   @@index([sourceType, sourceId])
 }
 
+/// The learner's own interest record (M2-5, D-034): "I'm interested" toggles and pages viewed.
+/// Personal data used for the Compass and next best step; never exported or aggregated directly
+/// (the anonymised heatmap stream is InterestSignal).
+model LearnerInterest {
+  id           String              @id @default(cuid())
+  learnerId    String
+  learner      Learner             @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  kind         LearnerInterestKind
+  industryCode String
+  /// Career id for CAREER_* kinds, else null
+  careerId     String?
+  /// industryCode for WORLD_* kinds, careerId for CAREER_* kinds (unique key; NULLs are not unique in Postgres)
+  targetKey    String
+  createdAt    DateTime            @default(now())
+
+  @@unique([learnerId, kind, targetKey])
+  @@index([learnerId, industryCode])
+}
+
 /// Anonymised. NEVER add a learner foreign key here (PRD §9.3).
 model InterestSignal {
   id             BigInt   @id @default(autoincrement())
@@ -1005,6 +1045,7 @@ model InterestSignal {
   occurredAt     DateTime
 
   @@index([occurredAt, districtCode, industryCode])
+  @@index([learnerHash, signalType, occurredAt])
 }
 
 model Wallet {
