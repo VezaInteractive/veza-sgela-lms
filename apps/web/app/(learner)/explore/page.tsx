@@ -1,27 +1,40 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import { ArrowRight, Briefcase, Compass, Gamepad2, Star } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
+import { ArrowRight, Briefcase, Compass, Gamepad2, Heart, Star } from "lucide-react";
 import { CardPhoto, PageIntro, StatStrip } from "@/components/dashboard/parts";
-import { SampleNote } from "@/components/demo/ui";
 import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
 import { requireLearnerPage } from "@/lib/auth/rbac";
 import { linkedResults } from "@/lib/claim/service";
 import { wantsLessData } from "@/lib/data-saver";
 import { worldPhoto } from "@/lib/demo/photos";
-import { WORLDS } from "@/lib/demo/data";
+import { listWorlds } from "@/lib/explore/catalog";
+import { loadInterestSummary } from "@/lib/interest/service";
 
 export async function generateMetadata() {
   const t = await getTranslations("nav");
   return { title: t("explore") };
 }
 
-/** Explore index (demo shell for M2-4; D-021 card layout). Expo scores are real. */
+/**
+ * Explore index (L-EX-1, M2-4; D-021 card layout). Worlds, careers and sponsors come from the
+ * DB; expo scores and interest are the learner's own.
+ */
 export default async function ExplorePage() {
   const { learner } = await requireLearnerPage();
   const t = await getTranslations("demo");
+  const te = await getTranslations("explore");
   const tw = await getTranslations("worlds");
-  const results = await linkedResults(learner.id);
-  const lessData = await wantsLessData();
+  const locale = await getLocale();
+  const worlds = await listWorlds(locale);
+  const [results, interest, saveData] = await Promise.all([
+    linkedResults(learner.id),
+    loadInterestSummary(
+      learner.id,
+      worlds.map((w) => w.code),
+    ),
+    wantsLessData(),
+  ]);
+  const lessData = saveData || learner.dataSaver;
   const best = new Map<string, number>();
   for (const r of results) best.set(r.worldCode, Math.max(best.get(r.worldCode) ?? 0, r.score));
   const top = Math.max(0, ...best.values());
@@ -32,7 +45,7 @@ export default async function ExplorePage() {
         stats={[
           {
             label: t("explore.statWorlds"),
-            value: String(WORLDS.length),
+            value: String(worlds.length),
             icon: Compass,
             accent: "#ABCF37",
           },
@@ -44,7 +57,7 @@ export default async function ExplorePage() {
           },
           {
             label: t("explore.statCareers"),
-            value: String(WORLDS.reduce((n, w) => n + w.careers.length, 0)),
+            value: String(worlds.reduce((n, w) => n + w.careerCount, 0)),
             icon: Briefcase,
             accent: "#FFB547",
           },
@@ -57,8 +70,9 @@ export default async function ExplorePage() {
         ]}
       />
       <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {WORLDS.map((w) => {
+        {worlds.map((w) => {
           const score = best.get(w.code);
+          const fit = interest.scores[w.code] ?? 0;
           return (
             <li key={w.code}>
               <Link
@@ -88,12 +102,25 @@ export default async function ExplorePage() {
                   </span>
                   <span className="font-heading text-2xl font-semibold">{tw(w.code)}</span>
                   <span className="text-sm text-muted">{w.tagline}</span>
-                  <span className="mt-auto flex items-center gap-1 text-sm font-semibold">
-                    {t("explore.careerCount", { count: w.careers.length })}
-                    <ArrowRight
-                      className="size-4 transition-transform group-hover:translate-x-1"
-                      aria-hidden="true"
-                    />
+                  {w.sponsor ? (
+                    <span className="text-xs font-semibold text-muted">
+                      {te("presentedBy", { world: tw(w.code), sponsor: w.sponsor })}
+                    </span>
+                  ) : null}
+                  <span className="mt-auto flex items-center justify-between gap-3 text-sm font-semibold">
+                    <span className="flex items-center gap-1">
+                      {te("careerCount", { count: w.careerCount })}
+                      <ArrowRight
+                        className="size-4 transition-transform group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    {fit > 0 ? (
+                      <span className="flex items-center gap-1 rounded-full bg-(--glass) px-2.5 py-1 text-xs">
+                        <Heart aria-hidden="true" className="size-3.5" />
+                        {te("interestBadge", { n: fit })}
+                      </span>
+                    ) : null}
                   </span>
                 </span>
               </Link>
@@ -101,7 +128,6 @@ export default async function ExplorePage() {
           );
         })}
       </ul>
-      <SampleNote>{t("sample")}</SampleNote>
     </section>
   );
 }

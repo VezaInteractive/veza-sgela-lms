@@ -507,5 +507,160 @@
         "a": "Turn on your phone's data saver and Sgela skips photos on cards. Pages are built to load quickly on slow networks."
       }
     }
+  },
+  "explore": {
+    "interested": "I'm interested",
+    "interestedOn": "You're interested",
+    "interestedHint": "Tap to show this on your Compass",
+    "presentedBy": "{world} World presented by {sponsor}",
+    "sponsorTitle": "Presented by",
+    "sponsorBody": "{sponsor} supports learners exploring {world} careers. Sponsors never see your personal details.",
+    "vrTitle": "In the VR world",
+    "vrNote": "Try it at a Veza expo, then add your code on Me to see your score here.",
+    "model3dTitle": "Explore in 3D",
+    "viewCareer": "See this career",
+    "careerCount": "{count} careers",
+    "interestBadge": "Interest {n}",
+    "dayInLife": "A day in the life",
+    "subjectsTitle": "Subjects you need",
+    "required": "Needed",
+    "recommended": "Helps",
+    "have": "You take this",
+    "missing": "Not in your subjects",
+    "swap": "Maths Literacy does not count",
+    "subjectsAllSet": "You take every subject this career needs.",
+    "subjectsGap": "{n, plural, one {# needed subject is} other {# needed subjects are}} not in your subjects yet.",
+    "subjectsNone": "No set school subjects. Anyone can start.",
+    "subjectsEdit": "Update my subjects",
+    "routesTitle": "Study routes",
+    "routeTypes": {
+      "TVET": "TVET college",
+      "UNIVERSITY": "University",
+      "LEARNERSHIP": "Learnership or apprenticeship",
+      "SHORT_COURSE": "Short course"
+    },
+    "salaryTitle": "Typical pay",
+    "roleModelTitle": "Someone who did it",
+    "roleModelFrom": "{name}, {place}",
+    "coursesTitle": "Courses that help",
+    "noCourses": "Courses for this world arrive soon.",
+    "askCoach": "Ask the coach about this career",
+    "coachSoon": "The coach arrives soon. Until then, Help has answers to common questions.",
+    "grade9": "Choosing subjects soon? To become a {career} you need {subjects}.",
+    "grade9Maths": "Take Mathematics, not Maths Literacy.",
+    "backToWorld": "Back to {world}",
+    "careersIn": "Careers in {world}",
+    "view3d": "View in 3D",
+    "loading3d": "Loading 3D model",
+    "reset3d": "Reset view",
+    "noWebgl": "3D needs WebGL, which this device does not have. Here is a picture instead.",
+    "failed3d": "The 3D model could not load. Here is a picture instead.",
+    "canvas3d": "3D model: {name}. Drag to turn it, pinch or scroll to zoom.",
+    "poster3d": "Picture of the {name} 3D model"
+  },
+  "compass": {
+    "title": "Your Career Compass",
+    "body": "Bigger, brighter worlds are the ones that fit you most. Tap a world to open it.",
+    "alt": "Career Compass: how strongly each career world fits you, out of 100",
+    "alt3d": "3D Career Compass. Each world is a glowing node; bigger means a stronger fit.",
+    "interest": "{world}: {n} of 100",
+    "listLabel": "Open a career world",
+    "expoTitle": "My expo results",
+    "expoNone": "No expo results yet. Played at an expo? Add your code on Me.",
+    "expoAdd": "Add expo code",
+    "expoRow": "Score {score}",
+    "expoMeta": "{date} · {place}",
+    "expoMetaDate": "{date}"
+  },
+  "nextStep": {
+    "title": "Your next best step",
+    "remindGuardian": {
+      "title": "Remind your guardian",
+      "body": "Your guardian has not answered yet. Send the link again so you can unlock opportunities.",
+      "cta": "Resend the link"
+    },
+    "respondInvite": {
+      "title": "Respond to your invite from {partner}",
+      "body": "It closes within a week. Say yes, save it or say no thanks.",
+      "cta": "See my invite"
+    },
+    "continueSection": {
+      "title": "Continue {section}",
+      "body": "Pick up where you left off.",
+      "cta": "Continue"
+    },
+    "takeCheck": {
+      "title": "Take the {topic} check",
+      "body": "You finished the topic. A short check shows what you learned.",
+      "cta": "Start the check"
+    },
+    "startCourse": {
+      "title": "Start {course}",
+      "body": "This course matches the world you like most.",
+      "cta": "Start course"
+    },
+    "closeGap": {
+      "title": "Complete {item} to qualify for {opportunity}",
+      "body": "You are close to this opportunity.",
+      "cta": "See what is needed"
+    },
+    "exploreWorld": {
+      "title": "Explore {world}",
+      "body": "See its careers, the subjects you need and how to study for them.",
+      "cta": "Explore"
+    },
+    "askCoach": {
+      "title": "Ask your coach what to do next",
+      "body": "You have explored a lot. The coach can help you choose a path.",
+      "cta": "Get help"
+    }
+  },
+  "admin": {
+    "careers": {
+      "title": "Worlds and careers",
+      "intro": "Edit the five career worlds and their careers. Changes show to learners straight away.",
+      "navInsights": "Insights",
+      "navCatalog": "Worlds and careers",
+      "world": "World",
+      "editWorld": "Edit world",
+      "careersHeading": "Careers ({n})",
+      "addCareer": "Add career",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this career? This cannot be undone.",
+      "save": "Save",
+      "saved": "Saved.",
+      "deleted": "Career deleted.",
+      "back": "Back to worlds and careers",
+      "fields": {
+        "name": "Name",
+        "tagline": "Tagline",
+        "why": "Why it matters (one per line, max 5)",
+        "vrSummary": "VR world summary",
+        "color": "Accent colour (hex)",
+        "sortOrder": "Order",
+        "sponsor": "Sponsor",
+        "noSponsor": "No sponsor",
+        "heroAsset": "3D hero object",
+        "noAsset": "None",
+        "title": "Title",
+        "slug": "Slug (used in the web address)",
+        "industry": "World",
+        "summary": "Summary",
+        "dayInLife": "Day in the life (one per line, 3 to 5)",
+        "studyRoutes": "Study routes (one per line: TYPE | label; TYPE is TVET, UNIVERSITY, LEARNERSHIP or SHORT_COURSE)",
+        "subjectsRequired": "Subjects needed",
+        "subjectsRecommended": "Subjects that help",
+        "salary": "Salary band note",
+        "roleName": "Role model name (optional)",
+        "rolePlace": "Role model place",
+        "roleStory": "Role model story"
+      },
+      "errors": {
+        "invalid": "Check the highlighted fields.",
+        "slugTaken": "That slug is already used by another career.",
+        "notFound": "Not found."
+      }
+    }
   }
 }
