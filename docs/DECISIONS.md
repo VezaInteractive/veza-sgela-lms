@@ -140,3 +140,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Not changed:** sign-in stays phone number + SMS code (D-012); no password field was added even though the reference shows one.
 - **Constraints kept:** art is `aria-hidden`; motion stops under prefers-reduced-motion (global rule in tokens.css); no images or video, so it is cheap on data and low-end phones; axe-clean in light and dark.
 - **Reason:** stakeholder asked for the reference sign-up layout with a subtle, futuristic motion graphic and the Veza Sgela name.
+
+## D-023 · 2026-11-09 · Card photos and data-saver handling
+
+- **Decision:** World cards (Explore) and course cards (Learn) get a full-bleed photo header. Ten free Unsplash License photos, chosen with the stakeholder, are stored in `apps/web/public/photos` as 800 px WebP (312 KB total) and served through `next/image` (lazy, responsive sizes). Credits are in `public/photos/CREDITS.md`. Photos are decorative (`alt=""`): every card has its own title.
+- **Data saver:** `lib/data-saver.ts` reads the `Save-Data: on` request header (Chrome Lite mode, Android data saver); pages then skip photos entirely. E2e covers both cases.
+- **Alternatives:** hotlinking images.unsplash.com (rejected: third-party request per view, breaks offline at expos); Veza expo photos (preferred long term; swap the files in place when available).
+- **Reason:** stakeholder asked for photos on cards like the reference course screens.

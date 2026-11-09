@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight, Briefcase, Compass, Gamepad2, Star } from "lucide-react";
-import { PageIntro, StatStrip } from "@/components/dashboard/parts";
+import { CardPhoto, PageIntro, StatStrip } from "@/components/dashboard/parts";
 import { SampleNote } from "@/components/demo/ui";
 import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
 import { requireLearnerPage } from "@/lib/auth/rbac";
 import { linkedResults } from "@/lib/claim/service";
+import { wantsLessData } from "@/lib/data-saver";
+import { worldPhoto } from "@/lib/demo/photos";
 import { WORLDS } from "@/lib/demo/data";
 
 export async function generateMetadata() {
@@ -19,6 +21,7 @@ export default async function ExplorePage() {
   const t = await getTranslations("demo");
   const tw = await getTranslations("worlds");
   const results = await linkedResults(learner.id);
+  const lessData = await wantsLessData();
   const best = new Map<string, number>();
   for (const r of results) best.set(r.worldCode, Math.max(best.get(r.worldCode) ?? 0, r.score));
   const top = Math.max(0, ...best.values());
@@ -61,27 +64,37 @@ export default async function ExplorePage() {
               <Link
                 href={"/explore/" + w.code.toLowerCase()}
                 style={worldStyle(w.code)}
-                className="course-card lift group flex h-full flex-col gap-4 rounded-2xl p-6"
+                className="course-card lift group flex h-full flex-col overflow-hidden rounded-3xl"
               >
-                <span className="flex items-start justify-between gap-3">
-                  <WorldIcon code={w.code} size="lg" className="course-card-icon" />
-                  <span className="text-right">
-                    <span className="block font-heading text-3xl font-bold tabular-nums">
-                      {score ?? "-"}
-                    </span>
-                    <span className="text-xs text-muted">
-                      {score !== undefined ? t("home.fromExpo", { score }) : t("home.notPlayed")}
+                {!lessData && worldPhoto(w.code) ? <CardPhoto src={worldPhoto(w.code)!} /> : null}
+                <span className="flex flex-1 flex-col gap-4 p-6">
+                  <span className="flex items-start justify-between gap-3">
+                    <WorldIcon
+                      code={w.code}
+                      size="lg"
+                      className={
+                        "course-card-icon" +
+                        (lessData ? "" : " relative z-10 -mt-14 ring-4 ring-(--card-ring)")
+                      }
+                    />
+                    <span className="text-right">
+                      <span className="block font-heading text-3xl font-bold tabular-nums">
+                        {score ?? "-"}
+                      </span>
+                      <span className="text-xs text-muted">
+                        {score !== undefined ? t("home.fromExpo", { score }) : t("home.notPlayed")}
+                      </span>
                     </span>
                   </span>
-                </span>
-                <span className="font-heading text-2xl font-semibold">{tw(w.code)}</span>
-                <span className="text-sm text-muted">{w.tagline}</span>
-                <span className="mt-auto flex items-center gap-1 text-sm font-semibold">
-                  {t("explore.careerCount", { count: w.careers.length })}
-                  <ArrowRight
-                    className="size-4 transition-transform group-hover:translate-x-1"
-                    aria-hidden="true"
-                  />
+                  <span className="font-heading text-2xl font-semibold">{tw(w.code)}</span>
+                  <span className="text-sm text-muted">{w.tagline}</span>
+                  <span className="mt-auto flex items-center gap-1 text-sm font-semibold">
+                    {t("explore.careerCount", { count: w.careers.length })}
+                    <ArrowRight
+                      className="size-4 transition-transform group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </span>
                 </span>
               </Link>
             </li>

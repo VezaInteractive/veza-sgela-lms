@@ -66,3 +66,14 @@ test("learner pages never scroll sideways", async ({ page }) => {
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
 });
+
+test("card photos load normally and are skipped under data saver", async ({ browser, page }) => {
+  await page.goto("/learn");
+  await expect(page.locator('main img[src*="photos"]').first()).toBeAttached();
+  const context = await browser.newContext({ extraHTTPHeaders: { "Save-Data": "on" } });
+  const lean = await context.newPage();
+  await lean.goto("/learn");
+  await expect(lean.locator("main h1")).toBeVisible();
+  await expect(lean.locator("main img")).toHaveCount(0);
+  await context.close();
+});

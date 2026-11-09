@@ -2,7 +2,9 @@ import { getTranslations } from "next-intl/server";
 import { BookOpen, CheckCircle2, Clock, GraduationCap } from "lucide-react";
 import { CourseCard, PageIntro, StatStrip } from "@/components/dashboard/parts";
 import { SampleNote } from "@/components/demo/ui";
+import { wantsLessData } from "@/lib/data-saver";
 import { COURSES } from "@/lib/demo/data";
+import { coursePhoto } from "@/lib/demo/photos";
 
 export async function generateMetadata() {
   const t = await getTranslations("nav");
@@ -12,6 +14,7 @@ export async function generateMetadata() {
 /** Learn index (demo shell for M3; reference "MyCourses" layout, D-021). */
 export default async function LearnPage() {
   const t = await getTranslations("demo");
+  const lessData = await wantsLessData();
   const started = COURSES.filter((c) => c.progress > 0).length;
   const topicsDone = COURSES.flatMap((c) => c.topics).filter((tp) => tp.status === "done").length;
   const minutes = COURSES.flatMap((c) => c.topics)
@@ -49,6 +52,7 @@ export default async function LearnPage() {
           <li key={c.slug}>
             <CourseCard
               course={c}
+              photo={lessData ? undefined : coursePhoto(c.slug)}
               labels={{
                 minutes: t("learn.minutes", { n: c.minutes }),
                 topics: t("learn.topicCount", { n: c.topics.length }),

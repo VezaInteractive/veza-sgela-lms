@@ -82,7 +82,8 @@ h4 {
 }
 .course-card {
   --w-strong: color-mix(in oklab, var(--w) var(--icon-mix), #000);
-  background: color-mix(in oklab, var(--w) var(--course-mix), var(--glass));
+  --card-ring: color-mix(in oklab, var(--w) var(--course-mix), var(--glass));
+  background: var(--card-ring);
   border: 1px solid color-mix(in oklab, var(--w) 35%, var(--glass-border));
   box-shadow: var(--card-shadow);
 }

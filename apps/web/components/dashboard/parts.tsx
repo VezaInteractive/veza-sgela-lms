@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, ChevronRight, Clock, Layers, type LucideIcon } from "lucide-react";
 import { cn } from "@sgela/ui";
@@ -189,8 +190,11 @@ export interface CourseCardData {
 export function CourseCard({
   course,
   labels,
+  photo,
 }: {
   course: CourseCardData;
+  /** Optional header photo; omit under data saver. */
+  photo?: string;
   labels: {
     minutes: string;
     topics: string;
@@ -204,38 +208,69 @@ export function CourseCard({
     <Link
       href={"/learn/" + course.slug}
       style={worldStyle(world)}
-      className="course-card lift flex h-full min-h-72 flex-col rounded-3xl p-6 md:min-h-80 md:p-7"
+      className="course-card lift flex h-full flex-col overflow-hidden rounded-3xl"
     >
-      <span className="flex items-start justify-between gap-3">
-        <WorldIcon code={world} size="lg" className="course-card-icon" />
-        <span className="pt-1 text-xs font-semibold tracking-wide text-muted">{course.code}</span>
-      </span>
-      <span className="mt-6 font-heading text-2xl leading-tight font-semibold">{course.title}</span>
-      <span className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm font-medium text-muted">
-        <span className="flex items-center gap-1.5">
-          <Clock aria-hidden="true" className="size-4" />
-          {labels.minutes}
+      {photo ? <CardPhoto src={photo} /> : null}
+      <span className="flex flex-1 flex-col p-6 md:p-7">
+        <span className="flex items-start justify-between gap-3">
+          <WorldIcon
+            code={world}
+            size="lg"
+            className={cn(
+              "course-card-icon",
+              photo && "relative z-10 -mt-14 ring-4 ring-(--card-ring)",
+            )}
+          />
+          <span className="pt-1 text-xs font-semibold tracking-wide text-muted">{course.code}</span>
         </span>
-        <span className="flex items-center gap-1.5">
-          <Layers aria-hidden="true" className="size-4" />
-          {labels.topics}
+        <span className="mt-5 font-heading text-2xl leading-tight font-semibold">
+          {course.title}
         </span>
-        {course.accredited ? (
+        <span className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm font-medium text-muted">
           <span className="flex items-center gap-1.5">
-            <BadgeCheck aria-hidden="true" className="size-4" />
-            {labels.accredited}
+            <Clock aria-hidden="true" className="size-4" />
+            {labels.minutes}
           </span>
-        ) : null}
-      </span>
-      <span className="mt-auto flex flex-col gap-2 pt-8">
-        <ColourBar
-          value={course.progress}
-          colour="var(--w-strong)"
-          label={labels.progressLabel}
-          className="course-card-track h-2.5"
-        />
-        <span className="text-sm font-medium text-muted">{labels.complete}</span>
+          <span className="flex items-center gap-1.5">
+            <Layers aria-hidden="true" className="size-4" />
+            {labels.topics}
+          </span>
+          {course.accredited ? (
+            <span className="flex items-center gap-1.5">
+              <BadgeCheck aria-hidden="true" className="size-4" />
+              {labels.accredited}
+            </span>
+          ) : null}
+        </span>
+        <span className="mt-auto flex flex-col gap-2 pt-8">
+          <ColourBar
+            value={course.progress}
+            colour="var(--w-strong)"
+            label={labels.progressLabel}
+            className="course-card-track h-2.5"
+          />
+          <span className="text-sm font-medium text-muted">{labels.complete}</span>
+        </span>
       </span>
     </Link>
+  );
+}
+
+/** Full-bleed photo header for cards. Decorative (the card has its own title); lazy-loaded. */
+export function CardPhoto({ src }: { src: string }) {
+  return (
+    <span className="relative block h-40 w-full shrink-0 md:h-44">
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+        className="object-cover"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 bg-linear-to-t from-black/25 to-transparent"
+      />
+    </span>
   );
 }
