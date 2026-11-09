@@ -129,20 +129,36 @@ export function CareerCompass({
           fill="none"
           stroke="var(--border)"
           strokeDasharray={k === 1 ? undefined : "2 5"}
+          className={
+            k === 1 ? undefined : k === 0.6 ? "compass-ring compass-ring-rev" : "compass-ring"
+          }
         />
       ))}
       {points.map((p) => (
         <line key={"s" + p.code} x1={c} y1={c} x2={p.ex} y2={p.ey} stroke="var(--border)" />
       ))}
       <polygon
+        className="compass-shape"
         points={polygon}
         fill="color-mix(in oklab, #ABCF37 18%, transparent)"
         stroke="#ABCF37"
         strokeWidth={2}
         strokeLinejoin="round"
       />
-      {points.map((p) => (
+      {points.map((p, i) => (
         <g key={p.code}>
+          {p.score !== null ? (
+            <circle
+              className="compass-halo"
+              style={{ ["--d" as string]: i * 0.6 + "s" }}
+              cx={p.x}
+              cy={p.y}
+              r={p.nodeR}
+              fill="none"
+              stroke={WORLD_COLOURS[p.code]}
+              strokeWidth={2}
+            />
+          ) : null}
           <circle
             cx={p.x}
             cy={p.y}
@@ -172,7 +188,7 @@ export function CareerCompass({
           </text>
         </g>
       ))}
-      <circle cx={c} cy={c} r={24} fill="#ABCF37" />
+      <circle className="compass-core" cx={c} cy={c} r={24} fill="#ABCF37" />
       <text
         x={c}
         y={c + 1}

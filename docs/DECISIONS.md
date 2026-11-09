@@ -209,3 +209,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Career-Ready courses** (no world: ICT, business) get their own violet accent and graduation-cap icon (`READY`), instead of borrowing Agriculture green.
 - **Access:** all layers are decorative (`aria-hidden`, pointer-events none) and fade away from text; axe e2e stays clean in light and dark at 360 px and 1440 px. Rules for position and pseudo-elements sit in `@layer components`, so Tailwind utilities still win.
 - **Reason:** stakeholder found the cards and stat tiles flat and asked for patterns and more depth across the platform.
+
+## D-037 · 2026-11-09 · Home contrast and motion
+
+- **Contrast:** the welcome line and big numbers sit in a deep-space "hero band" (dark gradient with a lime glow, the compass-ring motif and two softly drifting light orbs), so the top of Home reads strongly in both themes. Panels can take an `accent` colour: a gradient edge along the top and a coloured dot before the title (Up next violet, course progress in the course's world colour, calendar blue, Compass lime, top match in its world colour, notices coral).
+- **Motion (subtle, decorative):** progress rings and score rings draw in once; topic bars grow in, staggered; the three columns fade up in turn; Compass dashed rings turn very slowly in opposite directions, the interest shape grows in, played worlds give off a soft halo ping and the core breathes; today on the calendar pings; the XP bar gets a light sweep every few seconds; the hero stat gems float; the first notice bell rings now and then.
+- **Access and cost:** CSS only (transform, opacity, stroke), no JavaScript or images. The global prefers-reduced-motion rule stops every loop, and one-shot draws land straight on their final state. Decorative layers are `aria-hidden`; axe e2e stays clean in light and dark at 360 px and 1440 px.
+- **Reason:** stakeholder asked for more contrast on Home and for it to feel alive, with subtle animation on the graphics.

@@ -92,7 +92,7 @@ export function ProfileCard(p: ProfileCardProps) {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label={p.xpLabel}
-            className="h-1.5 w-full overflow-hidden rounded-full bg-white/25"
+            className="xp-shine h-1.5 w-full overflow-hidden rounded-full bg-white/25"
           >
             <div className="h-full rounded-full bg-lime-500" style={{ width: `${p.xpPct}%` }} />
           </div>

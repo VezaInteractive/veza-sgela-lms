@@ -77,23 +77,33 @@ export function Panel({
   action,
   children,
   className,
+  accent,
 }: {
   id?: string;
   title: string;
   action?: { href: string; label: string };
   children: React.ReactNode;
   className?: string;
+  /** Optional colour for a top accent edge and a dot before the title (D-037). */
+  accent?: string;
 }) {
   return (
     <section
       id={id}
+      style={accent ? { ["--w" as string]: accent } : undefined}
       className={cn(
         "glass flex min-w-0 scroll-mt-24 flex-col gap-4 rounded-2xl p-5 md:p-6",
+        accent && "panel-accent",
         className,
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-heading text-lg font-semibold">{title}</h2>
+        <h2 className="flex items-center gap-2.5 font-heading text-lg font-semibold">
+          {accent ? (
+            <span aria-hidden="true" className="panel-dot size-2 shrink-0 rounded-full" />
+          ) : null}
+          {title}
+        </h2>
         {action ? (
           <Link
             href={action.href}
@@ -115,11 +125,14 @@ export function ColourBar({
   colour,
   label,
   className,
+  delay = 200,
 }: {
   value: number;
   colour: string;
   label: string;
   className?: string;
+  /** Grow-in delay in ms (bars animate in once, D-037). */
+  delay?: number;
 }) {
   return (
     <div
@@ -131,7 +144,10 @@ export function ColourBar({
       style={{ ["--bar" as string]: colour }}
       className={cn("colour-bar h-2 w-full overflow-hidden rounded-full", className)}
     >
-      <div className="h-full rounded-full bg-(--bar)" style={{ width: `${value}%` }} />
+      <div
+        className="anim-bar h-full rounded-full bg-(--bar)"
+        style={{ width: `${value}%`, ["--d" as string]: delay + "ms" }}
+      />
     </div>
   );
 }
@@ -154,6 +170,7 @@ export function ProgressRing({
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(100, value));
+  const len = (v / 100) * c;
   return (
     <div
       role="img"
@@ -178,7 +195,9 @@ export function ProgressRing({
           stroke={colour}
           strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${(v / 100) * c} ${c}`}
+          strokeDasharray={`${len} ${c}`}
+          className="anim-arc"
+          style={{ ["--arc-len" as string]: len }}
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>

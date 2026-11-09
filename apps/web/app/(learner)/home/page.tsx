@@ -97,43 +97,47 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
 
   return (
     <section className="mx-auto flex max-w-7xl flex-col gap-6">
-      <PageIntro
-        title={t("home.welcome", { name: learner.firstName })}
-        intro={t("home.welcomeBody")}
-      >
-        <HeroStats
-          stats={[
-            {
-              label: t("home.statStreak"),
-              value: String(s.streakDays),
-              icon: Flame,
-              accent: "#FF6B5A",
-            },
-            {
-              label: t("home.statTopics"),
-              value: String(topicsDone),
-              icon: CheckCircle2,
-              accent: "#4FA3FF",
-            },
-            {
-              label: t("home.statBadges"),
-              value: String(BADGES.filter((b) => b.earned).length),
-              icon: Award,
-              accent: "#9B7BFF",
-            },
-            {
-              label: t("home.statBestScore"),
-              value: best.size ? String(Math.max(...best.values())) : "-",
-              icon: Star,
-              accent: "#FFB547",
-            },
-          ]}
-        />
-      </PageIntro>
+      <div className="hero-band fade-up rounded-3xl p-6 md:p-8">
+        <span aria-hidden="true" className="hero-orb hero-orb-a" />
+        <span aria-hidden="true" className="hero-orb hero-orb-b" />
+        <PageIntro
+          title={t("home.welcome", { name: learner.firstName })}
+          intro={t("home.welcomeBody")}
+        >
+          <HeroStats
+            stats={[
+              {
+                label: t("home.statStreak"),
+                value: String(s.streakDays),
+                icon: Flame,
+                accent: "#FF6B5A",
+              },
+              {
+                label: t("home.statTopics"),
+                value: String(topicsDone),
+                icon: CheckCircle2,
+                accent: "#4FA3FF",
+              },
+              {
+                label: t("home.statBadges"),
+                value: String(BADGES.filter((b) => b.earned).length),
+                icon: Award,
+                accent: "#9B7BFF",
+              },
+              {
+                label: t("home.statBestScore"),
+                value: best.size ? String(Math.max(...best.values())) : "-",
+                icon: Star,
+                accent: "#FFB547",
+              },
+            ]}
+          />
+        </PageIntro>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-[18rem_minmax(0,1fr)_20rem]">
         {/* Column 1: who you are + what to do next */}
-        <div className="flex min-w-0 flex-col gap-6">
+        <div className="fade-up flex min-w-0 flex-col gap-6 [animation-delay:80ms]">
           <ProfileCard
             name={name}
             photoUrl={avatarUrlFor(learner)}
@@ -147,6 +151,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
           />
           <Panel
             title={t("home.upNextTitle")}
+            accent="#9B7BFF"
             action={{ href: "/learn", label: t("home.viewAll") }}
           >
             <ul className="flex flex-col gap-3">
@@ -171,9 +176,10 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
         </div>
 
         {/* Column 2: learning progress + calendar */}
-        <div className="flex min-w-0 flex-col gap-6">
+        <div className="fade-up flex min-w-0 flex-col gap-6 [animation-delay:160ms]">
           <Panel
             title={t("home.progressTitle", { course: course.title })}
+            accent={courseColour}
             action={{ href: "/learn/" + course.slug, label: t("learn.continue") }}
           >
             <div className="flex flex-col items-center gap-6 2xl:flex-row">
@@ -195,6 +201,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
                       <ColourBar
                         value={v}
                         colour={BAR_COLOURS[i % BAR_COLOURS.length]!}
+                        delay={350 + i * 120}
                         label={tp.title + ": " + v + "%"}
                       />
                     </li>
@@ -228,9 +235,10 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
         </div>
 
         {/* Column 3: where you fit */}
-        <div className="flex min-w-0 flex-col gap-6 md:col-span-2 md:grid md:grid-cols-2 xl:col-span-1 xl:flex">
+        <div className="fade-up flex min-w-0 flex-col gap-6 [animation-delay:240ms] md:col-span-2 md:grid md:grid-cols-2 xl:col-span-1 xl:flex">
           <Panel
             title={t("home.compassTitle")}
+            accent="#ABCF37"
             action={{
               href: "/explore/" + focus.code.toLowerCase(),
               label: t("explore.open", { world: tw(focus.code) }),
@@ -252,6 +260,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
 
           <Panel
             title={t("home.matchTitle")}
+            accent={WORLD_COLOURS[top.world]}
             action={{ href: "/opportunities", label: t("home.viewAll") }}
           >
             <Link
@@ -272,11 +281,19 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
             </Link>
           </Panel>
 
-          <Panel id="notices" title={t("home.noticeTitle")} className="md:col-span-2 xl:col-span-1">
+          <Panel
+            id="notices"
+            accent="#FF6B5A"
+            title={t("home.noticeTitle")}
+            className="md:col-span-2 xl:col-span-1"
+          >
             <ul className="flex flex-col gap-3">
-              {NOTICES.map((n) => (
+              {NOTICES.map((n, i) => (
                 <li key={n.id} className="flex gap-3 rounded-xl border border-border p-3">
-                  <Bell aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted" />
+                  <Bell
+                    aria-hidden="true"
+                    className={"mt-0.5 size-4 shrink-0 text-muted" + (i === 0 ? " bell-ring" : "")}
+                  />
                   <span className="flex flex-col gap-0.5">
                     <span className="text-sm font-semibold">{n.title}</span>
                     <span className="text-sm text-muted">{n.body}</span>

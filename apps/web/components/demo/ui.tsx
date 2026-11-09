@@ -23,6 +23,7 @@ export function ScoreRing({
   const r = (size - 8) / 2;
   const c = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(100, value));
+  const len = (v / 100) * c;
   return (
     <div
       className="relative shrink-0"
@@ -47,7 +48,9 @@ export function ScoreRing({
           stroke="var(--primary)"
           strokeWidth={6}
           strokeLinecap="round"
-          strokeDasharray={`${(v / 100) * c} ${c}`}
+          strokeDasharray={`${len} ${c}`}
+          className="anim-arc"
+          style={{ ["--arc-len" as string]: len }}
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>

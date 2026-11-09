@@ -80,9 +80,15 @@ export function MonthCalendar({
     .slice(0, 3);
 
   return (
-    <section className="glass flex min-w-0 flex-col gap-4 rounded-2xl p-5">
+    <section
+      style={{ ["--w" as string]: "#4FA3FF" }}
+      className="glass panel-accent flex min-w-0 flex-col gap-4 rounded-2xl p-5"
+    >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="font-heading text-lg font-semibold">{labels.title}</h2>
+        <h2 className="flex items-center gap-2.5 font-heading text-lg font-semibold">
+          <span aria-hidden="true" className="panel-dot size-2 shrink-0 rounded-full" />
+          {labels.title}
+        </h2>
         <div className="flex items-center gap-1">
           <Link
             href={hrefFor(shiftMonth(year, month, -1))}
@@ -131,7 +137,7 @@ export function MonthCalendar({
                       aria-current={isToday ? "date" : undefined}
                       className={cn(
                         "mx-auto flex size-9 flex-col items-center justify-center rounded-full tabular-nums",
-                        isToday && "bg-primary font-bold text-primary-foreground",
+                        isToday && "today-ping bg-primary font-bold text-primary-foreground",
                         !isToday && dayEvents.length > 0 && "font-semibold",
                       )}
                     >
