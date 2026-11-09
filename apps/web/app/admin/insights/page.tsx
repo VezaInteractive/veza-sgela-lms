@@ -26,6 +26,7 @@ export default async function InsightsPage() {
   const t = await getTranslations("demo.insights");
   const tw = await getTranslations("worlds");
   const tc = await getTranslations("common");
+  const tcat = await getTranslations("admin.careers");
   const data = await loadInsights();
   const k = data.kpis;
   const provinceName = (code: string) => PROVINCES.find((p) => p.code === code)?.name ?? code;
@@ -40,6 +41,12 @@ export default async function InsightsPage() {
             <ShieldCheck aria-hidden="true" className="size-4 text-link" />
             {t("privacyChip")}
           </span>
+          <a
+            href="/admin/careers"
+            className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold hover:border-primary"
+          >
+            {tcat("navCatalog")}
+          </a>
           <form action={signOutAction}>
             <Button type="submit" variant="secondary" size="sm">
               <LogOut className="size-4" aria-hidden="true" />

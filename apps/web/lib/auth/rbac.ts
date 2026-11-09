@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { UserRole } from "@sgela/db";
 import { getCurrentSession, type CurrentSession } from "./session";
 import { onboardingPath } from "@/lib/onboarding/steps";
@@ -39,5 +39,13 @@ export async function requireLearnerPage() {
 export async function requireSignedInPage() {
   const s = await getCurrentSession();
   if (!s) redirect("/start");
+  return s;
+}
+
+/** For admin pages: signed-in ADMIN or SUPER_ADMIN, else 404 (learners never see admin). */
+export async function requireAdminPage() {
+  const s = await getCurrentSession();
+  if (!s) redirect("/start");
+  if (s.user.role !== "ADMIN" && s.user.role !== "SUPER_ADMIN") notFound();
   return s;
 }
