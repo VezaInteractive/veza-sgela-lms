@@ -11,7 +11,18 @@
     "me": "Mina",
     "primary": "Uhla lokuzulazula oluyinhloko",
     "collapse": "Goqa imenyu",
-    "expand": "Vula imenyu"
+    "expand": "Vula imenyu",
+    "notifications": "Izaziso",
+    "unread": "{n, plural, =0 {azikho ezingafundiwe} one {# esingafundiwe} other {# ezingafundiwe}}",
+    "markAllRead": "Maka zonke njengezifundiwe",
+    "noNotifications": "Usufunde konke.",
+    "seeAll": "Bona konke ku-Ekhaya",
+    "support": "Usizo",
+    "supportMenu": "Izindlela zosizo",
+    "askCoach": "Buza umqeqeshi wakho",
+    "help": "Usizo nemibuzo evamile",
+    "privacy": "Ubumfihlo nemininingwane yakho",
+    "addResults": "Engeza imiphumela ye-expo"
   },
   "coach": {
     "open": "Buza umqeqeshi wakho",

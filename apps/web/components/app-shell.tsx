@@ -3,10 +3,12 @@ import { getTranslations } from "next-intl/server";
 import { signOutAction } from "@/app/(auth)/start/actions";
 import { getCurrentSession } from "@/lib/auth/session";
 import { BottomNav } from "./bottom-nav";
-import { CoachFab } from "./coach-fab";
+import { NOTICES } from "@/lib/demo/data";
 import { LanguageSwitcher } from "./language-switcher";
+import { NotificationBell } from "./notification-bell";
 import { PageTitle } from "./page-title";
 import { SideNav } from "./side-nav";
+import { SupportDock } from "./support-dock";
 import { ThemeToggle } from "./theme-toggle";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
@@ -38,6 +40,9 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             <PageTitle />
           </div>
           <div className="flex items-center gap-2">
+            <NotificationBell
+              notices={NOTICES.map(({ id, title, body }) => ({ id, title, body }))}
+            />
             <LanguageSwitcher />
             <ThemeToggle />
             <form action={signOutAction} className="hidden sm:block">
@@ -56,7 +61,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
       <BottomNav />
-      <CoachFab />
+      <SupportDock />
     </div>
   );
 }

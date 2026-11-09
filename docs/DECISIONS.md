@@ -167,3 +167,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Decision:** `/learn/[course]` follows the reference course detail layout in Veza style: a hero card (course photo, status pill, accreditation, title, summary, completion bar), a facts row (credits, level, course code, length, provider), Modules (numbered topics with done / up next / locked states and 3D markers) beside Resources (PDFs, 3D models, videos), and the two main actions (Continue lesson, Open 3D model). Actions stay disabled with a note until lessons ship in M3. Sample courses gained `level`, `credits`, `provider` and `resources` (D-018 demo data).
 - **Accessibility:** the facts row is a plain list (an earlier `dl` version failed axe); new axe and sideways-scroll e2e checks cover the page.
 - **Reason:** stakeholder asked for the course detail page from the reference screens.
+
+## D-027 · 2026-11-09 · Support pill, notifications bell and help page
+
+- **Support:** the bottom-right dock follows the reference: a lime "Support" pill (headset icon, chevron) beside the round coach button. The pill opens a small menu with real destinations: Help and FAQs (new `/help` page, native `details`, works without JS), Privacy and your data, Add expo results (`/me#add-results`), and Ask your coach (coming-soon note until M6). One panel open at a time; Escape or a click outside closes it.
+- **Bell:** top bar on every learner page. Shows an unread count badge and a dropdown of notices with "Mark all as read" and "See all on Home" (`/home#notices`). Read state is a per-device convenience in localStorage (D-021 storage rule); a server-side inbox arrives with messaging in M5/M6. Server render assumes all read, so the badge never flashes a wrong count.
+- **Strings:** bell and support labels live in `nav` (en/zu/st); help FAQs are English with fallback. Analytics: `support_opened`, `notifications_opened`.
+- **Reason:** stakeholder asked for the reference Support pill and a notifications bell.

@@ -272,7 +272,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
             </Link>
           </Panel>
 
-          <Panel title={t("home.noticeTitle")} className="md:col-span-2 xl:col-span-1">
+          <Panel id="notices" title={t("home.noticeTitle")} className="md:col-span-2 xl:col-span-1">
             <ul className="flex flex-col gap-3">
               {NOTICES.map((n) => (
                 <li key={n.id} className="flex gap-3 rounded-xl border border-border p-3">

@@ -25,6 +25,8 @@ export const UI_EVENTS = [
   "theme_changed",
   "coach_opened",
   "data_saver_toggled",
+  "support_opened",
+  "notifications_opened",
 ] as const;
 
 /** M1: auth, onboarding, consent and claim actions. */

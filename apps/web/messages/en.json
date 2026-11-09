@@ -12,7 +12,18 @@
     "me": "Me",
     "primary": "Main navigation",
     "collapse": "Collapse menu",
-    "expand": "Expand menu"
+    "expand": "Expand menu",
+    "notifications": "Notifications",
+    "unread": "{n, plural, =0 {none unread} one {# unread} other {# unread}}",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "You are all caught up.",
+    "seeAll": "See all on Home",
+    "support": "Support",
+    "supportMenu": "Support options",
+    "askCoach": "Ask your coach",
+    "help": "Help and FAQs",
+    "privacy": "Privacy and your data",
+    "addResults": "Add expo results"
   },
   "coach": {
     "open": "Ask your coach",
@@ -450,6 +461,36 @@
         "profile_completed": "Profiles completed",
         "claim_linked": "Results linked",
         "consent_complete": "Consent complete"
+      }
+    }
+  },
+  "help": {
+    "title": "Help and FAQs",
+    "intro": "Quick answers about using Sgela. Still stuck? Ask your coach from the Support button.",
+    "faqs": {
+      "sms": {
+        "q": "I did not get my SMS code",
+        "a": "Check the number you typed, wait 30 seconds and tap Send a new code. You can ask for up to 5 codes an hour, and each code works for 5 minutes."
+      },
+      "results": {
+        "q": "How do I add my expo results?",
+        "a": "Open Me and enter the 6-character code from your expo card under Add expo results, or scan the QR code on the kiosk screen."
+      },
+      "guardian": {
+        "q": "Why can't sponsors see me yet?",
+        "a": "If you are under 18, a parent or guardian must agree first. Until then you can learn and explore, but sponsors cannot find or invite you."
+      },
+      "photo": {
+        "q": "Who can see my profile photo?",
+        "a": "Only you. It is never shown to sponsors, coaches or other learners, and we remove location data from the photo when you upload it."
+      },
+      "privacy": {
+        "q": "How do I change what I share?",
+        "a": "Open Me, then Privacy and your data. Every change is saved with the date, and you can change your mind at any time."
+      },
+      "data": {
+        "q": "Does Sgela use a lot of data?",
+        "a": "Turn on your phone's data saver and Sgela skips photos on cards. Pages are built to load quickly on slow networks."
       }
     }
   }

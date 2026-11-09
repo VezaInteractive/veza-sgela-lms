@@ -64,18 +64,26 @@ export function StatStrip({ stats }: { stats: Stat[] }) {
 }
 
 export function Panel({
+  id,
   title,
   action,
   children,
   className,
 }: {
+  id?: string;
   title: string;
   action?: { href: string; label: string };
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <section className={cn("glass flex min-w-0 flex-col gap-4 rounded-2xl p-5 md:p-6", className)}>
+    <section
+      id={id}
+      className={cn(
+        "glass flex min-w-0 scroll-mt-24 flex-col gap-4 rounded-2xl p-5 md:p-6",
+        className,
+      )}
+    >
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-heading text-lg font-semibold">{title}</h2>
         {action ? (

@@ -203,7 +203,7 @@ export default async function MePage() {
               </ul>
             </Panel>
 
-            <Panel title={t("claim.addTitle")}>
+            <Panel id="add-results" title={t("claim.addTitle")}>
               <p className="text-sm text-muted">{t("claim.addIntro")}</p>
               <AddExpoCode />
             </Panel>

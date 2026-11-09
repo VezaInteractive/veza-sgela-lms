@@ -138,3 +138,37 @@ test("course page has no serious a11y violations", async ({ page }) => {
     results.violations.filter((v) => v.impact === "serious" || v.impact === "critical"),
   ).toEqual([]);
 });
+
+test("support pill opens help options and the help page works", async ({ page }) => {
+  await page.goto("/home");
+  await page.getByTestId("support-pill").click();
+  const menu = page.getByRole("region", { name: "Support options" });
+  await expect(menu).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+  await page.getByTestId("support-pill").click();
+  await menu.getByRole("link", { name: "Help and FAQs" }).click();
+  await expect(page).toHaveURL(/\/help$/);
+  await page.getByText("I did not get my SMS code").click();
+  await expect(page.getByText(/up to 5 codes an hour/)).toBeVisible();
+  await settleAnimations(page);
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+  expect(
+    results.violations.filter((v) => v.impact === "serious" || v.impact === "critical"),
+  ).toEqual([]);
+});
+
+test("bell shows unread notices and remembers mark all as read", async ({ page }) => {
+  await page.goto("/home");
+  await page.evaluate(() => localStorage.removeItem("sgela.notices.seen"));
+  await page.reload();
+  const bell = page.getByTestId("notification-bell");
+  await expect(bell).toHaveAccessibleName(/3 unread/);
+  await bell.click();
+  const panel = page.getByRole("region", { name: "Notifications" });
+  await expect(panel.getByRole("listitem")).toHaveCount(3);
+  await panel.getByRole("button", { name: "Mark all as read" }).click();
+  await expect(bell).toHaveAccessibleName(/none unread/);
+  await page.reload();
+  await expect(page.getByTestId("notification-bell")).toHaveAccessibleName(/none unread/);
+});
