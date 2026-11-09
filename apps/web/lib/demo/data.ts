@@ -418,3 +418,14 @@ export const NOTICES = [
     body: "You finished Soil health and testing. Learn 3 more days for your 7-day streak.",
   },
 ];
+
+/** Calendar items (sample; real dates come from enrolments, expos and matches in M3-M5). */
+export const EVENTS = [
+  { id: "e-1", date: "2026-11-12", title: "Finish Crop planning (AGR-101)", world: "AGR" },
+  { id: "e-2", date: "2026-11-18", title: "Live Q&A: what pilots study", world: "AVI" },
+  { id: "e-3", date: "2026-11-21", title: "Veza expo, Polokwane schools", world: "AGR" },
+  { id: "e-4", date: "2026-11-21", title: "Try the Medical world at the expo", world: "MED" },
+  { id: "e-5", date: "2026-11-27", title: "Clinic job shadow info session", world: "MED" },
+  { id: "e-6", date: "2026-12-05", title: "Bursary application workshop (online)", world: "AVI" },
+  { id: "e-7", date: "2026-12-10", title: "Power tools topic 1 due (ENG-101)", world: "ENG" },
+] as const;

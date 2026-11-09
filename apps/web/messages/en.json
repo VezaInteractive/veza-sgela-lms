@@ -304,7 +304,21 @@
       "exploreWorlds": "Explore",
       "matchTitle": "Your top match",
       "viewAll": "View all",
-      "closes": "Closes {date}"
+      "closes": "Closes {date}",
+      "editProfile": "Edit",
+      "gradeValue": "Grade {grade}",
+      "notInSchool": "Not in school",
+      "levelValue": "Level {level}",
+      "xpToNext": "{xp} of {next} XP to Level {level}",
+      "statTopics": "Topics completed",
+      "statBestScore": "Best expo score",
+      "calendarTitle": "Calendar",
+      "calendarPrev": "Previous month",
+      "calendarNext": "Next month",
+      "calendarComingUp": "Coming up",
+      "calendarNone": "Nothing planned yet",
+      "calendarToday": "today",
+      "calendarEvents": "{n, plural, one {# event} other {# events}}"
     },
     "explore": {
       "title": "Explore career worlds",

@@ -147,3 +147,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Data saver:** `lib/data-saver.ts` reads the `Save-Data: on` request header (Chrome Lite mode, Android data saver); pages then skip photos entirely. E2e covers both cases.
 - **Alternatives:** hotlinking images.unsplash.com (rejected: third-party request per view, breaks offline at expos); Veza expo photos (preferred long term; swap the files in place when available).
 - **Reason:** stakeholder asked for photos on cards like the reference course screens.
+
+## D-024 · 2026-11-09 · Home profile panel and calendar rail
+
+- **Decision:** Home gets a right-hand rail on desktop (20rem) with a profile panel (photo slot, name, level, school, grade, district and province, XP to next level, Edit link to Me) and a month calendar (Monday-first, today marked, coloured event dots with screen-reader counts, "Coming up" list of the next three, month links via `?month=YYYY-MM` so it works without JavaScript). Level and XP moved from the stat row into the profile panel to save space; the stat row now shows streak, topics completed, badges and best expo score. Layout uses CSS grid areas: phone = profile, content, calendar; tablet = profile and calendar side by side above content; desktop = content left, rail right.
+- **Profile photo:** no photo storage exists yet, so the panel shows initials in the photo slot. Real upload needs a storage provider, a schema field, image re-encoding (strip EXIF/GPS) and a decision on photos of under-18s; tracked as a follow-up.
+- **Data:** profile facts are real (Learner + School); calendar events are sample content (D-018). "Today" is computed in Africa/Johannesburg.
+- **Reason:** stakeholder asked for a profile image panel and a calendar on Home, optimised for space and UX.

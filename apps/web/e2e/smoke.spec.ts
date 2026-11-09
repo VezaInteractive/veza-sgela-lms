@@ -58,13 +58,16 @@ test("home in dark theme has no serious a11y violations", async ({ page }) => {
 });
 
 test("learner pages never scroll sideways", async ({ page }) => {
-  for (const path of ["/home", "/explore", "/learn", "/opportunities", "/me"]) {
-    await page.goto(path);
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    );
-    expect(overflow, path).toBeLessThanOrEqual(0);
-  }
+  const sizes = [page.viewportSize()!, { width: 768, height: 1024 }];
+  for (const size of sizes)
+    for (const path of ["/home", "/explore", "/learn", "/opportunities", "/me"]) {
+      await page.setViewportSize(size);
+      await page.goto(path);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow, path + " @" + size.width).toBeLessThanOrEqual(0);
+    }
 });
 
 test("card photos load normally and are skipped under data saver", async ({ browser, page }) => {
@@ -76,4 +79,14 @@ test("card photos load normally and are skipped under data saver", async ({ brow
   await expect(lean.locator("main h1")).toBeVisible();
   await expect(lean.locator("main img")).toHaveCount(0);
   await context.close();
+});
+
+test("home shows profile and calendar, and month links work", async ({ page }) => {
+  await page.goto("/home");
+  await expect(page.locator("[aria-current=date]")).toHaveCount(1);
+  await page.getByRole("link", { name: "Next month" }).click();
+  await expect(page).toHaveURL(/month=\d{4}-\d{2}/);
+  await expect(page.locator("[aria-current=date]")).toHaveCount(0);
+  await page.goto("/home?month=not-a-month");
+  await expect(page.locator("[aria-current=date]")).toHaveCount(1);
 });

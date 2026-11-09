@@ -20,7 +20,7 @@ export function PageIntro({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
       <div className="flex flex-col gap-1.5">
         <h1 className="font-heading text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
         {intro ? <p className="max-w-2xl text-muted">{intro}</p> : null}
