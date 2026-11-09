@@ -4,8 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { getDb } from "@sgela/db";
 import { IndustryForm } from "@/components/admin/catalog-forms";
-import { PageIntro } from "@/components/dashboard/parts";
-import { SimpleShellWide } from "@/components/simple-shell";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { requireAdminPage } from "@/lib/auth/rbac";
 
 export const metadata = { title: "Edit world", robots: { index: false } };
@@ -14,7 +13,7 @@ export default async function EditWorldPage({
   params,
   searchParams,
 }: PageProps<"/admin/careers/world/[code]">) {
-  await requireAdminPage();
+  const session = await requireAdminPage();
   const { code } = await params;
   const { error } = await searchParams;
   const db = getDb();
@@ -29,17 +28,26 @@ export default async function EditWorldPage({
   ]);
   if (!industry) notFound();
   const t = await getTranslations("admin.careers");
+  const adminName = session.user.learner
+    ? [session.user.learner.firstName, session.user.learner.lastName].filter(Boolean).join(" ")
+    : "Admin";
 
   return (
-    <SimpleShellWide>
-      <Link
-        href="/admin/careers"
-        className="flex items-center gap-1.5 self-start text-sm font-semibold text-link hover:underline"
-      >
-        <ArrowLeft aria-hidden="true" className="size-4" />
-        {t("back")}
-      </Link>
-      <PageIntro title={industry.name} intro={t("editWorld")} />
+    <AdminShell
+      tab="careers"
+      adminName={adminName}
+      title={industry.name}
+      intro={t("editWorld")}
+      actions={
+        <Link
+          href="/admin/careers"
+          className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-sm font-semibold hover:border-primary"
+        >
+          <ArrowLeft aria-hidden="true" className="size-4" />
+          {t("back")}
+        </Link>
+      }
+    >
       <div className="glass rounded-2xl p-5 md:p-6">
         <IndustryForm
           industry={{
@@ -60,6 +68,6 @@ export default async function EditWorldPage({
           error={typeof error === "string" ? error : undefined}
         />
       </div>
-    </SimpleShellWide>
+    </AdminShell>
   );
 }

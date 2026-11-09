@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { ChartNoAxesColumn, LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Pencil, Plus, Trash2 } from "lucide-react";
 import { getDb } from "@sgela/db";
-import { Button } from "@sgela/ui";
-import { signOutAction } from "@/app/(auth)/start/actions";
-import { PageIntro } from "@/components/dashboard/parts";
+import { AdminCard } from "@/components/admin/admin-parts";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { WorldIcon, worldStyle } from "@/components/demo/world-visuals";
-import { SimpleShellWide } from "@/components/simple-shell";
 import { requireAdminPage } from "@/lib/auth/rbac";
 import { listWorlds } from "@/lib/explore/catalog";
 import { deleteCareerAction } from "./actions";
@@ -14,14 +12,13 @@ import { deleteCareerAction } from "./actions";
 export const metadata = { title: "Worlds and careers", robots: { index: false } };
 
 /**
- * Admin worlds and careers (A-2). Admin-only; lists every world and its careers with edit,
- * create and delete.
+ * Admin worlds and careers (A-2; premium shell D-038). Admin-only; lists every world and its
+ * careers with edit, create and delete.
  */
 export default async function AdminCareersPage({ searchParams }: PageProps<"/admin/careers">) {
-  await requireAdminPage();
+  const session = await requireAdminPage();
   const locale = await getLocale();
   const t = await getTranslations("admin.careers");
-  const tc = await getTranslations("common");
   const { ok } = await searchParams;
   const [worlds, careers] = await Promise.all([
     listWorlds(locale),
@@ -36,29 +33,15 @@ export default async function AdminCareersPage({ searchParams }: PageProps<"/adm
     list.push(c);
     byWorld.set(c.industryCode, list);
   }
+  const adminName = session.user.learner
+    ? [session.user.learner.firstName, session.user.learner.lastName].filter(Boolean).join(" ")
+    : "Admin";
 
   return (
-    <SimpleShellWide>
-      <PageIntro title={t("title")} intro={t("intro")}>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/admin/insights"
-            className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold hover:border-primary"
-          >
-            <ChartNoAxesColumn aria-hidden="true" className="size-4" />
-            {t("navInsights")}
-          </Link>
-          <form action={signOutAction}>
-            <Button type="submit" variant="secondary" size="sm">
-              <LogOut className="size-4" aria-hidden="true" />
-              {tc("signOut")}
-            </Button>
-          </form>
-        </div>
-      </PageIntro>
-
+    <AdminShell tab="careers" adminName={adminName} title={t("title")} intro={t("intro")}>
       {ok ? (
-        <p className="rounded-xl border border-primary/40 bg-primary/10 p-3 text-sm font-medium">
+        <p className="flex items-center gap-2 rounded-xl border border-primary/40 bg-primary/10 p-3 text-sm font-medium">
+          <CheckCircle2 aria-hidden="true" className="size-4 text-link" />
           {ok === "deleted" ? t("deleted") : t("saved")}
         </p>
       ) : null}
@@ -67,21 +50,11 @@ export default async function AdminCareersPage({ searchParams }: PageProps<"/adm
         {worlds.map((w) => {
           const list = byWorld.get(w.code) ?? [];
           return (
-            <section
+            <AdminCard
               key={w.code}
-              style={worldStyle(w.code)}
-              className="glass panel-accent flex flex-col gap-4 rounded-2xl p-5 md:p-6"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <WorldIcon code={w.code} size="md" />
-                  <div className="flex flex-col">
-                    <h2 className="font-heading text-lg font-semibold">{w.name}</h2>
-                    <span className="text-xs text-muted">
-                      {w.code} · {t("careersHeading", { n: list.length })}
-                    </span>
-                  </div>
-                </div>
+              accent={w.color}
+              title={w.name}
+              action={
                 <div className="flex items-center gap-2">
                   <Link
                     href={"/admin/careers/world/" + w.code.toLowerCase()}
@@ -98,12 +71,19 @@ export default async function AdminCareersPage({ searchParams }: PageProps<"/adm
                     {t("addCareer")}
                   </Link>
                 </div>
+              }
+            >
+              <div className="-mt-1 flex items-center gap-3" style={worldStyle(w.code)}>
+                <WorldIcon code={w.code} size="md" />
+                <span className="text-xs text-muted">
+                  {w.code} · {t("careersHeading", { n: list.length })}
+                </span>
               </div>
               <ul className="flex flex-col divide-y divide-border">
                 {list.map((c) => (
                   <li key={c.id} className="flex items-center justify-between gap-3 py-2.5">
                     <span className="min-w-0 truncate text-sm font-medium">{c.title}</span>
-                    <span className="flex shrink-0 items-center gap-2">
+                    <span className="flex shrink-0 items-center gap-3">
                       <Link
                         href={"/admin/careers/edit/" + c.slug}
                         className="flex items-center gap-1 text-sm font-semibold text-link hover:underline"
@@ -127,10 +107,10 @@ export default async function AdminCareersPage({ searchParams }: PageProps<"/adm
                   </li>
                 ))}
               </ul>
-            </section>
+            </AdminCard>
           );
         })}
       </div>
-    </SimpleShellWide>
+    </AdminShell>
   );
 }

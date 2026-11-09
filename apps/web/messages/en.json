@@ -661,6 +661,17 @@
         "slugTaken": "That slug is already used by another career.",
         "notFound": "Not found."
       }
+    },
+    "shell": {
+      "brand": "Admin",
+      "brandSub": "Veza Sgela",
+      "navInsights": "Insights",
+      "navCatalog": "Worlds & careers",
+      "sectionManage": "Manage",
+      "sectionData": "Data",
+      "role": "Administrator",
+      "backToApp": "Back to the app",
+      "menu": "Admin menu"
     }
   }
 }
