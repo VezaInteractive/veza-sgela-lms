@@ -6,6 +6,7 @@ import { getDistrict, PROVINCES } from "@sgela/geo";
 import { MonthCalendar } from "@/components/dashboard/calendar";
 import { ColourBar, HeroStats, PageIntro, Panel, ProgressRing } from "@/components/dashboard/parts";
 import { ProfileCard } from "@/components/dashboard/profile-card";
+import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { SampleNote, ScoreRing } from "@/components/demo/ui";
 import {
   CareerCompass,
@@ -13,18 +14,16 @@ import {
   WorldIcon,
   worldStyle,
 } from "@/components/demo/world-visuals";
+import { HomeCompass } from "@/components/explore/three-widgets";
 import { requireLearnerPage } from "@/lib/auth/rbac";
 import { linkedResults } from "@/lib/claim/service";
 import { systemClock } from "@/lib/clock";
-import {
-  BADGES,
-  COURSES,
-  EVENTS,
-  LEARNER_STATS,
-  NOTICES,
-  OPPORTUNITIES,
-  WORLDS,
-} from "@/lib/demo/data";
+import { BADGES, COURSES, EVENTS, LEARNER_STATS, NOTICES, OPPORTUNITIES } from "@/lib/demo/data";
+import { wantsLessData } from "@/lib/data-saver";
+import { listWorlds } from "@/lib/explore/catalog";
+import { loadInterestSummary } from "@/lib/interest/service";
+import { loadNextStepContext } from "@/lib/recommendations/context";
+import { nextBestStep, type NextStep } from "@/lib/recommendations/next-step";
 import { avatarUrlFor } from "@/lib/profile/avatar";
 
 export async function generateMetadata() {
@@ -43,6 +42,39 @@ function todayInSa() {
   );
 }
 
+/** Resolves a next-best-step rule to its card text (L-HM-2). */
+function nextStepText(
+  step: NextStep,
+  tn: Awaited<ReturnType<typeof getTranslations<"nextStep">>>,
+  tw: Awaited<ReturnType<typeof getTranslations<"worlds">>>,
+) {
+  const label = tn("title");
+  const pick = (kind: string, params?: Record<string, string>) => ({
+    label,
+    title: tn(`${kind}.title`, params),
+    body: tn(`${kind}.body`, params),
+    cta: tn(`${kind}.cta`, params),
+  });
+  switch (step.kind) {
+    case "remindGuardian":
+      return pick("remindGuardian");
+    case "respondInvite":
+      return pick("respondInvite", { partner: step.partner });
+    case "continueSection":
+      return pick("continueSection", { section: step.section });
+    case "takeCheck":
+      return pick("takeCheck", { topic: step.topic });
+    case "startCourse":
+      return pick("startCourse", { course: step.course });
+    case "closeGap":
+      return pick("closeGap", { item: step.item, opportunity: step.opportunity });
+    case "exploreWorld":
+      return pick("exploreWorld", { world: tw(step.world as never) });
+    case "askCoach":
+      return pick("askCoach");
+  }
+}
+
 /**
  * Learner dashboard (D-021/D-025). Header with big numbers; then three columns on desktop:
  * profile + up next | course progress + calendar | compass + match + notices. Profile facts,
@@ -52,19 +84,47 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
   const { learner } = await requireLearnerPage();
   const t = await getTranslations("demo");
   const tw = await getTranslations("worlds");
+  const tn = await getTranslations("nextStep");
+  const tn2 = await getTranslations("compass");
   const locale = await getLocale();
   const intlLocale = locale === "en" ? "en-ZA" : locale;
   const fmt = new Intl.DateTimeFormat(intlLocale, { day: "numeric", month: "short" });
 
-  const [results, school] = await Promise.all([
+  const worlds = await listWorlds(locale);
+  const [results, school, interest, lessData] = await Promise.all([
     linkedResults(learner.id),
     learner.schoolId
       ? getDb().school.findUnique({ where: { id: learner.schoolId }, select: { name: true } })
       : null,
+    loadInterestSummary(
+      learner.id,
+      worlds.map((w) => w.code),
+    ),
+    wantsLessData(),
   ]);
   const best = new Map<string, number>();
   for (const r of results) best.set(r.worldCode, Math.max(best.get(r.worldCode) ?? 0, r.score));
-  const focus = [...WORLDS].sort((a, b) => (best.get(b.code) ?? -1) - (best.get(a.code) ?? -1))[0]!;
+  // Highest-interest world first; ties keep display order.
+  const focus = [...worlds].sort(
+    (a, b) => (interest.scores[b.code] ?? 0) - (interest.scores[a.code] ?? 0),
+  )[0]!;
+
+  // Next best step (PRD 7.11). Courses/invites/matches arrive in M3-M5; the rules handle their
+  // absence, so today this is usually "explore another world" or "ask the coach".
+  const stepCtx = await loadNextStepContext({
+    learner: {
+      id: learner.id,
+      restricted: learner.restricted,
+      guardian: learner.guardian
+        ? { requestedAt: learner.guardian.requestedAt, respondedAt: learner.guardian.respondedAt }
+        : null,
+    },
+    worlds: worlds.map((w) => ({ code: w.code, interest: interest.scores[w.code] ?? 0 })),
+    explored: interest.explored,
+    now: systemClock(),
+  });
+  const step = nextBestStep(stepCtx);
+  const stepText = nextStepText(step, tn, tw);
 
   const s = LEARNER_STATS;
   const course = COURSES.find((c) => c.progress > 0) ?? COURSES[0]!;
@@ -134,6 +194,14 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
           />
         </PageIntro>
       </div>
+
+      <NextStepCard
+        label={stepText.label}
+        title={stepText.title}
+        body={stepText.body}
+        cta={stepText.cta}
+        href={step.href}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-[18rem_minmax(0,1fr)_20rem]">
         {/* Column 1: who you are + what to do next */}
@@ -246,40 +314,54 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
           >
             <p className="text-sm text-muted">{t("home.compassBody")}</p>
             <div className="flex justify-center">
-              <CareerCompass
-                initial={learner.firstName.slice(0, 1).toUpperCase()}
-                label={t("home.compassAlt")}
-                worlds={WORLDS.map((w) => ({
+              <HomeCompass
+                lessData={lessData || learner.dataSaver}
+                label={tn2("alt3d")}
+                worlds={worlds.map((w) => ({
                   code: w.code,
                   name: tw(w.code),
-                  score: best.has(w.code) ? best.get(w.code)! : null,
+                  color: WORLD_COLOURS[w.code] ?? w.color,
+                  interest: interest.scores[w.code] ?? 0,
                 }))}
+                fallback={
+                  <CareerCompass
+                    initial={learner.firstName.slice(0, 1).toUpperCase()}
+                    label={t("home.compassAlt")}
+                    worlds={worlds.map((w) => ({
+                      code: w.code,
+                      name: tw(w.code),
+                      score: best.has(w.code) ? best.get(w.code)! : null,
+                    }))}
+                  />
+                }
               />
             </div>
           </Panel>
 
-          <Panel
-            title={t("home.matchTitle")}
-            accent={WORLD_COLOURS[top.world]}
-            action={{ href: "/opportunities", label: t("home.viewAll") }}
-          >
-            <Link
-              href="/opportunities"
-              style={worldStyle(top.world)}
-              className="world-tint lift flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center"
+          {learner.restricted ? null : (
+            <Panel
+              title={t("home.matchTitle")}
+              accent={WORLD_COLOURS[top.world]}
+              action={{ href: "/opportunities", label: t("home.viewAll") }}
             >
-              <ScoreRing
-                value={top.score}
-                size={80}
-                label={t("opps.match", { score: top.score })}
-              />
-              <span className="font-heading text-lg leading-snug font-semibold">{top.title}</span>
-              <span className="text-sm text-muted">{top.sponsor}</span>
-              <span className="text-xs font-semibold text-muted">
-                {top.type} · {t("home.closes", { date: fmt.format(new Date(top.closes)) })}
-              </span>
-            </Link>
-          </Panel>
+              <Link
+                href="/opportunities"
+                style={worldStyle(top.world)}
+                className="world-tint lift flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center"
+              >
+                <ScoreRing
+                  value={top.score}
+                  size={80}
+                  label={t("opps.match", { score: top.score })}
+                />
+                <span className="font-heading text-lg leading-snug font-semibold">{top.title}</span>
+                <span className="text-sm text-muted">{top.sponsor}</span>
+                <span className="text-xs font-semibold text-muted">
+                  {top.type} · {t("home.closes", { date: fmt.format(new Date(top.closes)) })}
+                </span>
+              </Link>
+            </Panel>
+          )}
 
           <Panel
             id="notices"

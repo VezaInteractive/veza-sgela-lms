@@ -132,7 +132,7 @@ function Scene({ worlds, reducedMotion, onSelect, onFps }: SceneProps) {
 /**
  * The live 3D Compass (loaded on demand). Kept light for low-end phones: about 25 small meshes,
  * Lambert materials, no shadows or post-processing, pixel ratio capped at 1.5. Under reduced
- * motion it renders a still frame (frameloop "demand").
+ * motion the scene still renders but holds still (rotation, pulse and halos are gated off).
  */
 export default function CompassScene({
   worlds,
@@ -146,7 +146,7 @@ export default function CompassScene({
       role="img"
       aria-label={label}
       dpr={[1, 1.5]}
-      frameloop={reducedMotion ? "demand" : "always"}
+      frameloop="always"
       gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
       camera={{ position: [0, 4.4, 5.4], fov: 42 }}
       onCreated={({ camera }) => camera.lookAt(0, 0.4, 0)}

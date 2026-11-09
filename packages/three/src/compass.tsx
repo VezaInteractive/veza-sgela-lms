@@ -58,7 +58,7 @@ export function CareerCompass3D(props: CareerCompass3DProps) {
     >
       {mode === "3d" ? (
         <Suspense fallback={props.fallback}>
-          <div className="aspect-square w-full">
+          <div className="mx-auto aspect-square w-full max-w-sm" style={{ minHeight: "16rem" }}>
             <CompassScene
               worlds={props.worlds}
               label={props.label}
