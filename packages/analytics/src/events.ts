@@ -43,6 +43,9 @@ export const ONBOARDING_EVENTS = [
   "claim_linked",
   "claim_failed",
   "expo_code_entered",
+  "profile_photo_updated",
+  "profile_photo_removed",
+  "profile_photo_rejected",
 ] as const;
 
 export const EVENT_NAMES = [...FUNNEL_EVENTS, ...UI_EVENTS, ...ONBOARDING_EVENTS] as const;

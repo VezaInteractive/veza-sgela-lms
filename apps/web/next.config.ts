@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
   ],
   serverExternalPackages: ["pino", "@prisma/client", "@sgela/db", "pg"],
   poweredByHeader: false,
+  // Profile photo uploads (D-025) are capped at 5 MB in code; leave headroom for form overhead.
+  experimental: { serverActions: { bodySizeLimit: "6mb" } },
 };
 
 export default withNextIntl(nextConfig);

@@ -18,21 +18,22 @@
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
     "@sgela/analytics": "workspace:*",
+    "@sgela/contracts": "workspace:*",
     "@sgela/db": "workspace:*",
     "@sgela/geo": "workspace:*",
+    "@sgela/matching": "workspace:*",
+    "@sgela/messaging": "workspace:*",
     "@sgela/ui": "workspace:*",
     "lucide-react": "^1.70.0",
     "next": "16.4.5",
     "next-intl": "^4.14.9",
     "next-themes": "^0.4.6",
     "pino": "^10.4.0",
+    "qrcode": "^1.5.4",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "zod": "^4.6.7",
-    "@sgela/contracts": "workspace:*",
-    "@sgela/matching": "workspace:*",
-    "@sgela/messaging": "workspace:*",
-    "qrcode": "^1.5.4"
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
@@ -40,15 +41,15 @@
     "@sgela/config": "workspace:*",
     "@tailwindcss/postcss": "4.3.5",
     "@types/node": "^24.0.0",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "dotenv": "^17.2.0",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "4.3.5",
+    "tsx": "^4.20.0",
     "typescript": "5.9.3",
-    "vitest": "^5.1.0",
-    "@types/qrcode": "^1.5.5",
-    "dotenv": "^17.2.0",
-    "tsx": "^4.20.0"
+    "vitest": "^5.1.0"
   }
 }
