@@ -1,4 +1,12 @@
-import { ChefHat, Plane, Sprout, Stethoscope, Zap, type LucideIcon } from "lucide-react";
+import {
+  ChefHat,
+  GraduationCap,
+  Plane,
+  Sprout,
+  Stethoscope,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@sgela/ui";
 
 export const WORLD_COLOURS: Record<string, string> = {
@@ -7,6 +15,8 @@ export const WORLD_COLOURS: Record<string, string> = {
   CUL: "#FF6B5A",
   MED: "#3FD1B5",
   AGR: "#ABCF37",
+  /** Career-Ready add-ons (ICT, business): not a career world, so its own accent. */
+  READY: "#9B7BFF",
 };
 
 const ICONS: Record<string, LucideIcon> = {
@@ -15,11 +25,22 @@ const ICONS: Record<string, LucideIcon> = {
   CUL: ChefHat,
   MED: Stethoscope,
   AGR: Sprout,
+  READY: GraduationCap,
 };
 
-/** Inline style that feeds the `.world-tint` / `.world-icon` / `.lift` classes. */
+/** Code for courses without a world (Career-Ready tracks). */
+export const NO_WORLD = "READY";
+
+/**
+ * Inline style that feeds the `.world-tint` / `.course-card` / `.world-icon` / `.lift` classes:
+ * the world colour and its line motif (D-036; motifs live in globals.css).
+ */
 export function worldStyle(code: string): React.CSSProperties {
-  return { ["--w" as string]: WORLD_COLOURS[code] ?? "#ABCF37" };
+  const known = code in WORLD_COLOURS && code !== "READY";
+  return {
+    ["--w" as string]: WORLD_COLOURS[code] ?? "#ABCF37",
+    ["--motif" as string]: known ? `var(--motif-${code})` : "var(--motif-dots)",
+  };
 }
 
 export function WorldIcon({

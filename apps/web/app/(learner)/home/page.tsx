@@ -68,7 +68,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
 
   const s = LEARNER_STATS;
   const course = COURSES.find((c) => c.progress > 0) ?? COURSES[0]!;
-  const courseColour = WORLD_COLOURS[course.world ?? "AGR"]!;
+  const courseColour = WORLD_COLOURS[course.world ?? "READY"]!;
   const upNext = COURSES.flatMap((c) =>
     c.topics.filter((tp) => tp.status === "current").map((tp) => ({ course: c, topic: tp })),
   ).slice(0, 3);
@@ -156,7 +156,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
                     href={"/learn/" + c.slug}
                     className="flex items-center gap-3 rounded-xl border border-border p-3 transition-colors hover:border-primary"
                   >
-                    <WorldIcon code={c.world ?? "AGR"} size="sm" />
+                    <WorldIcon code={c.world ?? "READY"} size="sm" />
                     <span className="flex min-w-0 flex-col">
                       <span className="truncate text-sm font-semibold">{topic.title}</span>
                       <span className="truncate text-xs text-muted">

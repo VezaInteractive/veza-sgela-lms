@@ -56,11 +56,94 @@ h4 {
   box-shadow: var(--card-shadow);
 }
 
-/* World tint: flat pastel card in the world colour. Set --w inline. */
+/* ── Card surfaces (D-036) ────────────────────────────────────────────────────────────
+   Every world card carries its own line motif (like the lime sidebar pattern) in its world
+   colour, a soft diagonal gradient, a corner glow and a coloured lift on hover. Motifs are
+   one-colour SVG tiles used as masks, so one pattern works in any colour and both themes.
+   worldStyle() sets --w and --motif; tiles without a world fall back to dots. Decorative only:
+   the pattern sits behind content and fades out away from the top-right corner. */
+:root {
+  --motif-AVI: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'><path d='M-4 48L48 -4' stroke='black' stroke-width='1.6' stroke-dasharray='5 6' stroke-linecap='round'/><circle cx='34' cy='34' r='1.6'/></svg>");
+  --motif-ENG: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='34'><path d='M15 3l11 6.5v13L15 29 4 22.5v-13z' fill='none' stroke='black' stroke-width='1.5'/><circle cx='15' cy='16' r='2.2' fill='none' stroke='black' stroke-width='1.3'/></svg>");
+  --motif-CUL: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='22'><path d='M0 11q5-7 10 0t10 0 10 0 10 0' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'/></svg>");
+  --motif-MED: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M15 10v10M10 15h10' stroke='black' stroke-width='2.2' stroke-linecap='round'/></svg>");
+  --motif-AGR: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='38' height='38'><path d='M9 29c1-11 8-18 20-20-1 12-8 19-20 20zM9 29l11-11' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>");
+  --motif-dots: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14'><circle cx='3' cy='3' r='1.4'/></svg>");
+  --motif-fade: radial-gradient(
+    130% 120% at 100% 0%,
+    black 0%,
+    rgb(0 0 0 / 0.6) 40%,
+    transparent 75%
+  );
+}
+
+:root,
+[data-theme="dark"] {
+  --card-highlight: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+[data-theme="light"] {
+  --card-highlight: inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+@layer components {
+  .world-tint,
+  .course-card,
+  .stat-tile {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  /* Pattern layer: world colour, masked by the motif and faded away from the corner. */
+  .world-tint::before,
+  .course-card::before,
+  .stat-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--w-strong, var(--w));
+    opacity: var(--motif-alpha, 0.16);
+    -webkit-mask-image: var(--motif, var(--motif-dots)), var(--motif-fade);
+    mask-image: var(--motif, var(--motif-dots)), var(--motif-fade);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Corner glow: a soft light source in the world colour, top right. */
+  .world-tint::after,
+  .course-card::after,
+  .stat-tile::after {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    pointer-events: none;
+    top: -40%;
+    right: -25%;
+    width: 75%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--w) var(--glow-mix, 45%), transparent) 0%,
+      transparent 68%
+    );
+  }
+}
+
+/* World tint: pastel card in the world colour. Set --w inline (worldStyle). */
 .world-tint {
-  background: color-mix(in oklab, var(--w) var(--tint-mix), var(--glass));
-  border: 1px solid color-mix(in oklab, var(--w) 28%, var(--glass-border));
-  box-shadow: var(--card-shadow);
+  --w-strong: color-mix(in oklab, var(--w) var(--icon-mix), #000);
+  --motif-alpha: 0.12;
+  --glow-mix: 30%;
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--w) calc(var(--tint-mix) * 0.6), var(--glass)) 0%,
+    color-mix(in oklab, var(--w) calc(var(--tint-mix) * 1.4), var(--glass)) 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--w) 30%, var(--glass-border));
+  box-shadow: var(--card-highlight), var(--card-shadow);
 }
 .world-icon {
   color: color-mix(in oklab, var(--w) var(--icon-mix), #000);
@@ -69,13 +152,44 @@ h4 {
 
 /* Dashboard parts (components/dashboard/parts.tsx). Set --w (world/accent) inline. */
 .stat-tile {
-  background: color-mix(in oklab, var(--w) var(--stat-mix), var(--glass));
-  border: 1px solid color-mix(in oklab, var(--w) 22%, var(--glass-border));
+  --w-strong: color-mix(in oklab, var(--w) var(--icon-mix), #000);
+  --motif: var(--motif-dots);
+  --motif-alpha: 0.16;
+  --glow-mix: 38%;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--w) calc(var(--stat-mix) * 0.7), var(--glass)) 0%,
+    color-mix(in oklab, var(--w) calc(var(--stat-mix) * 1.7), var(--glass)) 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--w) 28%, var(--glass-border));
+  box-shadow: var(--card-highlight), var(--card-shadow);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
+.stat-tile:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--card-highlight),
+    0 14px 30px -16px color-mix(in oklab, var(--w) 70%, transparent);
+}
+/* Big faded icon in the tile corner (StatStrip). */
+.stat-watermark {
+  color: var(--w-strong);
+  opacity: 0.14;
+  transform: rotate(-12deg);
+}
+/* Icon chip: solid world-colour gem with a white icon. */
 .stat-chip {
-  background: var(--glass);
-  color: color-mix(in oklab, var(--w) var(--icon-mix), #000);
-  box-shadow: var(--card-shadow);
+  color: #fff;
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--w) 78%, #fff),
+    color-mix(in oklab, var(--w) 70%, #000)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 6px 14px -6px color-mix(in oklab, var(--w) 80%, transparent);
 }
 .colour-bar {
   background: color-mix(in oklab, var(--bar) 18%, var(--glass));
@@ -83,15 +197,44 @@ h4 {
 .course-card {
   --w-strong: color-mix(in oklab, var(--w) var(--icon-mix), #000);
   --card-ring: color-mix(in oklab, var(--w) var(--course-mix), var(--glass));
-  background: var(--card-ring);
-  border: 1px solid color-mix(in oklab, var(--w) 35%, var(--glass-border));
-  box-shadow: var(--card-shadow);
+  --motif-alpha: 0.18;
+  background: linear-gradient(
+    155deg,
+    color-mix(in oklab, var(--w) calc(var(--course-mix) * 0.7), var(--glass)) 0%,
+    var(--card-ring) 45%,
+    color-mix(in oklab, var(--w) calc(var(--course-mix) * 1.35), var(--glass)) 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--w) 38%, var(--glass-border));
+  box-shadow: var(--card-highlight), var(--card-shadow);
+}
+/* Course cards often have a photo on top, so motif and glow sit in the bottom-right body. */
+.course-card {
+  --motif-fade: radial-gradient(
+    140% 110% at 100% 100%,
+    black 0%,
+    rgb(0 0 0 / 0.6) 40%,
+    transparent 78%
+  );
+}
+@layer components {
+  .course-card::after {
+    top: auto;
+    bottom: -45%;
+  }
 }
 .course-card .course-card-icon {
   background: var(--glass);
+  color: var(--w-strong);
+  box-shadow: 0 8px 18px -8px color-mix(in oklab, var(--w) 75%, transparent);
 }
 .course-card .course-card-track {
   background: color-mix(in oklab, var(--glass) 70%, transparent);
+}
+.course-card.lift:hover,
+.world-tint.lift:hover {
+  box-shadow:
+    var(--card-highlight),
+    0 20px 40px -20px color-mix(in oklab, var(--w) 75%, transparent);
 }
 
 /* Accent headline colour (solid; replaces the D-020 gradient). */

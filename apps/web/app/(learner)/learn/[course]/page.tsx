@@ -48,7 +48,7 @@ export default async function CoursePage({ params }: PageProps<"/learn/[course]"
   const t = await getTranslations("demo");
   const lessData = await wantsLessData();
   const photo = lessData ? undefined : coursePhoto(c.slug);
-  const world = c.world ?? "AGR";
+  const world = c.world ?? "READY";
   const colour = WORLD_COLOURS[world]!;
   const statusLabel =
     c.progress >= 100

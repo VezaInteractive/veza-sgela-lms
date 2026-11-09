@@ -47,15 +47,23 @@ export function StatStrip({ stats }: { stats: Stat[] }) {
           style={{ ["--w" as string]: accent }}
           className="stat-tile flex items-center gap-3 rounded-2xl p-3.5 md:gap-4 md:p-4"
         >
+          <Icon
+            aria-hidden="true"
+            className="stat-watermark pointer-events-none absolute -right-3 -bottom-4 size-20 md:size-24"
+          />
           <span
             aria-hidden="true"
-            className="stat-chip flex size-11 shrink-0 items-center justify-center rounded-xl md:size-12"
+            className="stat-chip relative flex size-11 shrink-0 items-center justify-center rounded-2xl md:size-12"
           >
             <Icon className="size-5 md:size-6" />
           </span>
-          <span className="flex min-w-0 flex-col">
-            <span className="font-heading text-xl font-bold tabular-nums md:text-2xl">{value}</span>
-            <span className="text-xs leading-tight text-muted md:text-sm">{label}</span>
+          <span className="relative flex min-w-0 flex-col">
+            <span className="font-heading text-2xl leading-none font-bold tabular-nums md:text-3xl">
+              {value}
+            </span>
+            <span className="mt-1 text-xs leading-tight font-medium text-muted md:text-sm">
+              {label}
+            </span>
           </span>
         </li>
       ))}
@@ -211,7 +219,7 @@ export function CourseCard({
     progressLabel: string;
   };
 }) {
-  const world = course.world ?? "AGR";
+  const world = course.world ?? "READY";
   return (
     <Link
       href={"/learn/" + course.slug}
