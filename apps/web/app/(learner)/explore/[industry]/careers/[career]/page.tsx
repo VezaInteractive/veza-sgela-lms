@@ -44,7 +44,6 @@ export default async function CareerPage({ params }: Params) {
   const locale = await getLocale();
   const c = await getCareer(industry, career, locale);
   if (!c) notFound();
-  const t = await getTranslations("demo");
   const te = await getTranslations("explore");
   const tw = await getTranslations("worlds");
   const ts = await getTranslations("subjects");
