@@ -212,3 +212,22 @@ test("career world page has no serious a11y violations", async ({ page }) => {
     results.violations.filter((v) => v.impact === "serious" || v.impact === "critical"),
   ).toEqual([]);
 });
+
+test("sign-up brand scene animates, and holds still under reduced motion", async ({ browser }) => {
+  test.skip(test.info().project.name !== "desktop-1440", "panel shows on wide screens");
+  const planet = 'aside svg.career-scene g[transform^="translate"]';
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    const context = await browser.newContext({
+      storageState: { cookies: [], origins: [] },
+      reducedMotion,
+    });
+    const page = await context.newPage();
+    await page.goto("/consent/unknown-token-000000000000");
+    const first = await page.locator(planet).first().getAttribute("transform");
+    await page.waitForTimeout(800);
+    const later = await page.locator(planet).first().getAttribute("transform");
+    if (reducedMotion === "reduce") expect(later).toBe(first);
+    else expect(later).not.toBe(first);
+    await context.close();
+  }
+});

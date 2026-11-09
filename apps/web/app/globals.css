@@ -177,3 +177,60 @@ h4 {
     opacity: 0.5;
   }
 }
+
+/* Career holodeck scene (components/brand/career-scene.tsx, D-030). Stops under reduced motion. */
+.cs-twinkle {
+  animation: cs-twinkle 3.6s ease-in-out infinite;
+}
+@keyframes cs-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+.cs-meridian {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cs-spin-y 6s linear infinite;
+}
+@keyframes cs-spin-y {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.02);
+  }
+  100% {
+    transform: scaleX(-1);
+  }
+}
+.cs-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cs-pulse 4.5s ease-in-out infinite;
+}
+@keyframes cs-pulse {
+  50% {
+    transform: scale(1.12);
+    opacity: 0.7;
+  }
+}
+.cs-beams line {
+  animation: cs-flow 1.6s linear infinite;
+}
+@keyframes cs-flow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+.cs-float {
+  animation: cs-float 7s ease-in-out infinite;
+}
+@keyframes cs-float {
+  50% {
+    transform: translateY(-12px);
+  }
+}

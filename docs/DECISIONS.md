@@ -187,3 +187,9 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Decision:** `/explore/[world]` opens with a full-width photo banner (world icon, name, tagline and the learner's real best expo score on a dark gradient; data saver gets a tinted banner without the photo), then a big-number strip (careers, subjects you take x/y, courses, expo score), careers as tinted cards with pay and study routes, a "Subjects you need" panel checked against the learner's real subjects with a match bar, "Why it matters", and the world's courses as photo course cards. On phones the banner stacks the icon above the name so long world names never clip.
 - **Data:** expo score and subjects are real; careers, pay, routes and courses are sample content (D-018).
 - **Reason:** last pending page from the stakeholder's redesign list.
+
+## D-030 · 2026-11-09 · "Career holodeck" sign-up scene
+
+- **Decision:** the sign-up brand panel (and phone banner) uses a new animated SVG scene instead of the D-022 orbit art: a lime perspective grid floor rushing toward the viewer (a nod to Veza VR worlds), a spinning wireframe globe with the compass core, the five career worlds orbiting on tilted 3D paths with their names and flowing light beams to the core, a twinkling star field, and two floating glass "heads-up" cards (Aviation 78, Agriculture +40 XP; decorative sample values).
+- **Performance and access:** one requestAnimationFrame loop updates about 25 SVG attributes; it pauses when the tab is hidden or the scene is off screen, and draws a single still frame under prefers-reduced-motion (CSS animations also stop via the global rule). No images or video; scene is `aria-hidden`. E2e checks it moves with motion allowed and stays still under reduced motion. The old orbit art remains as the no-photo backdrop on the profile card.
+- **Reason:** stakeholder asked for a more distinctive, animated illustration on the sign-up page.
