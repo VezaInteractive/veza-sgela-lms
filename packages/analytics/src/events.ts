@@ -50,7 +50,31 @@ export const ONBOARDING_EVENTS = [
   "profile_photo_rejected",
 ] as const;
 
-export const EVENT_NAMES = [...FUNNEL_EVENTS, ...UI_EVENTS, ...ONBOARDING_EVENTS] as const;
+/** M2: Career Compass, Explore, 3D viewer and the catalogue admin. */
+export const EXPLORE_EVENTS = [
+  "world_viewed",
+  "career_viewed",
+  "world_interest_toggled",
+  "career_interest_toggled",
+  "compass_world_opened",
+  "compass_mode",
+  "next_step_clicked",
+  "coach_asked_about_career",
+  "model_viewer_loaded",
+  "model_viewer_reset",
+  "model_viewer_failed",
+  "admin_industry_updated",
+  "admin_career_created",
+  "admin_career_updated",
+  "admin_career_deleted",
+] as const;
+
+export const EVENT_NAMES = [
+  ...FUNNEL_EVENTS,
+  ...UI_EVENTS,
+  ...ONBOARDING_EVENTS,
+  ...EXPLORE_EVENTS,
+] as const;
 
 export type FunnelEventName = (typeof FUNNEL_EVENTS)[number];
 export type EventName = (typeof EVENT_NAMES)[number];

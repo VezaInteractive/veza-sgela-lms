@@ -1,7 +1,6 @@
 import { getDb, type PrismaClient } from "@sgela/db";
 import { normaliseClaimCode } from "@sgela/contracts";
-import { sha256 } from "@/lib/crypto";
-import { ageOn } from "@/lib/onboarding/steps";
+import { emitSignals, vrSignalTypes } from "@/lib/interest/signals";
 
 export const CLAIM_COOKIE = "sgela_claim";
 
@@ -54,18 +53,6 @@ export type ClaimResult =
   | { ok: true; sessionId: string; worlds: string[]; alreadyLinked: boolean }
   | { ok: false; code: "INVALID_CODE" | "CLAIM_NOT_FOUND" | "CLAIM_EXPIRED" | "ALREADY_CLAIMED" };
 
-function ageBand(age: number): string {
-  if (age < 15) return "<15";
-  if (age < 18) return "15-17";
-  if (age < 25) return "18-24";
-  if (age < 36) return "25-35";
-  return "36+";
-}
-
-function quarterSalt(now: Date): string {
-  return now.getUTCFullYear() + "Q" + (Math.floor(now.getUTCMonth() / 3) + 1);
-}
-
 /**
  * Link an expo session and all its results to a learner (L-ON-7). The conditional update makes
  * double claims impossible even when two people submit at the same moment (L-ON-1).
@@ -112,25 +99,21 @@ export async function claimSession(
       where: { expoSessionId: session.id },
       data: { learnerId },
     });
-    // Initial interest signals from worlds played (L-ON-7). No learner FK: salted one-way hash.
-    await tx.interestSignal.createMany({
-      data: session.results.map((r) => ({
-        learnerHash: sha256(
-          (process.env.HASH_SALT ?? "dev") + ":" + quarterSalt(now) + ":" + learnerId,
-        ),
-        industryCode: r.worldCode,
-        signalType: "vr_world_played",
-        weight: Math.max(1, Math.round(r.score / 20)),
-        provinceCode: learner.provinceCode,
-        districtCode: learner.districtCode,
-        ageBand: ageBand(ageOn(learner.dateOfBirth, now)),
-        gradeBand: learner.grade ? (learner.grade >= 10 ? "10-12" : "8-9") : null,
-        schoolQuintile: learner.school?.quintile ?? null,
-        source: r.simulated ? "expo_simulated" : "expo",
-        expoEventId: session.expoEventId,
-        occurredAt: now,
-      })),
-    });
+    // Initial interest signals from worlds played (L-ON-7, M2-5). Anonymised: bands plus a
+    // salted one-way hash, never a learner id.
+    await emitSignals(
+      tx,
+      { ...learner, schoolQuintile: learner.school?.quintile ?? null },
+      session.results.flatMap((r) =>
+        vrSignalTypes(r.score).map((type) => ({
+          type,
+          industryCode: r.worldCode,
+          source: r.simulated ? ("EXPO_SIMULATED" as const) : ("EXPO" as const),
+          expoEventId: session.expoEventId,
+        })),
+      ),
+      now,
+    );
     return true;
   });
   if (!linked) return { ok: false, code: "ALREADY_CLAIMED" };

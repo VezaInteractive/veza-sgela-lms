@@ -63,11 +63,14 @@ describe("claim flow", () => {
       ]),
     );
     const signals = await db.interestSignal.findMany({
-      where: { source: "expo_simulated", districtCode: "DC34" },
+      where: { source: "EXPO_SIMULATED", districtCode: "DC34" },
       orderBy: { id: "desc" },
-      take: 2,
+      take: 3,
     });
-    expect(signals.map((s) => s.industryCode).sort()).toEqual(["AVI", "MED"]);
+    // AVI 78 is a high score (>= 75), MED 66 is not (PRD 9.3 weights).
+    expect(signals.map((s) => s.industryCode + ":" + s.signalType + ":" + s.weight).sort()).toEqual(
+      ["AVI:VR_HIGH_SCORE:2", "AVI:VR_WORLD_PLAYED:3", "MED:VR_WORLD_PLAYED:3"],
+    );
     expect(
       signals.every(
         (s) => s.learnerHash && !s.learnerHash.includes(thandeka.id) && s.ageBand === "15-17",

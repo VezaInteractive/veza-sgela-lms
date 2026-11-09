@@ -33,3 +33,12 @@ export function safeEqualHex(a: string, b: string): boolean {
   const bb = Buffer.from(b, "hex");
   return ab.length === bb.length && timingSafeEqual(ab, bb);
 }
+
+/**
+ * One-way, salted learner hash for the anonymised InterestSignal stream (PRD 9.3). The salt
+ * rotates every quarter (`period`, e.g. "2026Q4"), so hashes cannot be joined across quarters;
+ * within a quarter they only de-duplicate signals. Never store this next to a learner id.
+ */
+export function learnerSignalHash(learnerId: string, period: string): string {
+  return sha256(secret("HASH_SALT") + ":signal:" + period + ":" + learnerId);
+}
