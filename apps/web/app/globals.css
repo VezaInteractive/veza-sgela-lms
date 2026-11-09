@@ -229,7 +229,7 @@ h4 {
 }
 /* sprite walk: stepped swings read as hand-drawn frames */
 .js-walk {
-  animation: js-walk 2.8s ease-in-out both;
+  animation: js-walk 2s ease-in-out both;
 }
 @keyframes js-walk {
   from {
@@ -321,7 +321,7 @@ h4 {
   }
 }
 .js-takeoff {
-  animation: js-takeoff 3.4s ease-in 300ms both;
+  animation: js-takeoff 2.6s ease-in 150ms both;
 }
 @keyframes js-takeoff {
   from {
@@ -468,4 +468,100 @@ h4 {
 }
 .js-bounce {
   animation: js-float 1.6s ease-in-out infinite;
+}
+/* D-031 update: job characters and ambient island life. */
+.js-idle {
+  animation: js-breathe 2.4s ease-in-out infinite;
+}
+@keyframes js-breathe {
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+.js-work {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: js-work 700ms ease-in-out infinite alternate;
+}
+.js-work-pilot {
+  animation-name: js-salute;
+}
+@keyframes js-work {
+  from {
+    transform: rotate(-6deg);
+  }
+  to {
+    transform: rotate(-30deg);
+  }
+}
+@keyframes js-salute {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-150deg);
+  }
+}
+.js-drop {
+  animation: js-drop 700ms ease-in infinite;
+}
+@keyframes js-drop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+}
+.js-cloud {
+  animation: js-cloud 28s linear infinite;
+}
+@keyframes js-cloud {
+  from {
+    transform: translateX(-120px);
+  }
+  to {
+    transform: translateX(260px);
+  }
+}
+.js-drone {
+  animation: js-drone 11s linear infinite;
+}
+@keyframes js-drone {
+  0% {
+    transform: translate(-60px, 0);
+  }
+  50% {
+    transform: translate(430px, -30px);
+  }
+  100% {
+    transform: translate(880px, 10px);
+  }
+}
+.js-flag {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  animation: js-flag 1.2s ease-in-out infinite alternate;
+}
+@keyframes js-flag {
+  from {
+    transform: skewY(-6deg) scaleX(1);
+  }
+  to {
+    transform: skewY(6deg) scaleX(0.9);
+  }
+}
+.js-chase {
+  animation: js-chase 1.4s ease-in-out infinite;
+}
+@keyframes js-chase {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
 }

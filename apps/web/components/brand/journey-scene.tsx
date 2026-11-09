@@ -18,7 +18,7 @@ import { cn } from "@sgela/ui";
  * The drawing is decorative and hidden from assistive tech (the tagline carries the message).
  */
 
-const ACT_MS = 4200;
+const ACT_MS = 3000;
 const WORLDS = [
   { code: "AVI", colour: "#4FA3FF", score: 78 },
   { code: "ENG", colour: "#FFB547", score: 71 },
@@ -136,9 +136,23 @@ function subscribePaused(l: () => void) {
  * Sprite learner, feet at (0,0): hooded lime hoodie with the Veza compass badge, jeans, white
  * sneakers, face and hair. Stepped walk cycle; the VR headset drops on in acts 2-3.
  */
-function Learner({ walking, headset }: { walking: boolean; headset: boolean }) {
+function Learner({
+  walking,
+  headset,
+  hoodie = "#ABCF37",
+  shade = "#8dae27",
+  skin = "#7a4a2a",
+  idle = false,
+}: {
+  walking: boolean;
+  headset: boolean;
+  hoodie?: string;
+  shade?: string;
+  skin?: string;
+  idle?: boolean;
+}) {
   return (
-    <g className={walking ? "js-walking" : undefined}>
+    <g className={walking ? "js-walking" : idle ? "js-idle" : undefined}>
       <ellipse cx="0" cy="2" rx="17" ry="6" fill="#000" opacity="0.4" />
       <g className="js-bob">
         {/* legs + sneakers */}
@@ -151,18 +165,18 @@ function Learner({ walking, headset }: { walking: boolean; headset: boolean }) {
           <rect x="0" y="-4" width="11" height="5" rx="2.5" fill="#e3e8ef" />
         </g>
         {/* back arm */}
-        <rect className="js-arm-b" x="9" y="-52" width="7" height="23" rx="3.5" fill="#8dae27" />
+        <rect className="js-arm-b" x="9" y="-52" width="7" height="23" rx="3.5" fill={shade} />
         {/* hoodie */}
-        <path d="M-13 -56 Q0 -61 13 -56 L14 -26 Q0 -22 -14 -26Z" fill="#ABCF37" />
+        <path d="M-13 -56 Q0 -61 13 -56 L14 -26 Q0 -22 -14 -26Z" fill={hoodie} />
         <path d="M-13 -56 Q0 -61 13 -56 L12 -50 Q0 -54 -12 -50Z" fill="#c8e070" />
-        <rect x="-14" y="-30" width="28" height="5" rx="2.5" fill="#8dae27" />
+        <rect x="-14" y="-30" width="28" height="5" rx="2.5" fill={shade} />
         <circle cx="-4" cy="-42" r="4.5" fill="#0B0F14" />
         <path d="M-4 -46 L-2.6 -42 L-4 -38 L-5.4 -42Z" fill="#ABCF37" />
         {/* front arm */}
-        <rect className="js-arm-a" x="-16" y="-52" width="7" height="23" rx="3.5" fill="#9cbf2f" />
+        <rect className="js-arm-a" x="-16" y="-52" width="7" height="23" rx="3.5" fill={shade} />
         {/* head */}
         <rect x="-4" y="-61" width="8" height="5" fill="#6b3f22" />
-        <circle cx="0" cy="-70" r="11" fill="#7a4a2a" />
+        <circle cx="0" cy="-70" r="11" fill={skin} />
         <circle cx="-4" cy="-71" r="1.3" fill="#1d1414" />
         <circle cx="4" cy="-71" r="1.3" fill="#1d1414" />
         <path
@@ -230,6 +244,241 @@ function Mentor() {
         strokeWidth="1.2"
         strokeLinecap="round"
       />
+    </g>
+  );
+}
+
+type Role = "pilot" | "tech" | "chef" | "nurse" | "farmer";
+
+/** A person doing the job, so each world reads at a glance. Feet at (0,0). */
+function Worker({ role, colour }: { role: Role; colour: string }) {
+  const outfit = {
+    pilot: { shirt: "#f5f7fa", pants: "#1f2f4f", skin: "#5c3a22" },
+    tech: { shirt: "#ff8a1f", pants: "#2f3b4a", skin: "#7a4a2a" },
+    chef: { shirt: "#f5f7fa", pants: "#2a2526", skin: "#8a5a3a" },
+    nurse: { shirt: "#2fb39a", pants: "#2fb39a", skin: "#5c3a22" },
+    farmer: { shirt: "#c0392b", pants: "#2f5d9a", skin: "#7a4a2a" },
+  }[role];
+  return (
+    <g>
+      <ellipse cx="0" cy="2" rx="17" ry="6" fill="#000" opacity="0.4" />
+      <g className="js-idle">
+        <rect x="-8" y="-27" width="7" height="25" rx="3" fill={outfit.pants} />
+        <rect x="1" y="-27" width="7" height="25" rx="3" fill={outfit.pants} />
+        <rect x="-10" y="-4" width="11" height="5" rx="2.5" fill="#231F20" />
+        <rect x="0" y="-4" width="11" height="5" rx="2.5" fill="#231F20" />
+        <path d="M-14 -57 Q0 -61 14 -57 L14 -25 L-14 -25Z" fill={outfit.shirt} />
+        {role === "pilot" ? (
+          <>
+            <path d="M-2 -57 L2 -57 L1 -38 L-1 -38Z" fill="#1f2f4f" />
+            <rect x="-14" y="-57" width="7" height="3" fill="#e6b422" />
+            <rect x="7" y="-57" width="7" height="3" fill="#e6b422" />
+          </>
+        ) : null}
+        {role === "tech" ? (
+          <>
+            <rect x="-14" y="-44" width="28" height="3" fill="#e3e8ef" />
+            <rect x="-14" y="-36" width="28" height="3" fill="#e3e8ef" />
+          </>
+        ) : null}
+        {role === "chef" ? (
+          <>
+            <path d="M-5 -57 L0 -51 L5 -57Z" fill="#e74c3c" />
+            {[-48, -40, -32].map((y) => (
+              <circle key={y} cx="4" cy={y} r="1.6" fill="#9aa4b1" />
+            ))}
+          </>
+        ) : null}
+        {role === "nurse" ? (
+          <path
+            d="M-7 -57 Q-9 -44 -2 -42 Q4 -42 5 -48"
+            fill="none"
+            stroke="#231F20"
+            strokeWidth="2"
+          />
+        ) : null}
+        {role === "farmer" ? (
+          <>
+            <rect x="-11" y="-50" width="22" height="24" rx="3" fill={outfit.pants} />
+            <rect x="-10" y="-58" width="3" height="10" fill={outfit.pants} />
+            <rect x="7" y="-58" width="3" height="10" fill={outfit.pants} />
+          </>
+        ) : null}
+        <g className={"js-work js-work-" + role}>
+          <rect x="9" y="-53" width="7" height="24" rx="3.5" fill={outfit.shirt} />
+          {role === "farmer" ? (
+            <g>
+              <path d="M10 -30 L30 -30 L28 -16 L12 -16Z" fill="#9aa4b1" />
+              <path d="M30 -28 L42 -36" stroke="#9aa4b1" strokeWidth="3" />
+              {[0, 1, 2].map((i) => (
+                <circle
+                  key={i}
+                  cx={42 + i * 3}
+                  cy={-32}
+                  r="2"
+                  fill="#4FA3FF"
+                  className="js-drop"
+                  style={{ animationDelay: i * 0.2 + "s" }}
+                />
+              ))}
+            </g>
+          ) : null}
+          {role === "chef" ? (
+            <rect
+              x="12"
+              y="-32"
+              width="4"
+              height="26"
+              rx="2"
+              fill="#b07a45"
+              transform="rotate(25 14 -32)"
+            />
+          ) : null}
+          {role === "nurse" ? (
+            <rect
+              x="12"
+              y="-40"
+              width="14"
+              height="18"
+              rx="2"
+              fill="#f5f7fa"
+              stroke={colour}
+              strokeWidth="1.5"
+            />
+          ) : null}
+        </g>
+        <rect x="-16" y="-53" width="7" height="24" rx="3.5" fill={outfit.shirt} />
+        <rect x="-4" y="-61" width="8" height="5" fill={outfit.skin} />
+        <circle cx="0" cy="-70" r="11" fill={outfit.skin} />
+        <circle cx="-4" cy="-70" r="1.3" fill="#1d1414" />
+        <circle cx="4" cy="-70" r="1.3" fill="#1d1414" />
+        <path
+          d="M-3.5 -65 Q0 -62.5 3.5 -65"
+          fill="none"
+          stroke="#1d1414"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+        />
+        {role === "pilot" ? (
+          <>
+            <path d="M-12 -76 Q0 -90 12 -76Z" fill="#1f2f4f" />
+            <rect x="-13" y="-78" width="26" height="5" rx="2" fill="#1f2f4f" />
+            <rect x="-13" y="-76" width="26" height="2" fill="#e6b422" />
+            <rect x="0" y="-75" width="17" height="3" rx="1.5" fill="#0f1a2e" />
+          </>
+        ) : null}
+        {role === "tech" ? (
+          <>
+            <path d="M-13 -74 Q0 -94 13 -74Z" fill="#ffd21f" />
+            <rect x="-15" y="-76" width="30" height="4" rx="2" fill="#f0c000" />
+          </>
+        ) : null}
+        {role === "chef" ? (
+          <>
+            <rect x="-10" y="-96" width="20" height="18" fill="#f5f7fa" />
+            <circle cx="-7" cy="-96" r="7" fill="#f5f7fa" />
+            <circle cx="0" cy="-100" r="8" fill="#f5f7fa" />
+            <circle cx="7" cy="-96" r="7" fill="#f5f7fa" />
+            <rect x="-11" y="-80" width="22" height="4" fill="#e3e8ef" />
+          </>
+        ) : null}
+        {role === "nurse" ? (
+          <path
+            d="M-12 -72 Q-12 -84 0 -84 Q12 -84 12 -72 Q6 -76 0 -76 Q-6 -76 -12 -72Z"
+            fill="#2fb39a"
+          />
+        ) : null}
+        {role === "farmer" ? (
+          <>
+            <ellipse cx="0" cy="-77" rx="22" ry="5" fill="#d9b25f" />
+            <path d="M-10 -78 Q0 -92 10 -78Z" fill="#e3c27a" />
+            <rect x="-10" y="-80" width="20" height="3" fill="#8a5a2a" />
+          </>
+        ) : null}
+      </g>
+    </g>
+  );
+}
+
+const CREW: Record<string, { role: Role; u: number; v: number }> = {
+  AVI: { role: "pilot", u: 0.66, v: -0.22 },
+  ENG: { role: "tech", u: 0.62, v: -0.3 },
+  CUL: { role: "chef", u: 0.98, v: -0.32 },
+  MED: { role: "nurse", u: 0.62, v: -0.24 },
+  AGR: { role: "farmer", u: 0.58, v: -0.08 },
+};
+
+/** Simple glyph per world for the sign (plane, bolt, chef hat, cross, sprout). */
+function WorldGlyph({ code }: { code: string }) {
+  switch (code) {
+    case "AVI":
+      return (
+        <path
+          d="M-11 2 L9 -1 Q13 0 9 1 L-11 4 Z M-2 -1 L-7 -9 L-3 -9 L4 -1Z M-2 3 L-7 10 L-3 10 L4 3Z"
+          fill="#0B0F14"
+        />
+      );
+    case "ENG":
+      return <path d="M2 -11 L-7 2 L-1 2 L-3 11 L7 -2 L1 -2Z" fill="#0B0F14" />;
+    case "CUL":
+      return (
+        <g fill="#0B0F14">
+          <rect x="-6" y="0" width="12" height="7" />
+          <circle cx="-5" cy="-2" r="4.5" />
+          <circle cx="0" cy="-5" r="5" />
+          <circle cx="5" cy="-2" r="4.5" />
+        </g>
+      );
+    case "MED":
+      return (
+        <g fill="#0B0F14">
+          <rect x="-3" y="-9" width="6" height="18" rx="1" />
+          <rect x="-9" y="-3" width="18" height="6" rx="1" />
+        </g>
+      );
+    default:
+      return (
+        <g fill="#0B0F14">
+          <rect x="-1" y="-3" width="2" height="12" />
+          <path d="M0 -1 Q-9 -4 -10 -11 Q-2 -9 0 -3Z" />
+          <path d="M0 -4 Q9 -8 10 -14 Q2 -12 0 -6Z" />
+        </g>
+      );
+  }
+}
+
+/** Job character and a sign naming the world, so each set is unmistakable. */
+function WorldCrew({ code, colour, name }: { code: string; colour: string; name: string }) {
+  const crew = CREW[code] ?? CREW.AGR!;
+  const [wx, wy] = iso(crew.u, crew.v);
+  const [sx, sy] = iso(0.08, -0.98, 150);
+  return (
+    <g>
+      <g transform={`translate(${wx} ${wy}) scale(1.6)`}>
+        <Worker role={crew.role} colour={colour} />
+      </g>
+      <g transform={`translate(${sx} ${sy})`}>
+        <g className="js-rise">
+          <rect x="-3" y="20" width="6" height="70" fill="#46525e" />
+          <rect
+            x="-78"
+            y="-22"
+            width="156"
+            height="44"
+            rx="12"
+            fill="#0B0F14"
+            stroke={colour}
+            strokeWidth="3"
+          />
+          <circle cx="-54" cy="0" r="15" fill={colour} />
+          <g transform="translate(-54 0)">
+            <WorldGlyph code={code} />
+          </g>
+          <text x="-32" y="7" fill="#ffffff" fontSize="20" fontWeight="800">
+            {name}
+          </text>
+        </g>
+      </g>
     </g>
   );
 }
@@ -757,6 +1006,36 @@ export function JourneyScene({
               </g>
             </g>
           ))}
+          {/* drifting clouds */}
+          {(
+            [
+              [60, 140, 1],
+              [520, 90, 0.8],
+              [300, 380, 0.65],
+            ] as [number, number, number][]
+          ).map(([x, y, sc], i) => (
+            <g key={"cl" + i} transform={`translate(${x} ${y}) scale(${sc})`} opacity="0.16">
+              <g className="js-cloud" style={{ animationDelay: -i * 9 + "s" }}>
+                <ellipse cx="0" cy="0" rx="70" ry="18" fill="#ffffff" />
+                <ellipse cx="-24" cy="-12" rx="30" ry="18" fill="#ffffff" />
+                <ellipse cx="18" cy="-16" rx="36" ry="22" fill="#ffffff" />
+              </g>
+            </g>
+          ))}
+          {/* drones */}
+          {[0, 1].map((i) => (
+            <g key={"dr" + i} transform={`translate(0 ${170 + i * 140})`}>
+              <g
+                className="js-drone"
+                style={{ animationDelay: -i * 5 + "s", animationDuration: 11 + i * 3 + "s" }}
+              >
+                <rect x="-14" y="-3" width="28" height="6" rx="3" fill="#9aa4b1" />
+                <rect x="-20" y="-6" width="12" height="2" rx="1" fill="#e3e8ef" />
+                <rect x="8" y="-6" width="12" height="2" rx="1" fill="#e3e8ef" />
+                <circle cx="0" cy="5" r="3" fill={i ? "#FF6B5A" : "#ABCF37"} className="js-flash" />
+              </g>
+            </g>
+          ))}
         </g>
 
         {/* island layer */}
@@ -823,6 +1102,43 @@ export function JourneyScene({
               opacity={act === 1 || act === 2 ? 0 : 1}
             />
 
+            {/* flag on the kiosk */}
+            <g
+              transform={`translate(${iso(KIOSK.u - 0.1, KIOSK.v - 0.08, 125)[0]} ${iso(KIOSK.u - 0.1, KIOSK.v - 0.08, 125)[1]})`}
+            >
+              <rect x="-1.5" y="-60" width="3" height="60" fill="#c3cbd5" />
+              <g className="js-flag">
+                <path d="M1.5 -60 L42 -50 L1.5 -40Z" fill="#ABCF37" />
+                <circle cx="14" cy="-50" r="4" fill="#0B0F14" />
+              </g>
+            </g>
+            {/* learners queuing for the kiosk */}
+            {(
+              [
+                [-0.92, -0.42, "#4FA3FF", "#3a82d1", "#5c3a22"],
+                [-0.98, -0.12, "#FF6B5A", "#d4544a", "#8a5a3a"],
+              ] as [number, number, string, string, string][]
+            ).map(([u, v, h, sh, sk], i) => (
+              <g key={"q" + i} transform={`translate(${iso(u, v)[0]} ${iso(u, v)[1]}) scale(1.45)`}>
+                <Learner walking={false} headset={false} hoodie={h} shade={sh} skin={sk} idle />
+              </g>
+            ))}
+            {/* chasing lights along the front edges */}
+            {Array.from({ length: 12 }, (_, i) => {
+              const [ex, ey] = i < 6 ? iso(-1 + (i / 5) * 2, 1) : iso(1, 1 - ((i - 6) / 5) * 2);
+              return (
+                <circle
+                  key={"e" + i}
+                  cx={ex}
+                  cy={ey + 2}
+                  r="3.5"
+                  fill={i % 2 ? "#ABCF37" : "#f5f7fa"}
+                  className="js-chase"
+                  style={{ animationDelay: i * 0.12 + "s" }}
+                />
+              );
+            })}
+
             {/* act scenes, remounted per act so their animations restart */}
             <g key={key} className="js-act">
               {act === 1 ? (
@@ -849,6 +1165,7 @@ export function JourneyScene({
                     />
                   </g>
                   <WorldSet code={world.code} colour={world.colour} />
+                  <WorldCrew code={world.code} colour={world.colour} name={name} />
                 </g>
               ) : null}
               {act === 2 ? (
@@ -913,7 +1230,7 @@ export function JourneyScene({
                       ])}
                       fill="#ABCF37"
                       className="js-tile"
-                      style={{ animationDelay: i * 0.4 + "s" }}
+                      style={{ animationDelay: i * 0.25 + "s" }}
                     />
                   ))}
                   <g className="js-rise">
