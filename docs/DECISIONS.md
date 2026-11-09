@@ -161,3 +161,9 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Photo upload:** `Learner.avatarKey` + `avatarUpdatedAt` (migration `20261109120000_learner_avatar`). Files go through a `StorageProvider` (`lib/storage`; local disk under `.data/uploads` for dev/test, cloud provider at M8). Uploads are checked by decoding (JPEG/PNG/WebP, 64 px to 40 MP, max 5 MB) and re-encoded with sharp to a 512 px WebP with orientation applied and **all metadata removed** (no GPS). Served only to the signed-in learner at `GET /api/v1/me/avatar` (private cache, nosniff); no endpoint returns another learner's photo, so photos of under-18s are never visible to sponsors, coaches or other learners. Analytics: `profile_photo_updated`, `profile_photo_removed`, `profile_photo_rejected`. Server action body limit raised to 6 MB.
 - **Alternatives:** client-side resize only (rejected: cannot trust the client to strip metadata); public URLs (rejected: minors' photos must stay private).
 - **Reason:** stakeholder asked for better profile image framing, a Me tab that matches the platform, and real photo upload.
+
+## D-026 · 2026-11-09 · Course detail page
+
+- **Decision:** `/learn/[course]` follows the reference course detail layout in Veza style: a hero card (course photo, status pill, accreditation, title, summary, completion bar), a facts row (credits, level, course code, length, provider), Modules (numbered topics with done / up next / locked states and 3D markers) beside Resources (PDFs, 3D models, videos), and the two main actions (Continue lesson, Open 3D model). Actions stay disabled with a note until lessons ship in M3. Sample courses gained `level`, `credits`, `provider` and `resources` (D-018 demo data).
+- **Accessibility:** the facts row is a plain list (an earlier `dl` version failed axe); new axe and sideways-scroll e2e checks cover the page.
+- **Reason:** stakeholder asked for the course detail page from the reference screens.

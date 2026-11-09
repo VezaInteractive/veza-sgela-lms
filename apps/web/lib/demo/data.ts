@@ -212,6 +212,10 @@ export interface Course {
   minutes: number;
   accredited: boolean;
   progress: number;
+  level: "intro" | "beginner" | "intermediate";
+  credits: number;
+  provider: string;
+  resources: string[];
   topics: {
     title: string;
     minutes: number;
@@ -230,6 +234,15 @@ export const COURSES: Course[] = [
     minutes: 300,
     accredited: true,
     progress: 40,
+    level: "beginner",
+    credits: 12,
+    provider: "Bantu (accredited partner)",
+    resources: [
+      "Soil testing kit guide (PDF)",
+      "3D model: drip irrigation system",
+      "Video: a day on a Limpopo co-op farm",
+      "Hydroponics starter checklist",
+    ],
     topics: [
       { title: "Soil health and testing", minutes: 60, status: "done", has3d: true },
       { title: "Water and irrigation", minutes: 60, status: "done", has3d: true },
@@ -247,6 +260,15 @@ export const COURSES: Course[] = [
     minutes: 280,
     accredited: false,
     progress: 10,
+    level: "beginner",
+    credits: 0,
+    provider: "Veza Interactive",
+    resources: [
+      "3D model: angle grinder, exploded view",
+      "Workshop safety poster (PDF)",
+      "Video: testing a power tool safely",
+      "Fault-finding flowchart",
+    ],
     topics: [
       { title: "Plan to repair and maintain", minutes: 45, status: "current", has3d: true },
       { title: "Prepare work area and safety", minutes: 55, status: "locked", has3d: true },
@@ -264,6 +286,14 @@ export const COURSES: Course[] = [
     minutes: 25,
     accredited: false,
     progress: 0,
+    level: "intro",
+    credits: 0,
+    provider: "Veza Interactive",
+    resources: [
+      "3D model: jet engine walkaround",
+      "Pre-flight checklist (PDF)",
+      "Video: a pilot's first day",
+    ],
     topics: [{ title: "Pre-flight walkaround", minutes: 25, status: "current", has3d: true }],
   },
   {
@@ -275,6 +305,14 @@ export const COURSES: Course[] = [
     minutes: 25,
     accredited: false,
     progress: 0,
+    level: "intro",
+    credits: 0,
+    provider: "Veza Interactive",
+    resources: [
+      "3D model: hospital ward",
+      "Hand hygiene steps (PDF)",
+      "Video: triage in a busy clinic",
+    ],
     topics: [{ title: "Ward walkthrough", minutes: 25, status: "current", has3d: true }],
   },
   {
@@ -286,6 +324,14 @@ export const COURSES: Course[] = [
     minutes: 90,
     accredited: true,
     progress: 0,
+    level: "beginner",
+    credits: 4,
+    provider: "Bantu (accredited partner)",
+    resources: [
+      "Email and documents cheat sheet (PDF)",
+      "Staying safe online quiz",
+      "Video: writing your first CV",
+    ],
     topics: [
       { title: "Using a computer and phone well", minutes: 45, status: "current", has3d: false },
       { title: "Safe and smart online", minutes: 45, status: "locked", has3d: false },

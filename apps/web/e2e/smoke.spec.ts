@@ -61,7 +61,7 @@ test("home in dark theme has no serious a11y violations", async ({ page }) => {
 test("learner pages never scroll sideways", async ({ page }) => {
   const sizes = [page.viewportSize()!, { width: 768, height: 1024 }];
   for (const size of sizes)
-    for (const path of ["/home", "/explore", "/learn", "/opportunities", "/me"]) {
+    for (const path of ["/home", "/explore", "/learn", "/learn/agr-101", "/opportunities", "/me"]) {
       await page.setViewportSize(size);
       await page.goto(path);
       const overflow = await page.evaluate(
@@ -125,4 +125,16 @@ test("learner uploads, sees and removes a private profile photo", async ({ page,
   await page.getByRole("button", { name: "Remove photo" }).click();
   await expect(page.getByRole("status")).toHaveText("Photo removed.");
   await expect(page.locator('main img[src^="/api/v1/me/avatar"]')).toHaveCount(0);
+});
+
+test("course page has no serious a11y violations", async ({ page }) => {
+  await page.goto("/learn/eng-101");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Repair and Maintain Electrical Power Tools",
+  );
+  await settleAnimations(page);
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+  expect(
+    results.violations.filter((v) => v.impact === "serious" || v.impact === "critical"),
+  ).toEqual([]);
 });

@@ -375,7 +375,27 @@
       "statMinutes": "Minutes of learning",
       "topicCount": "{n, plural, one {# topic} other {# topics}}",
       "complete": "{n}% complete",
-      "allCourses": "All courses"
+      "allCourses": "All courses",
+      "statusNew": "Not started",
+      "statusActive": "In progress",
+      "statusDone": "Completed",
+      "credits": "Credits",
+      "noCredits": "Non-credit",
+      "levelLabel": "Level",
+      "levels": {
+        "intro": "Taster",
+        "beginner": "Beginner",
+        "intermediate": "Intermediate"
+      },
+      "codeLabel": "Course code",
+      "completion": "{n}% completion",
+      "provider": "Provider",
+      "modules": "Modules",
+      "resources": "Resources",
+      "openLesson": "Continue lesson",
+      "open3d": "Open 3D model",
+      "moduleMeta": "{n} min",
+      "length": "Course length"
     },
     "opps": {
       "title": "Opportunities",
