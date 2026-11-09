@@ -178,7 +178,7 @@ h4 {
   }
 }
 
-/* Career holodeck scene (components/brand/career-scene.tsx, D-030). Stops under reduced motion. */
+/* Star twinkle shared by brand scenes. */
 .cs-twinkle {
   animation: cs-twinkle 3.6s ease-in-out infinite;
 }
@@ -191,46 +191,252 @@ h4 {
     opacity: 0.9;
   }
 }
-.cs-meridian {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: cs-spin-y 6s linear infinite;
+/* Career journey story (components/brand/journey-scene.tsx, D-031). All motion stops under
+   prefers-reduced-motion via the global rule; acts still change (crossfade). */
+.js-layer-far,
+.js-layer-mid,
+.js-layer-near {
+  transition: transform 400ms ease-out;
 }
-@keyframes cs-spin-y {
-  0% {
-    transform: scaleX(1);
-  }
-  50% {
-    transform: scaleX(0.02);
-  }
-  100% {
-    transform: scaleX(-1);
-  }
+.js-layer-far {
+  transform: translate(calc(var(--px, 0) * -12px), calc(var(--py, 0) * -8px));
 }
-.cs-pulse {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: cs-pulse 4.5s ease-in-out infinite;
+.js-layer-mid {
+  transform: translate(calc(var(--px, 0) * -26px), calc(var(--py, 0) * -16px));
 }
-@keyframes cs-pulse {
-  50% {
-    transform: scale(1.12);
-    opacity: 0.7;
-  }
+.js-layer-near {
+  transform: translate(calc(var(--px, 0) * -48px), calc(var(--py, 0) * -30px));
 }
-.cs-beams line {
-  animation: cs-flow 1.6s linear infinite;
+.js-float {
+  animation: js-float 6s ease-in-out infinite;
 }
-@keyframes cs-flow {
-  to {
-    stroke-dashoffset: -32;
-  }
+.js-drift {
+  animation: js-float 8s ease-in-out infinite;
 }
-.cs-float {
-  animation: cs-float 7s ease-in-out infinite;
-}
-@keyframes cs-float {
+@keyframes js-float {
   50% {
     transform: translateY(-12px);
   }
+}
+.js-act,
+.js-caption {
+  animation: js-fade 500ms ease both;
+}
+@keyframes js-fade {
+  from {
+    opacity: 0;
+  }
+}
+/* sprite walk: stepped swings read as hand-drawn frames */
+.js-walk {
+  animation: js-walk 2.8s ease-in-out both;
+}
+@keyframes js-walk {
+  from {
+    transform: translate(var(--x0), var(--y0));
+  }
+  to {
+    transform: translate(var(--x1), var(--y1));
+  }
+}
+.js-walking .js-leg-a,
+.js-walking .js-leg-b,
+.js-walking .js-arm-a,
+.js-walking .js-arm-b {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: js-swing 420ms steps(3) infinite alternate;
+}
+.js-walking .js-leg-b,
+.js-walking .js-arm-a {
+  animation-direction: alternate-reverse;
+}
+@keyframes js-swing {
+  from {
+    transform: rotate(-24deg);
+  }
+  to {
+    transform: rotate(24deg);
+  }
+}
+.js-walking .js-bob {
+  animation: js-bob 210ms steps(2) infinite alternate;
+}
+@keyframes js-bob {
+  to {
+    transform: translateY(-3px);
+  }
+}
+.js-visor {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition:
+    opacity 400ms ease,
+    transform 400ms ease;
+}
+.js-visor-on {
+  opacity: 1;
+  transform: none;
+}
+.js-screen,
+.js-flash {
+  animation: js-blink 1.6s ease-in-out infinite;
+}
+@keyframes js-blink {
+  50% {
+    opacity: 0.45;
+  }
+}
+.js-gate-glow {
+  animation: js-glow 1.6s ease-in-out 1.2s infinite;
+}
+@keyframes js-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.js-portal,
+.js-pop,
+.js-spin,
+.js-spin-rev,
+.js-beat,
+.js-needle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.js-portal {
+  animation: js-pop-in 900ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+.js-pop {
+  animation: js-pop-in 600ms cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+@keyframes js-pop-in {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+}
+.js-fly {
+  animation: js-fly 3.2s ease-in 400ms both;
+}
+@keyframes js-fly {
+  from {
+    transform: translate(var(--fx), var(--fy)) scale(0.6);
+  }
+  to {
+    transform: translate(calc(var(--fx) + 330px), calc(var(--fy) - 215px)) scale(1.2);
+  }
+}
+.js-contrail {
+  animation: js-fade 1.2s ease 600ms both;
+}
+.js-spin {
+  animation: js-rot 4s linear infinite;
+}
+.js-spin-rev {
+  animation: js-rot 3s linear infinite reverse;
+}
+@keyframes js-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.js-steam {
+  animation: js-steam 1.6s ease-out infinite;
+}
+@keyframes js-steam {
+  from {
+    transform: translateY(0);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+}
+.js-ecg {
+  stroke-dasharray: 420;
+  animation: js-ecg 2s linear infinite;
+}
+@keyframes js-ecg {
+  from {
+    stroke-dashoffset: 420;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.js-beat {
+  animation: js-beat 1s ease-in-out infinite;
+}
+@keyframes js-beat {
+  15% {
+    transform: scale(1.18);
+  }
+  30% {
+    transform: scale(1);
+  }
+}
+.js-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: js-grow 1.2s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@keyframes js-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+.js-spark {
+  animation: js-spark 1.4s ease-out infinite;
+}
+@keyframes js-spark {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110px);
+    opacity: 0;
+  }
+}
+.js-tile {
+  opacity: 0;
+  animation: js-tile 500ms ease both;
+}
+@keyframes js-tile {
+  to {
+    opacity: 0.7;
+  }
+}
+.js-needle {
+  animation: js-needle 2.4s ease-in-out infinite;
+}
+@keyframes js-needle {
+  0% {
+    transform: rotate(-60deg);
+  }
+  40% {
+    transform: rotate(30deg);
+  }
+  70%,
+  100% {
+    transform: rotate(45deg);
+  }
+}
+.js-rise {
+  animation: js-rise 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 300ms both;
+}
+@keyframes js-rise {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+.js-bounce {
+  animation: js-float 1.6s ease-in-out infinite;
 }

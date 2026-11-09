@@ -92,6 +92,14 @@
       "verify": "Qinisekisa ikhodi yakho",
       "profile": "Mayelana nawe",
       "consent": "Imvume"
+    },
+    "story": {
+      "expo": "Dlala umhlaba womsebenzi e-expo ye-Veza",
+      "world": "Ngena ku-{world}",
+      "score": "Thola amaphuzu akho",
+      "match": "Landela ikhampasi yakho uye emathubeni angempela",
+      "pause": "Misa umdwebo onyakazayo",
+      "play": "Dlala umdwebo onyakazayo"
     }
   },
   "profile": {

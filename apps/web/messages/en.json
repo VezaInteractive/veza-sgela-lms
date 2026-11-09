@@ -118,6 +118,14 @@
       "verify": "Verify your code",
       "profile": "About you",
       "consent": "Consent"
+    },
+    "story": {
+      "expo": "Play a career world at a Veza expo",
+      "world": "Step inside {world}",
+      "score": "Get your score",
+      "match": "Follow your compass to real opportunities",
+      "pause": "Pause animation",
+      "play": "Play animation"
     }
   },
   "profile": {

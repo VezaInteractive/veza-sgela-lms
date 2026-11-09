@@ -213,9 +213,11 @@ test("career world page has no serious a11y violations", async ({ page }) => {
   ).toEqual([]);
 });
 
-test("sign-up brand scene animates, and holds still under reduced motion", async ({ browser }) => {
+test("sign-up story advances, can be paused, and still changes under reduced motion", async ({
+  browser,
+}) => {
   test.skip(test.info().project.name !== "desktop-1440", "panel shows on wide screens");
-  const planet = 'aside svg.career-scene g[transform^="translate"]';
+  test.setTimeout(60_000);
   for (const reducedMotion of ["no-preference", "reduce"] as const) {
     const context = await browser.newContext({
       storageState: { cookies: [], origins: [] },
@@ -223,11 +225,16 @@ test("sign-up brand scene animates, and holds still under reduced motion", async
     });
     const page = await context.newPage();
     await page.goto("/consent/unknown-token-000000000000");
-    const first = await page.locator(planet).first().getAttribute("transform");
-    await page.waitForTimeout(800);
-    const later = await page.locator(planet).first().getAttribute("transform");
-    if (reducedMotion === "reduce") expect(later).toBe(first);
-    else expect(later).not.toBe(first);
+    const act = page.locator("aside [data-testid=story-act]");
+    await expect(act).toHaveAttribute("data-act", "0");
+    await expect(act).toHaveAttribute("data-act", "1", { timeout: 6000 });
+    await page.locator("aside").getByRole("button", { name: "Pause animation" }).click();
+    const held = await act.getAttribute("data-act");
+    await page.waitForTimeout(5000);
+    await expect(act).toHaveAttribute("data-act", held!);
+    await expect(
+      page.locator("aside").getByRole("button", { name: "Play animation" }),
+    ).toBeVisible();
     await context.close();
   }
 });

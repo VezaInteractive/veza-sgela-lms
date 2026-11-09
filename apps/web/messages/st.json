@@ -92,6 +92,14 @@
       "verify": "Netefatsa khoutu ya hao",
       "profile": "Ka wena",
       "consent": "Tumello"
+    },
+    "story": {
+      "expo": "Bapala lefatshe la mosebetsi expo ya Veza",
+      "world": "Kena ho {world}",
+      "score": "Fumana dintlha tsa hao",
+      "match": "Latela khampase ya hao ho ya menyetla ya nnete",
+      "pause": "Emisa setshwantsho se tsamayang",
+      "play": "Bapala setshwantsho se tsamayang"
     }
   },
   "profile": {
