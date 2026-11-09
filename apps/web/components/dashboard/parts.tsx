@@ -274,3 +274,28 @@ export function CardPhoto({ src }: { src: string }) {
     </span>
   );
 }
+
+/** Big inline numbers for a page header (reference "92 Employee" style). */
+export function HeroStats({ stats }: { stats: Stat[] }) {
+  return (
+    <ul className="grid grid-cols-2 gap-x-6 gap-y-4 sm:flex sm:flex-wrap sm:gap-x-8">
+      {stats.map(({ label, value, icon: Icon, accent }) => (
+        <li key={label} className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            style={{ ["--w" as string]: accent }}
+            className="stat-chip flex size-10 shrink-0 items-center justify-center rounded-xl"
+          >
+            <Icon className="size-5" />
+          </span>
+          <span className="flex flex-col">
+            <span className="font-heading text-3xl leading-none font-bold tabular-nums md:text-4xl">
+              {value}
+            </span>
+            <span className="text-xs text-muted">{label}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}

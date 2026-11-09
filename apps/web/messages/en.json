@@ -252,7 +252,23 @@
     "resultsEmpty": "No expo results yet.",
     "simulated": "demo",
     "privacy": "Privacy and consent",
-    "account": "Account"
+    "account": "Account",
+    "photo": {
+      "title": "Profile photo",
+      "body": "Only you can see your photo. It is never shown to sponsors or other learners.",
+      "choose": "Choose a photo",
+      "upload": "Save photo",
+      "remove": "Remove photo",
+      "hint": "JPG, PNG or WebP, up to 5 MB.",
+      "saved": "Photo saved.",
+      "removed": "Photo removed.",
+      "errors": {
+        "TOO_BIG": "That photo is bigger than 5 MB. Try a smaller one.",
+        "NOT_AN_IMAGE": "That file is not a JPG, PNG or WebP photo.",
+        "TOO_SMALL": "That photo is too small. Use one at least 64 pixels wide.",
+        "NO_FILE": "Choose a photo first."
+      }
+    }
   },
   "privacy": {
     "title": "Privacy and consent",
@@ -383,7 +399,11 @@
       "badges": "Badges",
       "credentials": "Credentials",
       "earned": "Earned",
-      "notYet": "Not yet earned"
+      "notYet": "Not yet earned",
+      "title": "My profile",
+      "intro": "Your expo results, badges and account in one place.",
+      "badgesTitle": "Badges",
+      "resultsTitle": "Your expo results"
     },
     "insights": {
       "title": "Platform insights",

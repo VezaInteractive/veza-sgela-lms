@@ -1,14 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GraduationCap, MapPin, Pencil, School } from "lucide-react";
-import { ColourBar } from "./parts";
+import { Pencil } from "lucide-react";
+import { OrbitArt } from "@/components/brand/orbit-art";
 
 export interface ProfileCardProps {
   name: string;
-  /** Photo URL when the learner has one; otherwise initials are shown. */
+  /** Photo URL when the learner has one; otherwise a branded backdrop with initials. */
   photoUrl?: string;
-  school?: string;
-  grade?: string;
+  /** e.g. "Grade 10 · Vhembe Secondary School". */
+  subtitle?: string;
   place?: string;
   level: string;
   xpLabel: string;
@@ -28,58 +28,75 @@ function initials(name: string) {
   );
 }
 
-/** Learner profile panel for the Home rail: photo, name, school facts and level progress. */
+/**
+ * Portrait profile card (D-025): the photo fills the card and the learner's details sit on a
+ * dark gradient at the bottom, so text stays readable on any photo. No photo: deep-space brand
+ * art with large initials.
+ */
 export function ProfileCard(p: ProfileCardProps) {
   return (
     <section
       aria-label={p.name}
-      className="glass relative flex min-w-0 flex-col overflow-hidden rounded-2xl"
+      className="relative isolate flex aspect-4/5 max-h-[30rem] w-full flex-col justify-end overflow-hidden rounded-3xl bg-space text-white shadow-(--card-shadow)"
     >
-      <div aria-hidden="true" className="brand-pattern h-20 shrink-0" />
-      <div className="flex flex-col gap-4 px-5 pb-5">
-        <div className="-mt-10 flex items-end justify-between gap-3">
-          <span className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-ink font-heading text-2xl font-bold text-lime-500 ring-4 ring-(--glass)">
-            {p.photoUrl ? (
-              <Image src={p.photoUrl} alt="" fill sizes="80px" className="object-cover" />
-            ) : (
-              <span aria-hidden="true">{initials(p.name)}</span>
-            )}
-          </span>
-          <Link
-            href={p.editHref}
-            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-semibold hover:border-primary"
+      {p.photoUrl ? (
+        <Image
+          src={p.photoUrl}
+          alt=""
+          fill
+          sizes="(min-width: 1280px) 18rem, (min-width: 768px) 50vw, 100vw"
+          className="-z-20 object-cover object-top"
+          priority
+          // Private, cookie-protected URL: the image optimiser cannot fetch it. Already 512 px WebP.
+          unoptimized
+        />
+      ) : (
+        <>
+          <OrbitArt className="absolute inset-0 -z-20 size-full opacity-80" />
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 top-[22%] -z-10 mx-auto flex size-28 items-center justify-center rounded-full bg-lime-500 font-heading text-4xl font-bold text-ink shadow-[0_0_48px_-8px_var(--color-lime-500)]"
           >
-            <Pencil aria-hidden="true" className="size-3.5" />
-            {p.editLabel}
-          </Link>
+            {initials(p.name)}
+          </span>
+        </>
+      )}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/25 to-transparent"
+      />
+
+      <Link
+        href={p.editHref}
+        aria-label={p.editLabel}
+        className="absolute top-3 right-3 flex size-10 items-center justify-center rounded-full border border-white/40 bg-black/35 text-white hover:bg-black/55"
+      >
+        <Pencil aria-hidden="true" className="size-4" />
+      </Link>
+
+      <div className="flex flex-col gap-3 p-5">
+        <div className="flex items-end justify-between gap-3">
+          <div className="flex min-w-0 flex-col">
+            <h2 className="truncate font-heading text-2xl font-semibold">{p.name}</h2>
+            {p.subtitle ? <p className="truncate text-sm text-white/85">{p.subtitle}</p> : null}
+            {p.place ? <p className="truncate text-sm text-white/85">{p.place}</p> : null}
+          </div>
+          <span className="shrink-0 rounded-full border border-white/40 bg-black/35 px-3 py-1.5 text-sm font-semibold">
+            {p.level}
+          </span>
         </div>
-        <div className="flex flex-col gap-0.5">
-          <h2 className="truncate font-heading text-xl font-semibold">{p.name}</h2>
-          <span className="text-sm font-semibold text-link">{p.level}</span>
-        </div>
-        <ul className="flex flex-col gap-2 text-sm text-muted">
-          {p.school ? (
-            <li className="flex items-center gap-2">
-              <School aria-hidden="true" className="size-4 shrink-0" />
-              <span className="truncate">{p.school}</span>
-            </li>
-          ) : null}
-          {p.grade ? (
-            <li className="flex items-center gap-2">
-              <GraduationCap aria-hidden="true" className="size-4 shrink-0" />
-              {p.grade}
-            </li>
-          ) : null}
-          {p.place ? (
-            <li className="flex items-center gap-2">
-              <MapPin aria-hidden="true" className="size-4 shrink-0" />
-              <span className="truncate">{p.place}</span>
-            </li>
-          ) : null}
-        </ul>
         <div className="flex flex-col gap-1.5">
-          <ColourBar value={p.xpPct} colour="#ABCF37" label={p.xpLabel} />
-          <span className="text-xs font-medium text-muted">{p.xpLabel}</span>
+          <div
+            role="progressbar"
+            aria-valuenow={p.xpPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={p.xpLabel}
+            className="h-1.5 w-full overflow-hidden rounded-full bg-white/25"
+          >
+            <div className="h-full rounded-full bg-lime-500" style={{ width: `${p.xpPct}%` }} />
+          </div>
+          <span className="text-xs text-white/85">{p.xpLabel}</span>
         </div>
       </div>
     </section>

@@ -212,7 +212,23 @@
     "resultsEmpty": "Ha ho diphetho tsa expo hajwale.",
     "simulated": "pontsho",
     "privacy": "Lekunutu le tumello",
-    "account": "Akhaonte"
+    "account": "Akhaonte",
+    "photo": {
+      "title": "Setshwantsho sa profaele",
+      "body": "Ke wena feela ya ka bonang setshwantsho sa hao. Ha se bontshwe batshehetsi kapa baithuti ba bang.",
+      "choose": "Kgetha setshwantsho",
+      "upload": "Boloka setshwantsho",
+      "remove": "Tlosa setshwantsho",
+      "hint": "JPG, PNG kapa WebP, ho fihla ho 5 MB.",
+      "saved": "Setshwantsho se bolokilwe.",
+      "removed": "Setshwantsho se tlositswe.",
+      "errors": {
+        "TOO_BIG": "Setshwantsho seo se seholo ho feta 5 MB. Leka se senyenyane.",
+        "NOT_AN_IMAGE": "Faele eo hase setshwantsho sa JPG, PNG kapa WebP.",
+        "TOO_SMALL": "Setshwantsho seo se senyenyane haholo. Sebedisa se nang le bophara ba bonyane dipixel tse 64.",
+        "NO_FILE": "Kgetha setshwantsho pele."
+      }
+    }
   },
   "privacy": {
     "title": "Lekunutu le tumello",

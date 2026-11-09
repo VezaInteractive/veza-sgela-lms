@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import sharp from "sharp";
 import { settleAnimations } from "./helpers";
 
 test("root redirects to home", async ({ page }) => {
@@ -89,4 +90,39 @@ test("home shows profile and calendar, and month links work", async ({ page }) =
   await expect(page.locator("[aria-current=date]")).toHaveCount(0);
   await page.goto("/home?month=not-a-month");
   await expect(page.locator("[aria-current=date]")).toHaveCount(1);
+});
+
+test("learner uploads, sees and removes a private profile photo", async ({ page, browser }) => {
+  // One project only: both projects share the same test learner, so parallel runs would race.
+  test.skip(test.info().project.name !== "desktop-1440", "runs once");
+  const png = await sharp({
+    create: { width: 300, height: 300, channels: 3, background: { r: 79, g: 163, b: 255 } },
+  })
+    .png()
+    .toBuffer();
+  await page.goto("/me");
+  await page.getByTestId("photo-input").setInputFiles({
+    name: "me.png",
+    mimeType: "image/png",
+    buffer: png,
+  });
+  await page.getByRole("button", { name: "Save photo" }).click();
+  await expect(page.getByRole("status")).toHaveText("Photo saved.");
+  const img = page.locator('main img[src^="/api/v1/me/avatar"]').first();
+  await expect(img).toBeVisible();
+
+  const own = await page.request.get("/api/v1/me/avatar");
+  expect(own.status()).toBe(200);
+  expect(own.headers()["content-type"]).toBe("image/webp");
+
+  // Signed-out visitors cannot fetch it.
+  const anon = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  expect((await anon.request.get(new URL("/api/v1/me/avatar", page.url()).href)).status()).toBe(
+    401,
+  );
+  await anon.close();
+
+  await page.getByRole("button", { name: "Remove photo" }).click();
+  await expect(page.getByRole("status")).toHaveText("Photo removed.");
+  await expect(page.locator('main img[src^="/api/v1/me/avatar"]')).toHaveCount(0);
 });

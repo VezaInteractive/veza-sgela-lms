@@ -212,7 +212,23 @@
     "resultsEmpty": "Ayikho imiphumela ye-expo okwamanje.",
     "simulated": "isiboniso",
     "privacy": "Ubumfihlo nemvume",
-    "account": "I-akhawunti"
+    "account": "I-akhawunti",
+    "photo": {
+      "title": "Isithombe sephrofayela",
+      "body": "Nguwe kuphela ongasibona isithombe sakho. Asikaze siboniswe abaxhasi noma abanye abafundi.",
+      "choose": "Khetha isithombe",
+      "upload": "Londoloza isithombe",
+      "remove": "Susa isithombe",
+      "hint": "JPG, PNG noma WebP, kuze kufike ku-5 MB.",
+      "saved": "Isithombe silondoloziwe.",
+      "removed": "Isithombe sisusiwe.",
+      "errors": {
+        "TOO_BIG": "Leso sithombe sikhulu kuno-5 MB. Zama esincane.",
+        "NOT_AN_IMAGE": "Lelo fayela akusona isithombe se-JPG, PNG noma WebP.",
+        "TOO_SMALL": "Leso sithombe sincane kakhulu. Sebenzisa esinobubanzi obungama-pixel angu-64 okungenani.",
+        "NO_FILE": "Khetha isithombe kuqala."
+      }
+    }
   },
   "privacy": {
     "title": "Ubumfihlo nemvume",
