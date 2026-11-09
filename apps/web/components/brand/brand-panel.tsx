@@ -11,7 +11,7 @@ async function storyProps() {
   const ts = await getTranslations("start.story");
   return {
     names: Object.fromEntries(CODES.map((c) => [c, tw(c)])),
-    captions: [ts("expo"), ts("world"), ts("score"), ts("match")] as [
+    captions: [ts("expo"), ts.raw("world") as string, ts("score"), ts("match")] as [
       string,
       string,
       string,
