@@ -364,7 +364,10 @@
       "statWorlds": "Career worlds",
       "statPlayed": "Played at the expo",
       "statCareers": "Careers to explore",
-      "statBest": "Your best score"
+      "statBest": "Your best score",
+      "yourScore": "Your expo score",
+      "subjectsTake": "Subjects you take",
+      "subjectsMatch": "You take {have} of {total} subjects"
     },
     "learn": {
       "title": "My course progress",

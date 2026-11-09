@@ -181,3 +181,9 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Funnel rate rule:** a conversion % is shown only when a step is no larger than the one before; steps counted per view (claim pages opened) can exceed earlier steps, and a >100% "conversion" would mislead.
 - **Unchanged:** admin-only (ADMIN/SUPER_ADMIN, else 404), aggregates only, cells under 20 suppressed server-side (`MIN_CELL`). New e2e: learners get 404; admin sign-in reaches the page and it is axe-clean. Test server raises the per-phone SMS limit (test-only env) so the seeded admin can sign in every run.
 - **Reason:** stakeholder asked for the admin dashboard in the new style.
+
+## D-029 · 2026-11-09 · Career world pages
+
+- **Decision:** `/explore/[world]` opens with a full-width photo banner (world icon, name, tagline and the learner's real best expo score on a dark gradient; data saver gets a tinted banner without the photo), then a big-number strip (careers, subjects you take x/y, courses, expo score), careers as tinted cards with pay and study routes, a "Subjects you need" panel checked against the learner's real subjects with a match bar, "Why it matters", and the world's courses as photo course cards. On phones the banner stacks the icon above the name so long world names never clip.
+- **Data:** expo score and subjects are real; careers, pay, routes and courses are sample content (D-018).
+- **Reason:** last pending page from the stakeholder's redesign list.

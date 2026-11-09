@@ -61,7 +61,15 @@ test("home in dark theme has no serious a11y violations", async ({ page }) => {
 test("learner pages never scroll sideways", async ({ page }) => {
   const sizes = [page.viewportSize()!, { width: 768, height: 1024 }];
   for (const size of sizes)
-    for (const path of ["/home", "/explore", "/learn", "/learn/agr-101", "/opportunities", "/me"]) {
+    for (const path of [
+      "/home",
+      "/explore",
+      "/learn",
+      "/learn/agr-101",
+      "/explore/avi",
+      "/opportunities",
+      "/me",
+    ]) {
       await page.setViewportSize(size);
       await page.goto(path);
       const overflow = await page.evaluate(
@@ -193,4 +201,14 @@ test("admin dashboard shows aggregates with privacy note", async ({ browser, req
   await expect(page.getByText("Groups under 20 learners are hidden")).toBeVisible();
   await expectNoA11yViolations(page);
   await context.close();
+});
+
+test("career world page has no serious a11y violations", async ({ page }) => {
+  await page.goto("/explore/med");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Medical");
+  await settleAnimations(page);
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+  expect(
+    results.violations.filter((v) => v.impact === "serious" || v.impact === "critical"),
+  ).toEqual([]);
 });
