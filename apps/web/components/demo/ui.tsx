@@ -150,39 +150,3 @@ export function BarList({
     </table>
   );
 }
-
-export function StatTile({
-  label,
-  value,
-  hint,
-  icon: Icon,
-  accent = "#ABCF37",
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  /** Decorative icon tint only; the label carries meaning. */
-  accent?: string;
-}) {
-  return (
-    <div
-      style={{ ["--w" as string]: accent }}
-      className="world-tint lift flex flex-col gap-2 rounded-2xl p-4 md:p-5"
-    >
-      <span className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium text-muted">{label}</span>
-        {Icon ? (
-          <span
-            aria-hidden="true"
-            className="world-icon flex size-8 shrink-0 items-center justify-center rounded-lg"
-          >
-            <Icon className="size-4" />
-          </span>
-        ) : null}
-      </span>
-      <span className="font-heading text-3xl font-bold tabular-nums md:text-4xl">{value}</span>
-      {hint ? <span className="text-xs text-muted">{hint}</span> : null}
-    </div>
-  );
-}

@@ -461,7 +461,10 @@
         "profile_completed": "Profiles completed",
         "claim_linked": "Results linked",
         "consent_complete": "Consent complete"
-      }
+      },
+      "introShort": "Live numbers from this server, updated on every visit.",
+      "privacyChip": "Groups under 20 learners are hidden",
+      "ofPrevious": "{pct}% of previous step"
     }
   },
   "help": {

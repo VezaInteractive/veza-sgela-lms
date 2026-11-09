@@ -35,6 +35,7 @@ export default defineConfig({
       // All e2e traffic comes from one IP; keep L-ON-2 limits out of the way here
       // (they are covered by unit and DB tests).
       OTP_MAX_SENDS_PER_IP_PER_HOUR: "1000",
+      OTP_MAX_SENDS_PER_PHONE_PER_HOUR: "1000",
     },
   },
 });

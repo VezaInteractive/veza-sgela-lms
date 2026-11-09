@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import sharp from "sharp";
-import { settleAnimations } from "./helpers";
+import { expectNoA11yViolations, settleAnimations, waitForSms } from "./helpers";
 
 test("root redirects to home", async ({ page }) => {
   await page.goto("/");
@@ -171,4 +171,26 @@ test("bell shows unread notices and remembers mark all as read", async ({ page }
   await expect(bell).toHaveAccessibleName(/none unread/);
   await page.reload();
   await expect(page.getByTestId("notification-bell")).toHaveAccessibleName(/none unread/);
+});
+
+test("learners cannot open the admin dashboard", async ({ page }) => {
+  const res = await page.goto("/admin/insights");
+  expect(res?.status()).toBe(404);
+});
+
+test("admin dashboard shows aggregates with privacy note", async ({ browser, request }) => {
+  test.skip(test.info().project.name !== "desktop-1440", "one sign-in per run");
+  const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  const page = await context.newPage();
+  await page.goto("/start");
+  await page.getByLabel("Mobile number").fill("060 000 0001");
+  await page.getByRole("button", { name: "Send my code" }).click();
+  await expect(page).toHaveURL(/\/start\/verify$/);
+  const sms = await waitForSms(request, "+27600000001", /code is \d{6}/);
+  await page.getByLabel("6-digit code").pressSequentially(sms.match(/\d{6}/)![0]);
+  await expect(page).toHaveURL(/\/admin\/insights$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Platform insights");
+  await expect(page.getByText("Groups under 20 learners are hidden")).toBeVisible();
+  await expectNoA11yViolations(page);
+  await context.close();
 });

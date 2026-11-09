@@ -174,3 +174,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **Bell:** top bar on every learner page. Shows an unread count badge and a dropdown of notices with "Mark all as read" and "See all on Home" (`/home#notices`). Read state is a per-device convenience in localStorage (D-021 storage rule); a server-side inbox arrives with messaging in M5/M6. Server render assumes all read, so the badge never flashes a wrong count.
 - **Strings:** bell and support labels live in `nav` (en/zu/st); help FAQs are English with fallback. Analytics: `support_opened`, `notifications_opened`.
 - **Reason:** stakeholder asked for the reference Support pill and a notifications bell.
+
+## D-028 · 2026-11-09 · Admin insights in the dashboard style
+
+- **Decision:** `/admin/insights` uses the learner dashboard language: page heading with a privacy chip ("Groups under 20 learners are hidden") and Sign out, a big-number KPI strip (learners, under 18 with share, waiting for guardian with share, results claimed, expo sessions with simulated count), a numbered funnel with step-to-step conversion, and province / career-world bar lists in white panels.
+- **Funnel rate rule:** a conversion % is shown only when a step is no larger than the one before; steps counted per view (claim pages opened) can exceed earlier steps, and a >100% "conversion" would mislead.
+- **Unchanged:** admin-only (ADMIN/SUPER_ADMIN, else 404), aggregates only, cells under 20 suppressed server-side (`MIN_CELL`). New e2e: learners get 404; admin sign-in reaches the page and it is axe-clean. Test server raises the per-phone SMS limit (test-only env) so the seeded admin can sign in every run.
+- **Reason:** stakeholder asked for the admin dashboard in the new style.
