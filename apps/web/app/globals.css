@@ -320,19 +320,48 @@ h4 {
     opacity: 0;
   }
 }
-.js-fly {
-  animation: js-fly 3.2s ease-in 400ms both;
+.js-takeoff {
+  animation: js-takeoff 3.4s ease-in 300ms both;
 }
-@keyframes js-fly {
+@keyframes js-takeoff {
   from {
-    transform: translate(var(--fx), var(--fy)) scale(0.6);
+    transform: translate(var(--fx), var(--fy)) scale(0.8);
+  }
+  50% {
+    transform: translate(calc(var(--fx) + 112px), calc(var(--fy) - 63px)) scale(0.9);
   }
   to {
-    transform: translate(calc(var(--fx) + 330px), calc(var(--fy) - 215px)) scale(1.2);
+    transform: translate(calc(var(--fx) + 330px), calc(var(--fy) - 330px)) scale(1.35);
   }
 }
-.js-contrail {
-  animation: js-fade 1.2s ease 600ms both;
+.js-grind {
+  animation: js-grind 700ms ease-out infinite;
+}
+@keyframes js-grind {
+  from {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--sx), var(--sy));
+    opacity: 0;
+  }
+}
+.js-wave {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: js-wave 900ms ease-in-out infinite alternate;
+}
+@keyframes js-wave {
+  from {
+    transform: rotate(-12deg);
+  }
+  to {
+    transform: rotate(22deg);
+  }
+}
+.js-edge {
+  animation: js-blink 2.4s ease-in-out infinite;
 }
 .js-spin {
   animation: js-rot 4s linear infinite;

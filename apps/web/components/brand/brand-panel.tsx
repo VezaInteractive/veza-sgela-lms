@@ -29,8 +29,8 @@ export async function BrandPanel({ className }: { className?: string }) {
   return (
     <aside className={cn("relative isolate overflow-hidden bg-space text-white", className)}>
       <JourneyScene {...story} />
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-space via-transparent to-space/50" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-linear-to-r from-space/75 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-space via-transparent via-35% to-space/15" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-2/5 bg-linear-to-r from-space/60 to-transparent" />
       <div className="pointer-events-none relative z-10 flex h-full flex-col justify-between gap-10 p-10 xl:p-14">
         <Wordmark tone="onDark" />
         <SignupSteps />

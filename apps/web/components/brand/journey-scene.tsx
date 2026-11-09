@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { Pause, Play } from "lucide-react";
 import { cn } from "@sgela/ui";
 
 /**
  * "Career journey" brand story (D-031): a 2.5D isometric diorama that loops the real product
  * journey, one career world per loop.
- *   Act 1  Expo     a sprite learner walks to the kiosk and puts on a VR headset
- *   Act 2  Inside   a portal opens and the world comes alive (plane, gears, pot, heartbeat, crops)
+ *   Act 1  Expo     a sprite learner walks to the kiosk
+ *   Act 2  Inside   headset on, a portal opens and the world's set comes alive
  *   Act 3  Score    the score card pops with XP sparks
- *   Act 4  Match    compass appears, path tiles light, the learner walks to an opportunity gate
+ *   Act 4  Match    compass, lit path, a mentor waves at a rising opportunity gate
  *
  * Motion: CSS keyframes restarted per act + pointer parallax (desktop). Under
  * prefers-reduced-motion the acts still change (crossfade only, no movement). A pause button
@@ -28,7 +28,7 @@ const WORLDS = [
 ] as const;
 
 // Isometric island: tile coords u, v in [-1, 1] -> screen.
-const IX = 500;
+const IX = 425;
 const IY = 500;
 const HW = 300;
 const HH = 170;
@@ -38,16 +38,50 @@ function iso(u: number, v: number, z = 0): [number, number] {
 const pt = (p: [number, number]) => p[0].toFixed(1) + "," + p[1].toFixed(1);
 const poly = (ps: [number, number][]) => ps.map(pt).join(" ");
 
-function isoBox(u: number, v: number, du: number, dv: number, h: number) {
-  const a = iso(u - du, v - dv, h);
-  const b = iso(u + du, v - dv, h);
-  const c = iso(u + du, v + dv, h);
-  const d = iso(u - du, v + dv, h);
+function isoBox(u: number, v: number, du: number, dv: number, h: number, z = 0) {
+  const a = iso(u - du, v - dv, z + h);
+  const b = iso(u + du, v - dv, z + h);
+  const c = iso(u + du, v + dv, z + h);
+  const d = iso(u - du, v + dv, z + h);
   return {
     top: poly([a, b, c, d]),
-    right: poly([b, c, iso(u + du, v + dv), iso(u + du, v - dv)]),
-    left: poly([d, c, iso(u + du, v + dv), iso(u - du, v + dv)]),
+    right: poly([b, c, iso(u + du, v + dv, z), iso(u + du, v - dv, z)]),
+    left: poly([d, c, iso(u + du, v + dv, z), iso(u - du, v + dv, z)]),
   };
+}
+
+/** Shaded isometric block: lit top, mid right face, dark left face. */
+function Block({
+  u,
+  v,
+  du,
+  dv,
+  h,
+  z = 0,
+  top,
+  side,
+  dark,
+  className,
+}: {
+  u: number;
+  v: number;
+  du: number;
+  dv: number;
+  h: number;
+  z?: number;
+  top: string;
+  side: string;
+  dark: string;
+  className?: string;
+}) {
+  const b = isoBox(u, v, du, dv, h, z);
+  return (
+    <g className={className}>
+      <polygon points={b.left} fill={dark} />
+      <polygon points={b.right} fill={side} />
+      <polygon points={b.top} fill={top} />
+    </g>
+  );
 }
 
 const KIOSK = { u: -0.62, v: -0.55 };
@@ -55,6 +89,7 @@ const STAND = iso(-0.42, -0.2);
 const START = iso(-0.9, 0.35);
 const GATE = { u: 0.78, v: 0.3 };
 const GATE_FRONT = iso(0.55, 0.42);
+const MENTOR = iso(0.98, 0.5);
 const PROP = iso(0.5, -0.55);
 const PATH_TILES: [number, number][] = [
   [-0.25, -0.05],
@@ -63,10 +98,10 @@ const PATH_TILES: [number, number][] = [
   [0.5, 0.4],
 ];
 
-const STARS = Array.from({ length: 40 }, (_, i) => ({
+const STARS = Array.from({ length: 44 }, (_, i) => ({
   x: (i * 157.3) % 800,
-  y: (i * 71.9 + (i % 5) * 37) % 430,
-  r: i % 6 === 0 ? 1.8 : 1.1,
+  y: (i * 71.9 + (i % 5) * 37) % 420,
+  r: i % 6 === 0 ? 2 : 1.2,
   d: (i % 8) * 0.5,
 }));
 
@@ -97,169 +132,468 @@ function subscribePaused(l: () => void) {
   return () => pauseListeners.delete(l);
 }
 
-/** Sprite learner: feet at (0,0). Walk cycle swings legs/arms; visor shows with the headset. */
+/**
+ * Sprite learner, feet at (0,0): hooded lime hoodie with the Veza compass badge, jeans, white
+ * sneakers, face and hair. Stepped walk cycle; the VR headset drops on in acts 2-3.
+ */
 function Learner({ walking, headset }: { walking: boolean; headset: boolean }) {
   return (
     <g className={walking ? "js-walking" : undefined}>
-      <ellipse cx="0" cy="2" rx="16" ry="6" fill="#000" opacity="0.35" />
+      <ellipse cx="0" cy="2" rx="17" ry="6" fill="#000" opacity="0.4" />
       <g className="js-bob">
-        <rect className="js-leg-a" x="-8" y="-26" width="7" height="26" rx="3" fill="#231F20" />
-        <rect className="js-leg-b" x="1" y="-26" width="7" height="26" rx="3" fill="#2d2829" />
-        <rect className="js-arm-b" x="9" y="-50" width="6" height="22" rx="3" fill="#8dae27" />
-        <rect x="-12" y="-54" width="24" height="32" rx="8" fill="#ABCF37" />
-        <rect className="js-arm-a" x="-15" y="-50" width="6" height="22" rx="3" fill="#9cbf2f" />
-        <circle cx="0" cy="-66" r="11" fill="#7a4a2a" />
-        <path d="M-11 -68 Q0 -84 11 -68 Q6 -74 0 -74 Q-6 -74 -11 -68Z" fill="#1d1414" />
+        {/* legs + sneakers */}
+        <g className="js-leg-a">
+          <rect x="-8" y="-27" width="7" height="25" rx="3" fill="#2f4a7a" />
+          <rect x="-10" y="-4" width="11" height="5" rx="2.5" fill="#f5f7fa" />
+        </g>
+        <g className="js-leg-b">
+          <rect x="1" y="-27" width="7" height="25" rx="3" fill="#26406b" />
+          <rect x="0" y="-4" width="11" height="5" rx="2.5" fill="#e3e8ef" />
+        </g>
+        {/* back arm */}
+        <rect className="js-arm-b" x="9" y="-52" width="7" height="23" rx="3.5" fill="#8dae27" />
+        {/* hoodie */}
+        <path d="M-13 -56 Q0 -61 13 -56 L14 -26 Q0 -22 -14 -26Z" fill="#ABCF37" />
+        <path d="M-13 -56 Q0 -61 13 -56 L12 -50 Q0 -54 -12 -50Z" fill="#c8e070" />
+        <rect x="-14" y="-30" width="28" height="5" rx="2.5" fill="#8dae27" />
+        <circle cx="-4" cy="-42" r="4.5" fill="#0B0F14" />
+        <path d="M-4 -46 L-2.6 -42 L-4 -38 L-5.4 -42Z" fill="#ABCF37" />
+        {/* front arm */}
+        <rect className="js-arm-a" x="-16" y="-52" width="7" height="23" rx="3.5" fill="#9cbf2f" />
+        {/* head */}
+        <rect x="-4" y="-61" width="8" height="5" fill="#6b3f22" />
+        <circle cx="0" cy="-70" r="11" fill="#7a4a2a" />
+        <circle cx="-4" cy="-71" r="1.3" fill="#1d1414" />
+        <circle cx="4" cy="-71" r="1.3" fill="#1d1414" />
+        <path
+          d="M-3.5 -66 Q0 -63.5 3.5 -66"
+          fill="none"
+          stroke="#1d1414"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M-11.5 -72 Q-12 -84 -2 -85 Q10 -86 11.5 -73 Q8 -79 0 -79 Q-8 -79 -11.5 -72Z"
+          fill="#1d1414"
+        />
+        <circle cx="-9" cy="-82" r="4" fill="#1d1414" />
+        <circle cx="8" cy="-83" r="4" fill="#1d1414" />
+        {/* VR headset */}
         <g className={cn("js-visor", headset && "js-visor-on")}>
-          <rect x="-12" y="-71" width="24" height="9" rx="4" fill="#0B0F14" />
-          <rect x="-9" y="-69" width="18" height="4" rx="2" fill="#ABCF37" opacity="0.9" />
+          <rect x="-13" y="-76" width="26" height="10" rx="4" fill="#0B0F14" />
+          <rect x="-10" y="-74" width="20" height="5" rx="2.5" fill="#ABCF37" />
+          <rect x="-13" y="-73" width="26" height="2" fill="#0B0F14" opacity="0.6" />
         </g>
       </g>
     </g>
   );
 }
 
-function WorldProp({ code, colour }: { code: string; colour: string }) {
-  const [x, y] = PROP;
+/** Mentor at the opportunity gate: navy blazer, glasses, tablet, waving. */
+function Mentor() {
+  return (
+    <g>
+      <ellipse cx="0" cy="2" rx="17" ry="6" fill="#000" opacity="0.4" />
+      <rect x="-8" y="-27" width="7" height="25" rx="3" fill="#2a2526" />
+      <rect x="1" y="-27" width="7" height="25" rx="3" fill="#231F20" />
+      <rect x="-10" y="-4" width="11" height="5" rx="2.5" fill="#3a2a20" />
+      <rect x="0" y="-4" width="11" height="5" rx="2.5" fill="#3a2a20" />
+      <path d="M-14 -57 Q0 -61 14 -57 L14 -25 L-14 -25Z" fill="#1f3b63" />
+      <path d="M-3 -57 L0 -44 L3 -57Z" fill="#f5f7fa" />
+      <rect x="-16" y="-53" width="7" height="24" rx="3.5" fill="#1a3255" />
+      <rect
+        x="-22"
+        y="-40"
+        width="14"
+        height="18"
+        rx="2"
+        fill="#0B0F14"
+        stroke="#4FA3FF"
+        strokeWidth="1.5"
+      />
+      <g className="js-wave">
+        <rect x="9" y="-80" width="7" height="26" rx="3.5" fill="#1a3255" />
+        <circle cx="12.5" cy="-82" r="4.5" fill="#5c3a22" />
+      </g>
+      <rect x="-4" y="-61" width="8" height="5" fill="#4a2c18" />
+      <circle cx="0" cy="-70" r="11" fill="#5c3a22" />
+      <path
+        d="M-11 -71 Q-10 -83 0 -83 Q10 -83 11 -71 Q6 -77 0 -77 Q-6 -77 -11 -71Z"
+        fill="#c9c9c9"
+      />
+      <circle cx="-4" cy="-70" r="3.2" fill="none" stroke="#f5f7fa" strokeWidth="1.3" />
+      <circle cx="4" cy="-70" r="3.2" fill="none" stroke="#f5f7fa" strokeWidth="1.3" />
+      <path
+        d="M-3.5 -64.5 Q0 -62 3.5 -64.5"
+        fill="none"
+        stroke="#1d1414"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </g>
+  );
+}
+
+/** Each world's isometric set on the back-right stage (u 0.1..1, v -1..-0.15). */
+function WorldSet({ code, colour }: { code: string; colour: string }) {
   switch (code) {
-    case "AVI":
+    case "AVI": {
+      const runway = poly([iso(0.22, -0.15), iso(0.48, -0.15), iso(0.48, -1), iso(0.22, -1)]);
+      const lift = iso(0.35, -0.3);
       return (
         <g>
-          <path
-            d={`M${x - 150} ${y + 20} Q${x} ${y - 40} ${x + 170} ${y - 190}`}
-            fill="none"
-            stroke="#ffffff"
-            strokeOpacity="0.35"
-            strokeWidth="3"
-            strokeDasharray="4 10"
-            className="js-contrail"
+          <polygon points={runway} fill="#2a3036" />
+          {[-0.3, -0.5, -0.7, -0.9].map((v) => (
+            <polygon
+              key={v}
+              points={poly([iso(0.34, v), iso(0.36, v), iso(0.36, v - 0.08), iso(0.34, v - 0.08)])}
+              fill="#f5f7fa"
+              opacity="0.8"
+            />
+          ))}
+          {[-0.2, -0.4, -0.6, -0.8, -0.98].map((v, i) => (
+            <circle
+              key={v}
+              cx={iso(0.23, v)[0]}
+              cy={iso(0.23, v)[1]}
+              r="3"
+              fill={colour}
+              className="js-flash"
+              style={{ animationDelay: i * 0.15 + "s" }}
+            />
+          ))}
+          <Block
+            u={0.78}
+            v={-0.7}
+            du={0.17}
+            dv={0.2}
+            h={70}
+            top="#4a5560"
+            side="#36404a"
+            dark="#262e36"
+          />
+          <polygon
+            points={poly([
+              iso(0.95, -0.85, 4),
+              iso(0.95, -0.55, 4),
+              iso(0.95, -0.55, 50),
+              iso(0.95, -0.85, 50),
+            ])}
+            fill={colour}
+            opacity="0.35"
           />
           <g
-            className="js-fly"
-            style={{ ["--fx" as string]: `${x - 150}px`, ["--fy" as string]: `${y + 20}px` }}
+            className="js-takeoff"
+            style={{ ["--fx" as string]: `${lift[0]}px`, ["--fy" as string]: `${lift[1]}px` }}
           >
-            <g transform="rotate(-32) scale(1.7)">
+            <g transform="rotate(-30) scale(1.9)">
               <path d="M-34 0 L30 -5 Q40 0 30 5 Z" fill="#f5f7fa" />
               <path d="M-4 -2 L-18 -26 L-8 -26 L12 -2Z" fill={colour} />
               <path d="M-4 2 L-18 26 L-8 26 L12 2Z" fill={colour} />
               <path d="M-30 -1 L-38 -14 L-32 -14 L-24 -1Z" fill={colour} />
+              <circle cx="22" cy="0" r="2" fill="#0B0F14" />
             </g>
           </g>
         </g>
       );
-    case "ENG":
-      return (
-        <g transform={`translate(${x} ${y - 70})`}>
-          <g className="js-spin">
-            <circle r="38" fill="none" stroke={colour} strokeWidth="14" strokeDasharray="10 8" />
-            <circle r="24" fill="#1a1f12" stroke={colour} strokeWidth="5" />
-          </g>
-          <g transform="translate(52 34)">
-            <g className="js-spin-rev">
-              <circle
-                r="24"
-                fill="none"
-                stroke="#f5f7fa"
-                strokeOpacity="0.8"
-                strokeWidth="10"
-                strokeDasharray="7 6"
-              />
-              <circle r="14" fill="#1a1f12" stroke="#f5f7fa" strokeOpacity="0.8" strokeWidth="4" />
-            </g>
-          </g>
-          <path
-            d="M-60 -60 L-74 -30 L-62 -30 L-72 0 L-46 -38 L-58 -38 L-48 -60Z"
-            fill={colour}
-            className="js-flash"
-          />
-        </g>
-      );
-    case "CUL":
-      return (
-        <g transform={`translate(${x} ${y - 10})`}>
-          <ellipse
-            cx="0"
-            cy="12"
-            rx="56"
-            ry="12"
-            fill={colour}
-            opacity="0.35"
-            className="js-flash"
-          />
-          <ellipse cx="0" cy="0" rx="46" ry="16" fill="#3a3436" />
-          <rect x="-46" y="-44" width="92" height="44" fill="#4a4446" />
-          <ellipse cx="0" cy="-44" rx="46" ry="16" fill="#2a2526" stroke={colour} strokeWidth="3" />
-          <rect x="-62" y="-36" width="16" height="6" rx="3" fill="#4a4446" />
-          <rect x="46" y="-36" width="16" height="6" rx="3" fill="#4a4446" />
-          {[-18, 0, 18].map((dx, i) => (
-            <path
-              key={dx}
-              d={`M${dx} -56 q-10 -18 0 -36 q10 -18 0 -36`}
-              fill="none"
-              stroke="#f5f7fa"
-              strokeOpacity="0.7"
-              strokeWidth="5"
-              strokeLinecap="round"
-              className="js-steam"
-              style={{ animationDelay: i * 0.5 + "s" }}
-            />
-          ))}
-        </g>
-      );
-    case "MED":
-      return (
-        <g transform={`translate(${x} ${y - 80})`}>
-          <rect
-            x="-90"
-            y="-46"
-            width="180"
-            height="92"
-            rx="14"
-            fill="#0e1a19"
-            stroke={colour}
-            strokeWidth="2"
-          />
-          <path
-            d="M-80 0 L-40 0 L-30 -26 L-16 30 L-4 -36 L8 0 L80 0"
-            fill="none"
-            stroke={colour}
-            strokeWidth="4"
-            strokeLinejoin="round"
-            className="js-ecg"
-          />
-          <g transform="translate(0 -78)">
-            <g className="js-beat">
-              <rect x="-9" y="-24" width="18" height="48" rx="4" fill="#f5f7fa" />
-              <rect x="-24" y="-9" width="48" height="18" rx="4" fill="#f5f7fa" />
-            </g>
-          </g>
-        </g>
-      );
-    default:
+    }
+    case "ENG": {
+      const [gx, gy] = iso(0.55, -0.6, 64);
       return (
         <g>
-          {(
-            [
-              [-0.05, -0.55],
-              [0.25, -0.45],
-              [0.5, -0.3],
-              [0.15, -0.2],
-              [0.42, -0.08],
-            ] as [number, number][]
-          ).map(([u, v], i) => {
-            const [sx, sy] = iso(u, v);
-            return (
-              <g key={i} transform={`translate(${sx} ${sy})`}>
-                <g className="js-grow" style={{ animationDelay: i * 0.25 + "s" }}>
-                  <rect x="-2" y="-40" width="4" height="40" fill="#5d8a2a" />
-                  <path d="M0 -26 Q-22 -34 -24 -50 Q-6 -46 0 -30Z" fill={colour} />
-                  <path d="M0 -34 Q22 -44 24 -60 Q6 -56 0 -38Z" fill="#c8e070" />
-                </g>
+          <Block
+            u={0.55}
+            v={-0.55}
+            du={0.3}
+            dv={0.14}
+            h={56}
+            top="#6b4a2a"
+            side="#55391f"
+            dark="#3f2a17"
+          />
+          <Block
+            u={0.3}
+            v={-0.62}
+            du={0.06}
+            dv={0.05}
+            h={18}
+            z={56}
+            top="#c0392b"
+            side="#9e2f23"
+            dark="#7d251c"
+          />
+          <Block
+            u={0.85}
+            v={-0.85}
+            du={0.12}
+            dv={0.1}
+            h={40}
+            top={colour}
+            side="#d6912f"
+            dark="#a86f22"
+          />
+          <g transform={`translate(${gx} ${gy})`}>
+            <rect
+              x="-26"
+              y="-8"
+              width="46"
+              height="14"
+              rx="5"
+              fill="#3a434c"
+              transform="rotate(-20)"
+            />
+            <circle cx="22" cy="-6" r="11" fill="#9aa4b1" />
+            {Array.from({ length: 9 }, (_, i) => (
+              <rect
+                key={i}
+                x="30"
+                y="-8"
+                width="4"
+                height="4"
+                fill={i % 2 ? "#FFB547" : "#fff3c4"}
+                className="js-grind"
+                style={{
+                  animationDelay: i * 0.09 + "s",
+                  ["--sx" as string]: 20 + (i % 3) * 18 + "px",
+                  ["--sy" as string]: -30 - (i % 4) * 12 + "px",
+                }}
+              />
+            ))}
+          </g>
+          <g transform={`translate(${iso(0.9, -0.35, 110)[0]} ${iso(0.9, -0.35, 110)[1]})`}>
+            <g className="js-spin">
+              <circle r="34" fill="none" stroke={colour} strokeWidth="13" strokeDasharray="9 7" />
+              <circle r="21" fill="#1a1f12" stroke={colour} strokeWidth="5" />
+            </g>
+            <g transform="translate(46 30)">
+              <g className="js-spin-rev">
+                <circle r="21" fill="none" stroke="#f5f7fa" strokeWidth="9" strokeDasharray="6 5" />
+                <circle r="12" fill="#1a1f12" stroke="#f5f7fa" strokeWidth="4" />
               </g>
-            );
-          })}
+            </g>
+          </g>
         </g>
       );
+    }
+    case "CUL": {
+      const [px, py] = iso(0.62, -0.55, 60);
+      return (
+        <g>
+          <Block
+            u={0.58}
+            v={-0.55}
+            du={0.36}
+            dv={0.16}
+            h={60}
+            top="#d9dee4"
+            side="#aab3bd"
+            dark="#7f8894"
+          />
+          <polygon
+            points={poly([
+              iso(0.32, -0.62, 61),
+              iso(0.46, -0.62, 61),
+              iso(0.46, -0.48, 61),
+              iso(0.32, -0.48, 61),
+            ])}
+            fill="#b07a45"
+          />
+          {[0.36, 0.4].map((u) => (
+            <circle
+              key={u}
+              cx={iso(u, -0.55, 64)[0]}
+              cy={iso(u, -0.55, 64)[1]}
+              r="4"
+              fill="#e74c3c"
+            />
+          ))}
+          <g transform={`translate(${px} ${py})`}>
+            <ellipse
+              cx="0"
+              cy="4"
+              rx="40"
+              ry="11"
+              fill={colour}
+              opacity="0.6"
+              className="js-flash"
+            />
+            <ellipse cx="0" cy="0" rx="34" ry="11" fill="#3a3436" />
+            <rect x="-34" y="-34" width="68" height="34" fill="#4a4446" />
+            <ellipse
+              cx="0"
+              cy="-34"
+              rx="34"
+              ry="11"
+              fill="#2a2526"
+              stroke={colour}
+              strokeWidth="3"
+            />
+            <rect x="-48" y="-28" width="14" height="5" rx="2.5" fill="#4a4446" />
+            <rect x="34" y="-28" width="14" height="5" rx="2.5" fill="#4a4446" />
+            {[-14, 0, 14].map((dx, i) => (
+              <path
+                key={dx}
+                d={`M${dx} -46 q-9 -16 0 -32 q9 -16 0 -32`}
+                fill="none"
+                stroke="#f5f7fa"
+                strokeOpacity="0.75"
+                strokeWidth="5"
+                strokeLinecap="round"
+                className="js-steam"
+                style={{ animationDelay: i * 0.45 + "s" }}
+              />
+            ))}
+          </g>
+          <Block
+            u={0.92}
+            v={-0.92}
+            du={0.06}
+            dv={0.06}
+            h={90}
+            top="#d9dee4"
+            side="#aab3bd"
+            dark="#7f8894"
+          />
+          <rect
+            x={iso(0.92, -0.92, 92)[0] - 10}
+            y={iso(0.92, -0.92, 92)[1] - 18}
+            width="20"
+            height="16"
+            rx="8"
+            fill="#f5f7fa"
+          />
+        </g>
+      );
+    }
+    case "MED": {
+      const [mx, my] = iso(0.92, -0.75, 120);
+      return (
+        <g>
+          <Block
+            u={0.5}
+            v={-0.55}
+            du={0.34}
+            dv={0.14}
+            h={30}
+            z={14}
+            top="#e3e8ef"
+            side="#b9c2cc"
+            dark="#8d97a3"
+          />
+          {[
+            [0.2, -0.43],
+            [0.8, -0.43],
+            [0.2, -0.67],
+            [0.8, -0.67],
+          ].map(([u, v]) => (
+            <Block
+              key={`${u}${v}`}
+              u={u!}
+              v={v!}
+              du={0.02}
+              dv={0.02}
+              h={14}
+              top="#6b7480"
+              side="#5a636e"
+              dark="#4a525c"
+            />
+          ))}
+          <Block
+            u={0.24}
+            v={-0.55}
+            du={0.07}
+            dv={0.11}
+            h={10}
+            z={44}
+            top="#ffffff"
+            side="#dde3ea"
+            dark="#c3cbd5"
+          />
+          <polygon
+            points={poly([
+              iso(0.36, -0.69, 45),
+              iso(0.84, -0.69, 45),
+              iso(0.84, -0.41, 45),
+              iso(0.36, -0.41, 45),
+            ])}
+            fill={colour}
+            opacity="0.65"
+          />
+          <g transform={`translate(${mx} ${my})`}>
+            <rect
+              x="-62"
+              y="-40"
+              width="124"
+              height="80"
+              rx="10"
+              fill="#0e1a19"
+              stroke={colour}
+              strokeWidth="2.5"
+            />
+            <path
+              d="M-54 0 L-26 0 L-19 -20 L-9 24 L0 -28 L8 0 L54 0"
+              fill="none"
+              stroke={colour}
+              strokeWidth="3.5"
+              strokeLinejoin="round"
+              className="js-ecg"
+            />
+            <rect x="-3" y="40" width="6" height="40" fill="#6b7480" />
+          </g>
+          <g transform={`translate(${iso(0.15, -0.95, 150)[0]} ${iso(0.15, -0.95, 150)[1]})`}>
+            <g className="js-beat">
+              <rect x="-8" y="-22" width="16" height="44" rx="4" fill="#ff5a5a" />
+              <rect x="-22" y="-8" width="44" height="16" rx="4" fill="#ff5a5a" />
+            </g>
+          </g>
+        </g>
+      );
+    }
+    default: {
+      const corners = [iso(0.15, -0.95), iso(0.95, -0.95), iso(0.95, -0.2), iso(0.15, -0.2)];
+      const roof = corners.map(([x, y]) => [x, y - 120] as [number, number]);
+      return (
+        <g>
+          <polygon points={poly(corners)} fill="#3b2a1a" />
+          {[-0.35, -0.55, -0.75].map((v) => (
+            <polygon
+              key={v}
+              points={poly([
+                iso(0.2, v - 0.04),
+                iso(0.9, v - 0.04),
+                iso(0.9, v + 0.04),
+                iso(0.2, v + 0.04),
+              ])}
+              fill="#4e3622"
+            />
+          ))}
+          {[-0.35, -0.55, -0.75].flatMap((v, r) =>
+            [0.28, 0.46, 0.64, 0.82].map((u, c) => {
+              const [sx, sy] = iso(u, v);
+              return (
+                <g key={`${r}${c}`} transform={`translate(${sx} ${sy})`}>
+                  <g className="js-grow" style={{ animationDelay: (r * 4 + c) * 0.08 + "s" }}>
+                    <rect x="-1.5" y="-26" width="3" height="26" fill="#5d8a2a" />
+                    <path d="M0 -16 Q-15 -22 -16 -34 Q-4 -30 0 -19Z" fill={colour} />
+                    <path d="M0 -22 Q15 -30 16 -42 Q4 -38 0 -25Z" fill="#c8e070" />
+                  </g>
+                </g>
+              );
+            }),
+          )}
+          <g fill="none" stroke="#c8e070" strokeOpacity="0.7" strokeWidth="2">
+            {corners.map(([x, y], i) => (
+              <line key={i} x1={x} y1={y} x2={x} y2={y - 120} />
+            ))}
+            <polygon points={poly(roof)} fill="#ABCF37" fillOpacity="0.08" />
+            <line x1={roof[0]![0]} y1={roof[0]![1]} x2={roof[2]![0]} y2={roof[2]![1]} />
+          </g>
+          <g transform={`translate(${iso(0.55, -0.6, 150)[0]} ${iso(0.55, -0.6, 150)[1]})`}>
+            <circle r="18" fill="#ffd166" className="js-beat" />
+          </g>
+        </g>
+      );
+    }
   }
 }
 
@@ -280,9 +614,11 @@ export function JourneyScene({
   className?: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
+  // Unique gradient ids: the phone banner and desktop panel both render a scene on one page.
+  const uid = "js" + useId().replace(/[^a-zA-Z0-9]/g, "");
   const [tick, setTick] = useState(0);
-  const paused = useSyncExternalStore(subscribePaused, readPaused, () => false);
   const [visible, setVisible] = useState(true);
+  const paused = useSyncExternalStore(subscribePaused, readPaused, () => false);
   const reduced = useSyncExternalStore(
     subscribeMotion,
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -329,17 +665,17 @@ export function JourneyScene({
   const world = WORLDS[Math.floor(tick / 4) % WORLDS.length]!;
   const name = names[world.code] ?? world.code;
   const key = String(tick);
-  const kiosk = isoBox(KIOSK.u, KIOSK.v, 0.12, 0.09, 120);
-  const gateL = isoBox(GATE.u - 0.16, GATE.v + 0.16, 0.045, 0.045, 175);
-  const gateR = isoBox(GATE.u + 0.16, GATE.v - 0.16, 0.045, 0.045, 175);
-  const gateTopA = iso(GATE.u - 0.16, GATE.v + 0.16, 182);
-  const gateTopB = iso(GATE.u + 0.16, GATE.v - 0.16, 182);
+  const kiosk = isoBox(KIOSK.u, KIOSK.v, 0.12, 0.09, 125);
   const kioskScreen = poly([
-    iso(KIOSK.u + 0.12, KIOSK.v - 0.07, 110),
-    iso(KIOSK.u + 0.12, KIOSK.v + 0.07, 110),
-    iso(KIOSK.u + 0.12, KIOSK.v + 0.07, 52),
-    iso(KIOSK.u + 0.12, KIOSK.v - 0.07, 52),
+    iso(KIOSK.u + 0.12, KIOSK.v - 0.07, 115),
+    iso(KIOSK.u + 0.12, KIOSK.v + 0.07, 115),
+    iso(KIOSK.u + 0.12, KIOSK.v + 0.07, 55),
+    iso(KIOSK.u + 0.12, KIOSK.v - 0.07, 55),
   ]);
+  const gateL = isoBox(GATE.u - 0.16, GATE.v + 0.16, 0.045, 0.045, 180);
+  const gateR = isoBox(GATE.u + 0.16, GATE.v - 0.16, 0.045, 0.045, 180);
+  const gateTopA = iso(GATE.u - 0.16, GATE.v + 0.16, 188);
+  const gateTopB = iso(GATE.u + 0.16, GATE.v - 0.16, 188);
 
   const walking = act === 0 || act === 3;
   const from = act === 3 ? STAND : START;
@@ -360,24 +696,33 @@ export function JourneyScene({
         focusable="false"
       >
         <defs>
-          <radialGradient id="js-sky" cx="60%" cy="45%" r="80%">
-            <stop offset="0%" stopColor="#17222c" />
-            <stop offset="60%" stopColor="#0d1319" />
+          <radialGradient id={uid + "-sky"} cx="60%" cy="42%" r="80%">
+            <stop offset="0%" stopColor="#1b2a33" />
+            <stop offset="55%" stopColor="#0e151b" />
             <stop offset="100%" stopColor="#0B0F14" />
           </radialGradient>
-          <radialGradient id="js-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor={world.colour} stopOpacity="0.4" />
+          <radialGradient id={uid + "-glow"} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={world.colour} stopOpacity="0.6" />
+            <stop offset="55%" stopColor={world.colour} stopOpacity="0.14" />
             <stop offset="100%" stopColor={world.colour} stopOpacity="0" />
           </radialGradient>
-          <linearGradient id="js-beam" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stopColor="#ABCF37" stopOpacity="0.55" />
+          <radialGradient id={uid + "-island-glow"} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ABCF37" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#ABCF37" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={uid + "-top"} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#3d6a26" />
+            <stop offset="100%" stopColor="#25461b" />
+          </linearGradient>
+          <linearGradient id={uid + "-beam"} x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="#ABCF37" stopOpacity="0.7" />
             <stop offset="100%" stopColor="#ABCF37" stopOpacity="0" />
           </linearGradient>
         </defs>
 
         {/* far layer */}
         <g className="js-layer-far">
-          <rect x="-40" y="-40" width="880" height="1080" fill="url(#js-sky)" />
+          <rect x="-40" y="-40" width="880" height="1080" fill={"url(#" + uid + "-sky" + ")"} />
           <g fill="#fff">
             {STARS.map((s, i) => (
               <circle
@@ -390,25 +735,25 @@ export function JourneyScene({
               />
             ))}
           </g>
-          <circle cx={IX} cy={IY - 60} r="330" fill="url(#js-glow)" />
+          <circle cx={PROP[0]} cy={PROP[1] - 60} r="360" fill={"url(#" + uid + "-glow" + ")"} />
           {(
             [
-              [150, 300, 0.35],
-              [700, 250, 0.28],
-              [690, 860, 0.3],
+              [130, 260, 0.34],
+              [720, 210, 0.26],
+              [700, 900, 0.3],
             ] as [number, number, number][]
           ).map(([x, y, s], i) => (
-            <g key={i} transform={`translate(${x} ${y}) scale(${s})`} opacity="0.55">
+            <g key={i} transform={`translate(${x} ${y}) scale(${s})`} opacity="0.6">
               <g className="js-drift" style={{ animationDelay: -i * 2 + "s" }}>
                 <polygon
                   points="0,-60 115,0 0,60 -115,0"
-                  fill="#1a2a14"
+                  fill="#24391b"
                   stroke="#ABCF37"
-                  strokeOpacity="0.4"
-                  strokeWidth="3"
+                  strokeOpacity="0.6"
+                  strokeWidth="4"
                 />
-                <polygon points="-115,0 0,60 0,110 -115,50" fill="#10180f" />
-                <polygon points="0,60 115,0 115,50 0,110" fill="#0c120c" />
+                <polygon points="-115,0 0,60 0,110 -115,50" fill="#13200f" />
+                <polygon points="0,60 115,0 115,50 0,110" fill="#0e170c" />
               </g>
             </g>
           ))}
@@ -417,33 +762,37 @@ export function JourneyScene({
         {/* island layer */}
         <g className="js-layer-mid">
           <g className="js-float">
-            <ellipse cx={IX} cy={IY + 250} rx="270" ry="46" fill="#000" opacity="0.35" />
+            <ellipse
+              cx={IX}
+              cy={IY + 40}
+              rx="420"
+              ry="220"
+              fill={"url(#" + uid + "-island-glow" + ")"}
+            />
+            <ellipse cx={IX} cy={IY + 290} rx="300" ry="50" fill="#000" opacity="0.4" />
             <polygon
-              points={poly([iso(-1, 1), iso(1, 1), iso(1, 1, -70), iso(-1, 1, -70)])}
-              fill="#121d10"
+              points={poly([iso(-1, 1), iso(1, 1), iso(1, 1, -80), iso(-1, 1, -80)])}
+              fill="#173012"
             />
             <polygon
-              points={poly([iso(1, 1), iso(1, -1), iso(1, -1, -70), iso(1, 1, -70)])}
-              fill="#0c140b"
+              points={poly([iso(1, 1), iso(1, -1), iso(1, -1, -80), iso(1, 1, -80)])}
+              fill="#0f220c"
             />
             <polygon
               points={poly([
-                iso(-1, 1, -70),
-                iso(1, 1, -70),
-                iso(1, -1, -70),
-                [IX + 50, IY + 290],
-                [IX - 60, IY + 310],
+                iso(-1, 1, -80),
+                iso(1, 1, -80),
+                iso(1, -1, -80),
+                [IX + 60, IY + 330],
+                [IX - 70, IY + 350],
               ])}
-              fill="#0a0f09"
+              fill="#0a140a"
             />
             <polygon
               points={poly([iso(-1, -1), iso(1, -1), iso(1, 1), iso(-1, 1)])}
-              fill="#1b2a16"
-              stroke="#ABCF37"
-              strokeOpacity="0.8"
-              strokeWidth="2"
+              fill={"url(#" + uid + "-top" + ")"}
             />
-            <g stroke="#ABCF37" strokeOpacity="0.16">
+            <g stroke="#c8e070" strokeOpacity="0.3">
               {[-0.5, 0, 0.5].map((k) => (
                 <g key={k}>
                   <line x1={iso(k, -1)[0]} y1={iso(k, -1)[1]} x2={iso(k, 1)[0]} y2={iso(k, 1)[1]} />
@@ -451,16 +800,27 @@ export function JourneyScene({
                 </g>
               ))}
             </g>
-
-            {/* expo kiosk */}
-            <polygon points={kiosk.left} fill="#2a3138" />
-            <polygon points={kiosk.right} fill="#1e242a" />
-            <polygon points={kiosk.top} fill="#3a434c" />
             <polygon
-              points={kioskScreen}
-              fill={world.colour}
-              opacity="0.85"
-              className="js-screen"
+              points={poly([iso(-1, -1), iso(1, -1), iso(1, 1), iso(-1, 1)])}
+              fill="none"
+              stroke="#c8e070"
+              strokeWidth="3"
+              className="js-edge"
+            />
+
+            {/* expo kiosk with a headset on a hook */}
+            <polygon points={kiosk.left} fill="#2f3842" />
+            <polygon points={kiosk.right} fill="#222a33" />
+            <polygon points={kiosk.top} fill="#46525e" />
+            <polygon points={kioskScreen} fill={world.colour} className="js-screen" />
+            <rect
+              x={iso(KIOSK.u + 0.12, KIOSK.v, 60)[0] - 9}
+              y={iso(KIOSK.u + 0.12, KIOSK.v, 60)[1] - 28}
+              width="18"
+              height="7"
+              rx="3"
+              fill="#ABCF37"
+              opacity={act === 1 || act === 2 ? 0 : 1}
             />
 
             {/* act scenes, remounted per act so their animations restart */}
@@ -470,62 +830,72 @@ export function JourneyScene({
                   <g className="js-portal">
                     <circle
                       cx={PROP[0]}
-                      cy={PROP[1] - 90}
-                      r="120"
+                      cy={PROP[1] - 110}
+                      r="150"
                       fill={world.colour}
-                      fillOpacity="0.12"
+                      fillOpacity="0.14"
                       stroke={world.colour}
-                      strokeWidth="6"
+                      strokeWidth="9"
+                    />
+                    <circle
+                      cx={PROP[0]}
+                      cy={PROP[1] - 110}
+                      r="130"
+                      fill="none"
+                      stroke="#ffffff"
+                      strokeOpacity="0.35"
+                      strokeWidth="2"
+                      strokeDasharray="4 10"
                     />
                   </g>
-                  <WorldProp code={world.code} colour={world.colour} />
+                  <WorldSet code={world.code} colour={world.colour} />
                 </g>
               ) : null}
               {act === 2 ? (
                 <g>
                   <g className="js-pop">
                     <rect
-                      x={PROP[0] - 110}
-                      y={PROP[1] - 170}
-                      width="220"
-                      height="100"
-                      rx="20"
+                      x={PROP[0] - 130}
+                      y={PROP[1] - 210}
+                      width="260"
+                      height="116"
+                      rx="22"
                       fill="#0B0F14"
-                      fillOpacity="0.85"
+                      fillOpacity="0.9"
                       stroke={world.colour}
-                      strokeWidth="2"
+                      strokeWidth="3"
                     />
-                    <circle cx={PROP[0] - 70} cy={PROP[1] - 120} r="20" fill={world.colour} />
+                    <circle cx={PROP[0] - 82} cy={PROP[1] - 152} r="26" fill={world.colour} />
                     <text
-                      x={PROP[0] - 38}
-                      y={PROP[1] - 132}
+                      x={PROP[0] - 44}
+                      y={PROP[1] - 166}
                       fill="#ffffff"
-                      fillOpacity="0.8"
-                      fontSize="18"
+                      fillOpacity="0.85"
+                      fontSize="20"
                       fontWeight="600"
                     >
                       {name}
                     </text>
                     <text
-                      x={PROP[0] - 38}
-                      y={PROP[1] - 92}
+                      x={PROP[0] - 44}
+                      y={PROP[1] - 120}
                       fill="#ffffff"
-                      fontSize="38"
+                      fontSize="46"
                       fontWeight="800"
                     >
                       {world.score}
                     </text>
                   </g>
-                  {Array.from({ length: 10 }, (_, i) => (
+                  {Array.from({ length: 12 }, (_, i) => (
                     <rect
                       key={i}
-                      x={PROP[0] - 120 + i * 26}
-                      y={PROP[1] - 20}
-                      width="7"
-                      height="7"
+                      x={PROP[0] - 150 + i * 26}
+                      y={PROP[1] - 30}
+                      width="8"
+                      height="8"
                       fill={i % 2 ? "#ABCF37" : world.colour}
                       className="js-spark"
-                      style={{ animationDelay: (i % 5) * 0.18 + "s" }}
+                      style={{ animationDelay: (i % 6) * 0.15 + "s" }}
                     />
                   ))}
                 </g>
@@ -543,24 +913,24 @@ export function JourneyScene({
                       ])}
                       fill="#ABCF37"
                       className="js-tile"
-                      style={{ animationDelay: i * 0.45 + "s" }}
+                      style={{ animationDelay: i * 0.4 + "s" }}
                     />
                   ))}
                   <g className="js-rise">
-                    <polygon points={gateL.left} fill="#2a3138" />
-                    <polygon points={gateL.right} fill="#1e242a" />
+                    <polygon points={gateL.left} fill="#2f3842" />
+                    <polygon points={gateL.right} fill="#222a33" />
                     <polygon points={gateL.top} fill="#ABCF37" />
-                    <polygon points={gateR.left} fill="#2a3138" />
-                    <polygon points={gateR.right} fill="#1e242a" />
+                    <polygon points={gateR.left} fill="#2f3842" />
+                    <polygon points={gateR.right} fill="#222a33" />
                     <polygon points={gateR.top} fill="#ABCF37" />
                     <polygon
                       points={poly([
-                        iso(GATE.u - 0.13, GATE.v + 0.13, 166),
-                        iso(GATE.u + 0.13, GATE.v - 0.13, 166),
+                        iso(GATE.u - 0.13, GATE.v + 0.13, 172),
+                        iso(GATE.u + 0.13, GATE.v - 0.13, 172),
                         iso(GATE.u + 0.13, GATE.v - 0.13, 4),
                         iso(GATE.u - 0.13, GATE.v + 0.13, 4),
                       ])}
-                      fill="url(#js-beam)"
+                      fill={"url(#" + uid + "-beam" + ")"}
                       className="js-gate-glow"
                     />
                     <line
@@ -569,24 +939,27 @@ export function JourneyScene({
                       x2={gateTopB[0]}
                       y2={gateTopB[1]}
                       stroke="#ABCF37"
-                      strokeWidth="12"
+                      strokeWidth="13"
                       strokeLinecap="round"
                     />
                     <g
-                      transform={`translate(${(gateTopA[0] + gateTopB[0]) / 2} ${(gateTopA[1] + gateTopB[1]) / 2 - 46})`}
+                      transform={`translate(${(gateTopA[0] + gateTopB[0]) / 2} ${(gateTopA[1] + gateTopB[1]) / 2 - 50})`}
                     >
                       <g className="js-bounce">
-                        <circle r="26" fill="#0B0F14" stroke="#ABCF37" strokeWidth="3" />
-                        <rect x="-13" y="-8" width="26" height="18" rx="3" fill="#ABCF37" />
+                        <circle r="28" fill="#0B0F14" stroke="#ABCF37" strokeWidth="3" />
+                        <rect x="-14" y="-8" width="28" height="19" rx="3" fill="#ABCF37" />
                         <path d="M-6 -8 V-13 H6 V-8" fill="none" stroke="#ABCF37" strokeWidth="3" />
                       </g>
                     </g>
+                    <g transform={`translate(${MENTOR[0]} ${MENTOR[1]}) scale(1.6)`}>
+                      <Mentor />
+                    </g>
                   </g>
-                  <g transform={`translate(${STAND[0]} ${STAND[1] - 175})`}>
+                  <g transform={`translate(${STAND[0]} ${STAND[1] - 185})`}>
                     <g className="js-pop">
-                      <circle r="30" fill="#0B0F14" stroke="#ABCF37" strokeWidth="3" />
+                      <circle r="32" fill="#0B0F14" stroke="#ABCF37" strokeWidth="3" />
                       <g className="js-needle">
-                        <path d="M0 -22 L7 0 L0 22 L-7 0Z" fill="#ABCF37" />
+                        <path d="M0 -24 L8 0 L0 24 L-8 0Z" fill="#ABCF37" />
                       </g>
                     </g>
                   </g>
@@ -610,7 +983,7 @@ export function JourneyScene({
               }
               transform={walking ? undefined : `translate(${STAND[0]} ${STAND[1]})`}
             >
-              <g transform="scale(1.55)">
+              <g transform="scale(1.7)">
                 <Learner walking={walking} headset={act === 1 || act === 2} />
               </g>
             </g>
@@ -621,20 +994,20 @@ export function JourneyScene({
         <g className="js-layer-near">
           {(
             [
-              [90, 720],
-              [740, 520],
+              [80, 720],
+              [750, 520],
               [640, 960],
-              [220, 930],
+              [210, 940],
             ] as [number, number][]
           ).map(([x, y], i) => (
             <g key={i} transform={`translate(${x} ${y}) rotate(45)`}>
               <rect
-                x="-5"
-                y="-5"
-                width="10"
-                height="10"
+                x="-6"
+                y="-6"
+                width="12"
+                height="12"
                 fill="#ABCF37"
-                opacity="0.5"
+                opacity="0.7"
                 className="js-drift"
                 style={{ animationDelay: -i * 1.5 + "s" }}
               />
@@ -647,7 +1020,7 @@ export function JourneyScene({
         <p
           key={"c" + key}
           aria-hidden="true"
-          className="js-caption pointer-events-none absolute top-[13%] right-[7%] max-w-[15rem] rounded-2xl border border-white/15 bg-black/45 px-4 py-3 text-sm font-semibold text-white"
+          className="js-caption pointer-events-none absolute top-[13%] right-[7%] max-w-[15rem] rounded-2xl border border-white/20 bg-black/55 px-4 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)]"
         >
           <span
             className="mb-1 block text-xs font-bold tracking-widest"
