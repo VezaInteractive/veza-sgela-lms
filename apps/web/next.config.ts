@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     "@sgela/contracts",
     "@sgela/matching",
     "@sgela/messaging",
+    "@sgela/three",
   ],
   serverExternalPackages: ["pino", "@prisma/client", "@sgela/db", "pg"],
   poweredByHeader: false,
