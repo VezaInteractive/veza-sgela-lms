@@ -1,5 +1,5 @@
 import { getDb, type PrismaClient } from "@sgela/db";
-import { getSmsProvider, type SmsProvider } from "@sgela/messaging";
+import { getEmailProvider, type EmailProvider } from "@sgela/messaging";
 import { hashIp, hmac, safeEqualHex } from "@/lib/crypto";
 import {
   HOUR_MS,
@@ -11,20 +11,22 @@ import {
   type VerifyDecision,
 } from "./otp-rules";
 
-const codeHash = (phoneE164: string, code: string) => hmac("otp:" + phoneE164 + ":" + code);
+const codeHash = (email: string, code: string) => hmac("otp:" + email + ":" + code);
 
 export interface RequestOtpInput {
-  phoneE164: string;
+  email: string;
   ip: string | null;
-  /** Localised SMS body; receives the code. */
+  /** Localised email subject line. */
+  subject: string;
+  /** Localised email body; receives the code. */
   message: (code: string) => string;
   now?: Date;
   db?: PrismaClient;
-  sms?: SmsProvider;
+  mailer?: EmailProvider;
   rand?: (max: number) => number;
 }
 
-/** Send a 6-digit code (L-ON-2). Rate limits are counted from OtpChallenge rows. */
+/** Send a 6-digit code to an email (L-ON-2, D-039). Rate limits counted from OtpChallenge rows. */
 export async function requestOtp(input: RequestOtpInput): Promise<SendDecision> {
   const db = input.db ?? getDb();
   const now = input.now ?? new Date();
@@ -32,9 +34,9 @@ export async function requestOtp(input: RequestOtpInput): Promise<SendDecision> 
   const ipHash = hashIp(input.ip);
   const since = new Date(now.getTime() - HOUR_MS);
 
-  const [phoneRows, ipRows] = await Promise.all([
+  const [emailRows, ipRows] = await Promise.all([
     db.otpChallenge.findMany({
-      where: { phoneE164: input.phoneE164, createdAt: { gt: since } },
+      where: { email: input.email, createdAt: { gt: since } },
       select: { createdAt: true },
     }),
     db.otpChallenge.findMany({
@@ -43,7 +45,7 @@ export async function requestOtp(input: RequestOtpInput): Promise<SendDecision> 
     }),
   ]);
   const decision = checkSendAllowed(
-    { phoneSends: phoneRows.map((r) => r.createdAt), ipSends: ipRows.map((r) => r.createdAt) },
+    { identitySends: emailRows.map((r) => r.createdAt), ipSends: ipRows.map((r) => r.createdAt) },
     now,
     limits,
   );
@@ -51,29 +53,29 @@ export async function requestOtp(input: RequestOtpInput): Promise<SendDecision> 
 
   const code = generateOtpCode(input.rand);
   const existing = await db.user.findUnique({
-    where: { phoneE164: input.phoneE164 },
+    where: { email: input.email },
     select: { id: true },
   });
   await db.otpChallenge.create({
     data: {
-      phoneE164: input.phoneE164,
-      codeHash: codeHash(input.phoneE164, code),
+      email: input.email,
+      codeHash: codeHash(input.email, code),
       purpose: existing ? "SIGN_IN" : "SIGN_UP",
       expiresAt: new Date(now.getTime() + limits.ttlMs),
       ipHash,
       createdAt: now,
     },
   });
-  await (input.sms ?? getSmsProvider()).send(input.phoneE164, input.message(code));
+  await (input.mailer ?? getEmailProvider()).send(input.email, input.subject, input.message(code));
   return { ok: true };
 }
 
 export type VerifyResult =
   { ok: true; userId: string; isNew: boolean } | Exclude<VerifyDecision, { ok: true }>;
 
-/** Check a code against the latest challenge for the number; creates the user on first sign-up. */
+/** Check a code against the latest challenge for the email; creates the user on first sign-up. */
 export async function verifyOtp(input: {
-  phoneE164: string;
+  email: string;
   code: string;
   now?: Date;
   db?: PrismaClient;
@@ -81,13 +83,13 @@ export async function verifyOtp(input: {
   const db = input.db ?? getDb();
   const now = input.now ?? new Date();
   const challenge = await db.otpChallenge.findFirst({
-    where: { phoneE164: input.phoneE164 },
+    where: { email: input.email },
     orderBy: { createdAt: "desc" },
   });
   const matches =
     !!challenge &&
     /^\d{6}$/.test(input.code) &&
-    safeEqualHex(challenge.codeHash, codeHash(input.phoneE164, input.code));
+    safeEqualHex(challenge.codeHash, codeHash(input.email, input.code));
   const decision = evaluateVerify(challenge, matches, now);
 
   if (!decision.ok) {
@@ -111,12 +113,12 @@ export async function verifyOtp(input: {
   });
   if (consumed.count === 0) return { ok: false, code: "NO_CHALLENGE" };
 
-  const existing = await db.user.findUnique({ where: { phoneE164: input.phoneE164 } });
+  const existing = await db.user.findUnique({ where: { email: input.email } });
   if (existing) {
     if (existing.status !== "ACTIVE" || existing.deletedAt)
       return { ok: false, code: "NO_CHALLENGE" };
     return { ok: true, userId: existing.id, isNew: false };
   }
-  const user = await db.user.create({ data: { phoneE164: input.phoneE164 } });
+  const user = await db.user.create({ data: { email: input.email } });
   return { ok: true, userId: user.id, isNew: true };
 }

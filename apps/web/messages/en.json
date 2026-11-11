@@ -90,17 +90,17 @@
   },
   "start": {
     "title": "Save your results",
-    "intro": "Sign up with your phone number. We will SMS you a 6-digit code. No password needed.",
+    "intro": "Sign up with your email. We will email you a 6-digit code. No password needed.",
     "phoneLabel": "Mobile number",
     "phoneHint": "South African number, e.g. 071 234 5678",
     "trustDevice": "Keep me signed in on this phone for 30 days",
     "sendCode": "Send my code",
     "verifyTitle": "Enter your code",
-    "verifyIntro": "We sent a 6-digit code to {phone}.",
+    "verifyIntro": "We sent a 6-digit code to {email}.",
     "codeLabel": "6-digit code",
     "resendIn": "You can ask for a new code in {seconds} s",
     "resend": "Send a new code",
-    "changeNumber": "Use a different number",
+    "changeNumber": "Use a different email",
     "verifying": "Checking your code...",
     "doneTitle": "You are all set, {name}!",
     "doneRestricted": "You can start learning now. Opportunities and invites open once your guardian says yes.",
@@ -109,12 +109,12 @@
     "doneNoResults": "Played at a Veza expo? Add your code any time from Me.",
     "goToCompass": "Go to my Career Compass",
     "stepOf": "Step {step} of {total}",
-    "devCodeTitle": "Test mode: SMS is not connected yet",
+    "devCodeTitle": "Test mode: email is not connected yet",
     "devCodeBody": "Your code is",
     "steps": {
       "title": "Sign-up steps",
       "label": "Step {n}",
-      "phone": "Your number",
+      "phone": "Your email",
       "verify": "Verify your code",
       "profile": "About you",
       "consent": "Consent"
@@ -126,7 +126,9 @@
       "match": "Follow your compass to real opportunities",
       "pause": "Pause animation",
       "play": "Play animation"
-    }
+    },
+    "emailLabel": "Email address",
+    "emailHint": "We will send your code here, e.g. you@gmail.com"
   },
   "profile": {
     "title": "About you",
@@ -193,7 +195,8 @@
     "gradeInvalid": "Choose a grade from 8 to 12.",
     "tooLong": "That is too long.",
     "guardianSamePhone": "Use the number of your parent or guardian, not your own.",
-    "generic": "Something went wrong. Please try again."
+    "generic": "Something went wrong. Please try again.",
+    "emailInvalid": "Enter a valid email address, e.g. you@gmail.com"
   },
   "guardian": {
     "title": "Your parent or guardian",
@@ -673,5 +676,9 @@
       "backToApp": "Back to the app",
       "menu": "Admin menu"
     }
+  },
+  "email": {
+    "subject": "Your Sgela sign-in code",
+    "body": "Your Sgela code is {code}. It expires in 5 minutes. Never share it."
   }
 }

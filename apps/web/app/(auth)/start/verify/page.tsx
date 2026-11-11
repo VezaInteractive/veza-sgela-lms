@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { maskPhone } from "@sgela/contracts";
+import { maskEmail } from "@sgela/contracts";
 import { devOutbox, isConsoleMessaging } from "@sgela/messaging";
 import { devPagesEnabled } from "@/lib/dev-pages";
 import { StepHeader } from "@/components/onboarding/step-header";
@@ -12,15 +12,15 @@ export async function generateMetadata() {
 }
 
 export default async function VerifyPage() {
-  const phone = (await cookies()).get("sgela_otp_phone")?.value;
-  if (!phone) redirect("/start");
+  const email = (await cookies()).get("sgela_otp_email")?.value;
+  if (!email) redirect("/start");
   const t = await getTranslations("start");
-  // No SMS vendor is connected yet (SMS_PROVIDER=console, D-013): show the code locally so
-  // people can sign in. Never shown when a real SMS vendor or production mode is active.
+  // No email vendor is connected yet (EMAIL_PROVIDER=console, D-039): show the code locally so
+  // people can sign in. Never shown when a real email vendor or production mode is active.
   const devCode =
     isConsoleMessaging() && devPagesEnabled()
       ? devOutbox()
-          .filter((m) => m.channel === "sms" && m.to === phone)
+          .filter((m) => m.channel === "email" && m.to === email)
           .at(-1)
           ?.text.match(/\b\d{6}\b/)?.[0]
       : undefined;
@@ -28,7 +28,7 @@ export default async function VerifyPage() {
     <>
       <StepHeader
         title={t("verifyTitle")}
-        intro={t("verifyIntro", { phone: maskPhone(phone) })}
+        intro={t("verifyIntro", { email: maskEmail(email) })}
         step={2}
         total={4}
       />

@@ -1,5 +1,5 @@
 import { chromium, expect, request as apiRequest, type FullConfig } from "@playwright/test";
-import { AUTH_FILE, fillProfile, signUpWithPhone } from "./helpers";
+import { AUTH_FILE, fillProfile, signUpWithEmail } from "./helpers";
 
 /** Signs up one adult learner through the real UI and saves the session for smoke tests. */
 export default async function globalSetup(config: FullConfig) {
@@ -9,7 +9,7 @@ export default async function globalSetup(config: FullConfig) {
   const request = await apiRequest.newContext({ baseURL });
 
   await page.goto("/start");
-  await signUpWithPhone(page, request);
+  await signUpWithEmail(page, request);
   await fillProfile(page, {
     firstName: "Sipho",
     age: 22,

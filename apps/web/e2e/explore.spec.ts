@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { settleAnimations, waitForSms } from "./helpers";
+import { settleAnimations, waitForOtpEmail } from "./helpers";
 
 test("explore index lists DB worlds with a sponsor credit line", async ({ page }) => {
   await page.goto("/explore");
@@ -89,11 +89,11 @@ test("an admin can edit a career and sees it saved", async ({ browser, request }
   const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
   const page = await context.newPage();
   await page.goto("/start");
-  await page.getByLabel("Mobile number").fill("060 000 0001");
+  await page.getByLabel("Email address").fill("admin@veza.africa");
   await page.getByRole("button", { name: "Send my code" }).click();
   await expect(page).toHaveURL(/\/start\/verify$/);
-  const sms = await waitForSms(request, "+27600000001", /code is \d{6}/);
-  await page.getByLabel("6-digit code").pressSequentially(sms.match(/\d{6}/)![0]);
+  const code = await waitForOtpEmail(request, "admin@veza.africa");
+  await page.getByLabel("6-digit code").pressSequentially(code);
   await expect(page).toHaveURL(/\/admin\/insights$/);
 
   await page.goto("/admin/careers");

@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import sharp from "sharp";
-import { expectNoA11yViolations, settleAnimations, waitForSms } from "./helpers";
+import { expectNoA11yViolations, settleAnimations, waitForOtpEmail } from "./helpers";
 
 test("root redirects to home", async ({ page }) => {
   await page.goto("/");
@@ -191,11 +191,11 @@ test("admin dashboard shows aggregates with privacy note", async ({ browser, req
   const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
   const page = await context.newPage();
   await page.goto("/start");
-  await page.getByLabel("Mobile number").fill("060 000 0001");
+  await page.getByLabel("Email address").fill("admin@veza.africa");
   await page.getByRole("button", { name: "Send my code" }).click();
   await expect(page).toHaveURL(/\/start\/verify$/);
-  const sms = await waitForSms(request, "+27600000001", /code is \d{6}/);
-  await page.getByLabel("6-digit code").pressSequentially(sms.match(/\d{6}/)![0]);
+  const code = await waitForOtpEmail(request, "admin@veza.africa");
+  await page.getByLabel("6-digit code").pressSequentially(code);
   await expect(page).toHaveURL(/\/admin\/insights$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Platform insights");
   await expect(page.getByText("Groups under 20 learners are hidden")).toBeVisible();

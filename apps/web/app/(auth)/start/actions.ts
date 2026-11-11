@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getDb } from "@sgela/db";
-import { normaliseClaimCode, normaliseSaMobile } from "@sgela/contracts";
+import { normaliseClaimCode, normaliseEmail, normaliseSaMobile } from "@sgela/contracts";
 import { trackEvent } from "@/lib/analytics/server";
 import { requestOtp, verifyOtp } from "@/lib/auth/otp";
 import {
@@ -22,7 +22,7 @@ import { STEP_ONE_FIELDS, parseProfile } from "@/lib/onboarding/profile-schema";
 import { isMinor, onboardingPath } from "@/lib/onboarding/steps";
 import { LOCALE_COOKIE } from "@/i18n/config";
 
-const OTP_PHONE_COOKIE = "sgela_otp_phone";
+const OTP_EMAIL_COOKIE = "sgela_otp_email";
 const TRUST_COOKIE = "sgela_trust";
 const shortCookie = {
   httpOnly: true,
@@ -50,7 +50,7 @@ function otpErrorState(code: string, retryAfterSec = 0): FormState {
   switch (code) {
     case "RESEND_TOO_SOON":
       return { error: "resendTooSoon", params: { seconds: retryAfterSec } };
-    case "PHONE_RATE_LIMITED":
+    case "IDENTITY_RATE_LIMITED":
     case "IP_RATE_LIMITED":
       return { error: "rateLimited", params: { minutes: Math.ceil(retryAfterSec / 60) } };
     default:
@@ -58,38 +58,40 @@ function otpErrorState(code: string, retryAfterSec = 0): FormState {
   }
 }
 
-/** /start: send a code to the number. */
+/** /start: send a code to the email (D-039). */
 export async function requestCodeAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const raw = String(formData.get("phone") ?? "").slice(0, 25);
-  const values = { phone: raw };
-  const phoneE164 = normaliseSaMobile(raw);
-  if (!phoneE164) return { fieldErrors: { phone: "phoneInvalid" }, values };
-  const t = await getTranslations("sms");
+  const raw = String(formData.get("email") ?? "").slice(0, 254);
+  const values = { email: raw };
+  const email = normaliseEmail(raw);
+  if (!email) return { fieldErrors: { email: "emailInvalid" }, values };
+  const t = await getTranslations("email");
   const result = await requestOtp({
-    phoneE164,
+    email,
     ip: await ip(),
-    message: (code) => t("otp", { code }),
+    subject: t("subject"),
+    message: (code) => t("body", { code }),
   });
   if (!result.ok) return { ...otpErrorState(result.code, result.retryAfterSec), values };
   const store = await cookies();
-  store.set(OTP_PHONE_COOKIE, phoneE164, shortCookie);
+  store.set(OTP_EMAIL_COOKIE, email, shortCookie);
   store.set(TRUST_COOKIE, formData.get("trustDevice") ? "1" : "0", shortCookie);
-  await trackEvent({ name: "otp_requested", props: { channel: "sms" } });
+  await trackEvent({ name: "otp_requested", props: { channel: "email" } });
   redirect("/start/verify");
 }
 
 /** /start/verify: resend after 30 s. */
 export async function resendCodeAction(_prev: FormState): Promise<FormState> {
-  const phoneE164 = (await cookies()).get(OTP_PHONE_COOKIE)?.value;
-  if (!phoneE164) redirect("/start");
-  const t = await getTranslations("sms");
+  const email = (await cookies()).get(OTP_EMAIL_COOKIE)?.value;
+  if (!email) redirect("/start");
+  const t = await getTranslations("email");
   const result = await requestOtp({
-    phoneE164,
+    email,
     ip: await ip(),
-    message: (code) => t("otp", { code }),
+    subject: t("subject"),
+    message: (code) => t("body", { code }),
   });
   if (!result.ok) return otpErrorState(result.code, result.retryAfterSec);
-  await trackEvent({ name: "otp_requested", props: { channel: "sms", resend: true } });
+  await trackEvent({ name: "otp_requested", props: { channel: "email", resend: true } });
   // Re-render the verify page so the test-mode code box shows the new code.
   revalidatePath("/start/verify");
   return {};
@@ -114,12 +116,12 @@ async function linkPendingClaim(learnerId: string): Promise<string | null> {
 /** /start/verify: check the code, start the session, route to the next step. */
 export async function verifyCodeAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const store = await cookies();
-  const phoneE164 = store.get(OTP_PHONE_COOKIE)?.value;
-  if (!phoneE164) redirect("/start");
+  const email = store.get(OTP_EMAIL_COOKIE)?.value;
+  if (!email) redirect("/start");
   const code = String(formData.get("code") ?? "").replace(/\D/g, "");
   if (code.length !== 6) return { fieldErrors: { code: "codeInvalid" } };
 
-  const result = await verifyOtp({ phoneE164, code });
+  const result = await verifyOtp({ email, code });
   if (!result.ok) {
     await trackEvent({ name: "otp_failed", props: { reason: result.code } });
     if (result.code === "WRONG_CODE") {
@@ -133,7 +135,7 @@ export async function verifyCodeAction(_prev: FormState, formData: FormData): Pr
     return { fieldErrors: { code: key } };
   }
   await startSession(result.userId, store.get(TRUST_COOKIE)?.value !== "0");
-  store.delete(OTP_PHONE_COOKIE);
+  store.delete(OTP_EMAIL_COOKIE);
   store.delete(TRUST_COOKIE);
   await trackEvent({
     name: result.isNew ? "account_created" : "otp_verified",
@@ -242,7 +244,8 @@ export async function inviteGuardianAction(
   if (!name) fieldErrors.guardianName = "required";
   else if (name.length > 80) fieldErrors.guardianName = "tooLong";
   if (!phoneE164) fieldErrors.guardianPhone = "phoneInvalid";
-  else if (phoneE164 === session.user.phoneE164) fieldErrors.guardianPhone = "guardianSamePhone";
+  else if (session.user.phoneE164 && phoneE164 === session.user.phoneE164)
+    fieldErrors.guardianPhone = "guardianSamePhone";
   if (Object.keys(fieldErrors).length > 0) return { fieldErrors };
 
   await inviteGuardian({ learnerId: learner.id, name, phoneE164: phoneE164!, relationship });

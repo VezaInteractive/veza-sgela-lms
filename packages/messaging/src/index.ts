@@ -14,6 +14,11 @@ export interface SmsProvider {
   send(toE164: string, text: string): Promise<{ id: string }>;
 }
 
+/** Email delivery (D-039): login codes and links. Console impl first; real vendor at M8. */
+export interface EmailProvider {
+  send(to: string, subject: string, text: string): Promise<{ id: string }>;
+}
+
 export interface WhatsAppProvider {
   sendTemplate(
     toE164: string,
@@ -24,7 +29,7 @@ export interface WhatsAppProvider {
 
 export interface OutboxMessage {
   id: string;
-  channel: "sms" | "whatsapp";
+  channel: "sms" | "whatsapp" | "email";
   to: string;
   text: string;
   sentAt: string;
@@ -75,6 +80,22 @@ export class ConsoleWhatsAppProvider implements WhatsAppProvider {
   }
 }
 
+export class ConsoleEmailProvider implements EmailProvider {
+  async send(to: string, subject: string, text: string) {
+    const msg = record({ channel: "email", to, text: `${subject}\n${text}` });
+    console.info(
+      `[email:console] to=${to} subject=${JSON.stringify(subject)} text=${JSON.stringify(text)}`,
+    );
+    return { id: msg.id };
+  }
+}
+
+export function getEmailProvider(): EmailProvider {
+  const kind = process.env.EMAIL_PROVIDER ?? "console";
+  if (kind === "console") return new ConsoleEmailProvider();
+  throw new Error(`EMAIL_PROVIDER "${kind}" is not implemented yet (M8)`);
+}
+
 export function getSmsProvider(): SmsProvider {
   const kind = process.env.SMS_PROVIDER ?? "console";
   if (kind === "console") return new ConsoleSmsProvider();
@@ -89,5 +110,8 @@ export function getWhatsAppProvider(): WhatsAppProvider {
 
 /** Console providers keep an in-memory outbox; true only when no real SMS vendor is configured. */
 export function isConsoleMessaging(): boolean {
-  return (process.env.SMS_PROVIDER ?? "console") === "console";
+  return (
+    (process.env.SMS_PROVIDER ?? "console") === "console" &&
+    (process.env.EMAIL_PROVIDER ?? "console") === "console"
+  );
 }

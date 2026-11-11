@@ -6,21 +6,22 @@ import { Button, Input } from "@sgela/ui";
 import { requestCodeAction, type FormState } from "@/app/(auth)/start/actions";
 import { FormError, useErrorText } from "./field-error";
 
-export function PhoneForm() {
+/** Email sign-in / sign-up (D-039): one address, a 6-digit code is sent to it. */
+export function EmailForm() {
   const t = useTranslations();
   const err = useErrorText();
   const [state, action, pending] = useActionState<FormState, FormData>(requestCodeAction, {});
   return (
     <form action={action} className="flex flex-col gap-5" noValidate>
       <Input
-        name="phone"
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel-national"
-        label={t("start.phoneLabel")}
-        hint={t("start.phoneHint")}
-        error={err(state.fieldErrors?.phone)}
-        defaultValue={state.values?.phone}
+        name="email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        label={t("start.emailLabel")}
+        hint={t("start.emailHint")}
+        error={err(state.fieldErrors?.email)}
+        defaultValue={state.values?.email}
         required
       />
       <label className="flex min-h-11 items-center gap-3 text-sm">

@@ -5,7 +5,7 @@ export interface OtpLimits {
   ttlMs: number;
   maxAttempts: number;
   resendAfterMs: number;
-  maxSendsPerPhonePerHour: number;
+  maxSendsPerIdentityPerHour: number;
   maxSendsPerIpPerHour: number;
 }
 
@@ -19,7 +19,10 @@ export function otpLimits(): OtpLimits {
     ttlMs: 5 * 60_000,
     maxAttempts: 5,
     resendAfterMs: 30_000,
-    maxSendsPerPhonePerHour: envInt("OTP_MAX_SENDS_PER_PHONE_PER_HOUR", 5),
+    maxSendsPerIdentityPerHour: envInt(
+      "OTP_MAX_SENDS_PER_EMAIL_PER_HOUR",
+      envInt("OTP_MAX_SENDS_PER_PHONE_PER_HOUR", 5),
+    ),
     maxSendsPerIpPerHour: envInt("OTP_MAX_SENDS_PER_IP_PER_HOUR", 20),
   };
 }
@@ -34,13 +37,13 @@ export type SendDecision =
   | { ok: true }
   | {
       ok: false;
-      code: "RESEND_TOO_SOON" | "PHONE_RATE_LIMITED" | "IP_RATE_LIMITED";
+      code: "RESEND_TOO_SOON" | "IDENTITY_RATE_LIMITED" | "IP_RATE_LIMITED";
       retryAfterSec: number;
     };
 
 export interface SendHistory {
-  /** createdAt of challenges for this phone in the last hour, any order. */
-  phoneSends: Date[];
+  /** createdAt of challenges for this identity (email) in the last hour, any order. */
+  identitySends: Date[];
   /** createdAt of challenges from this IP hash in the last hour. */
   ipSends: Date[];
 }
@@ -51,7 +54,7 @@ export function checkSendAllowed(
   limits = otpLimits(),
 ): SendDecision {
   const since = now.getTime() - HOUR_MS;
-  const phone = history.phoneSends
+  const identity = history.identitySends
     .map((d) => d.getTime())
     .filter((t) => t > since)
     .sort((a, b) => a - b);
@@ -60,7 +63,7 @@ export function checkSendAllowed(
     .filter((t) => t > since)
     .sort((a, b) => a - b);
 
-  const last = phone.at(-1);
+  const last = identity.at(-1);
   if (last !== undefined && now.getTime() - last < limits.resendAfterMs) {
     return {
       ok: false,
@@ -68,11 +71,11 @@ export function checkSendAllowed(
       retryAfterSec: Math.ceil((last + limits.resendAfterMs - now.getTime()) / 1000),
     };
   }
-  if (phone.length >= limits.maxSendsPerPhonePerHour) {
-    const oldest = phone[phone.length - limits.maxSendsPerPhonePerHour]!;
+  if (identity.length >= limits.maxSendsPerIdentityPerHour) {
+    const oldest = identity[identity.length - limits.maxSendsPerIdentityPerHour]!;
     return {
       ok: false,
-      code: "PHONE_RATE_LIMITED",
+      code: "IDENTITY_RATE_LIMITED",
       retryAfterSec: Math.ceil((oldest + HOUR_MS - now.getTime()) / 1000),
     };
   }

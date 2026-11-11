@@ -243,8 +243,9 @@ enum AppStatus {
 
 model User {
   id             String          @id @default(cuid())
-  phoneE164      String          @unique
-  email          String?         @unique
+  /// Optional since D-039: login moved to email OTP. Kept for later SMS/notifications.
+  phoneE164      String?         @unique
+  email          String          @unique
   role           UserRole        @default(LEARNER)
   status         UserStatus      @default(ACTIVE)
   lastLoginAt    DateTime?
@@ -276,7 +277,8 @@ model AuthSession {
 
 model OtpChallenge {
   id         String     @id @default(cuid())
-  phoneE164  String
+  /// Email the code was sent to (D-039). Login is email OTP; SMS dropped for cost.
+  email      String
   codeHash   String
   purpose    OtpPurpose
   attempts   Int        @default(0)
@@ -286,7 +288,7 @@ model OtpChallenge {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
-  @@index([phoneE164, createdAt])
+  @@index([email, createdAt])
 }
 
 model Learner {

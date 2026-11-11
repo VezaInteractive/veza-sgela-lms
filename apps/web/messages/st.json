@@ -64,13 +64,11 @@
   },
   "start": {
     "title": "Boloka diphetho tsa hao",
-    "intro": "Ingodise ka nomoro ya hao ya mohala. Re tla o romella khoutu ya dinomoro tse 6 ka SMS. Ha ho hlokehe phasewete.",
     "phoneLabel": "Nomoro ya selefouno",
     "phoneHint": "Nomoro ya Afrika Borwa, mohl. 071 234 5678",
     "trustDevice": "Ntshwarele ke kene mohaleng ona matsatsi a 30",
     "sendCode": "Nthomelle khoutu",
     "verifyTitle": "Kenya khoutu ya hao",
-    "verifyIntro": "Re rometse khoutu ya dinomoro tse 6 ho {phone}.",
     "codeLabel": "Khoutu ya dinomoro tse 6",
     "resendIn": "O ka kopa khoutu e ntjha ka mor'a metsotswana e {seconds}",
     "resend": "Romela khoutu e ntjha",
@@ -100,7 +98,11 @@
       "match": "Latela khampase ya hao ho ya menyetla ya nnete",
       "pause": "Emisa setshwantsho se tsamayang",
       "play": "Bapala setshwantsho se tsamayang"
-    }
+    },
+    "emailLabel": "Aterese ya imeile",
+    "emailHint": "Re tla romela khoutu ya hao mona",
+    "intro": "Ngodisa ka imeile ya hao. Re tla o romella khoutu ya dinomoro tse 6. Ha ho hlokahale password.",
+    "verifyIntro": "Re rometse khoutu ya dinomoro tse 6 ho {email}."
   },
   "profile": {
     "title": "Ka wena",
@@ -153,7 +155,8 @@
     "gradeInvalid": "Kgetha kereiti ho tloha ho 8 ho isa ho 12.",
     "tooLong": "Seo se selelele haholo.",
     "guardianSamePhone": "Sebedisa nomoro ya motswadi kapa mohlokomedi wa hao, eseng ya hao.",
-    "generic": "Ho na le se sa tsamaeng hantle. Ka kopo leka hape."
+    "generic": "Ho na le se sa tsamaeng hantle. Ka kopo leka hape.",
+    "emailInvalid": "Kenya aterese ya imeile e nepahetseng, mohlala you@gmail.com"
   },
   "guardian": {
     "title": "Motswadi kapa mohlokomedi wa hao",

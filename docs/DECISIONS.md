@@ -247,3 +247,10 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 - **KPI cards:** `AdminStatGrid`/`AdminCard` (`components/admin/admin-parts.tsx`) give insights premium stat cards (gradient fill, corner glow, gem icon chip, big number, optional trend/share pill) and accent-edged panels, reusing the D-036/D-037 card language. Styles (`.admin-sidebar`, `.admin-stat`) live in `globals.css`.
 - **Unchanged:** admin-only (`requireAdminPage` → 404 for learners), aggregates only with < 20 suppressed server-side, all server actions and RBAC. axe stays clean in light and dark; no sideways scroll at 360 px; existing admin e2e pass.
 - **Reason:** stakeholder asked for a detailed, premium admin user flow (reference: an Eduplex-style dashboard with a dark sidebar and rich cards).
+
+## D-039 · 2026-11-11 · Email OTP login (SMS dropped for cost)
+
+- **Decision:** sign-in and sign-up move from SMS to **email** one-time codes, for learners and admins. SMS at scale is expensive; email is effectively free. `/start` now asks for an email, a 6-digit code is sent to it, and the same verify flow continues. Schema (migration `email_login`): `User.phoneE164` is now optional and `User.email` is required and unique; `OtpChallenge` is keyed on `email` instead of `phoneE164`. The OTP engine (`lib/auth/otp.ts`), rate-limit rules (per-identity, reusing the hourly caps; new `OTP_MAX_SENDS_PER_EMAIL_PER_HOUR` falls back to the old phone env), the `/api/v1/auth/otp/*` routes and the start UI all use email. `normaliseEmail`/`maskEmail` live in `packages/contracts`.
+- **Delivery:** a console `EmailProvider` (`packages/messaging`) records to the dev outbox like the SMS one, so the code shows on screen in test mode and e2e reads it; a real email vendor is an M8 swap behind `EMAIL_PROVIDER`. Dev admin is now `admin@veza.africa`.
+- **Guardian consent stays on SMS/WhatsApp for now** — it is one message per under-18 learner (low volume), and the big cost was high-volume student login. Moving guardian to email is a small follow-up.
+- **Reason:** stakeholder decided email login is cheaper and simpler for students and admin "for now".

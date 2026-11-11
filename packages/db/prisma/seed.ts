@@ -115,11 +115,12 @@ async function main() {
     }
   }
 
-  // Dev admin (PRD §18.1). Sign in at /start with 060 000 0001; the OTP prints to the dev server console.
+  // Dev admin (PRD §18.1, D-039). Sign in at /start with admin@veza.africa; the code prints to
+  // the dev server console and shows on screen in test mode.
   await db.user.upsert({
-    where: { phoneE164: "+27600000001" },
+    where: { email: "admin@veza.africa" },
     update: { role: "SUPER_ADMIN" },
-    create: { phoneE164: "+27600000001", role: "SUPER_ADMIN" },
+    create: { email: "admin@veza.africa", role: "SUPER_ADMIN" },
   });
 
   // Sample schools so the searchable school list works in dev (D-017). Names are generic

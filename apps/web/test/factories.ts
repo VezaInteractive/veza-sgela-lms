@@ -8,6 +8,10 @@ export function randomPhone(): string {
   return "+2782" + String(randomInt(0, 10_000_000)).padStart(7, "0");
 }
 
+export function randomEmail(): string {
+  return "test-" + randomInt(0, 1_000_000_000).toString(36) + "@example.test";
+}
+
 export function dobForAge(age: number, now = new Date()): Date {
   return new Date(Date.UTC(now.getUTCFullYear() - age, 0, 15));
 }
@@ -17,7 +21,7 @@ export async function createLearner(opts: {
   restricted?: boolean;
   firstName?: string;
 }) {
-  const user = await db.user.create({ data: { phoneE164: randomPhone() } });
+  const user = await db.user.create({ data: { email: randomEmail() } });
   return db.learner.create({
     data: {
       userId: user.id,

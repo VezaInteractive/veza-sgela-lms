@@ -5,7 +5,7 @@ const limits: OtpLimits = {
   ttlMs: 5 * 60_000,
   maxAttempts: 5,
   resendAfterMs: 30_000,
-  maxSendsPerPhonePerHour: 5,
+  maxSendsPerIdentityPerHour: 5,
   maxSendsPerIpPerHour: 20,
 };
 const T0 = new Date("2026-11-20T09:00:00Z");
@@ -21,11 +21,11 @@ describe("OTP code", () => {
 
 describe("send limits", () => {
   it("allows the first send", () => {
-    expect(checkSendAllowed({ phoneSends: [], ipSends: [] }, T0, limits)).toEqual({ ok: true });
+    expect(checkSendAllowed({ identitySends: [], ipSends: [] }, T0, limits)).toEqual({ ok: true });
   });
 
   it("blocks resend within 30 s and allows it after", () => {
-    const h = { phoneSends: [T0], ipSends: [T0] };
+    const h = { identitySends: [T0], ipSends: [T0] };
     expect(checkSendAllowed(h, at(29), limits)).toEqual({
       ok: false,
       code: "RESEND_TOO_SOON",
@@ -36,21 +36,21 @@ describe("send limits", () => {
 
   it("allows 5 sends per number per hour, then blocks until the oldest ages out", () => {
     const sends = [0, 60, 120, 180, 240].map(at);
-    const h = { phoneSends: sends, ipSends: sends };
+    const h = { identitySends: sends, ipSends: sends };
     const blocked = checkSendAllowed(h, at(300), limits);
-    expect(blocked).toMatchObject({ ok: false, code: "PHONE_RATE_LIMITED" });
+    expect(blocked).toMatchObject({ ok: false, code: "IDENTITY_RATE_LIMITED" });
     expect(blocked.ok === false && blocked.retryAfterSec).toBe(3300);
     expect(checkSendAllowed(h, at(3601), limits)).toEqual({ ok: true });
   });
 
   it("allows 20 sends per IP per hour", () => {
     const ipSends = Array.from({ length: 20 }, (_, i) => at(i * 10));
-    expect(checkSendAllowed({ phoneSends: [], ipSends }, at(300), limits)).toMatchObject({
+    expect(checkSendAllowed({ identitySends: [], ipSends }, at(300), limits)).toMatchObject({
       ok: false,
       code: "IP_RATE_LIMITED",
     });
     expect(
-      checkSendAllowed({ phoneSends: [], ipSends: ipSends.slice(1) }, at(300), limits),
+      checkSendAllowed({ identitySends: [], ipSends: ipSends.slice(1) }, at(300), limits),
     ).toEqual({ ok: true });
   });
 });

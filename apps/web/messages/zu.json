@@ -64,13 +64,11 @@
   },
   "start": {
     "title": "Londoloza imiphumela yakho",
-    "intro": "Bhalisa ngenombolo yakho yocingo. Sizokuthumelela ikhodi yezinombolo ezi-6 nge-SMS. Akudingeki iphasiwedi.",
     "phoneLabel": "Inombolo yeselula",
     "phoneHint": "Inombolo yaseNingizimu Afrika, isib. 071 234 5678",
     "trustDevice": "Ngigcine ngingenile kulolu cingo izinsuku ezingama-30",
     "sendCode": "Thumela ikhodi yami",
     "verifyTitle": "Faka ikhodi yakho",
-    "verifyIntro": "Sithumele ikhodi yezinombolo ezi-6 ku-{phone}.",
     "codeLabel": "Ikhodi yezinombolo ezi-6",
     "resendIn": "Ungacela ikhodi entsha emizuzwaneni engu-{seconds}",
     "resend": "Thumela ikhodi entsha",
@@ -100,7 +98,11 @@
       "match": "Landela ikhampasi yakho uye emathubeni angempela",
       "pause": "Misa umdwebo onyakazayo",
       "play": "Dlala umdwebo onyakazayo"
-    }
+    },
+    "emailLabel": "Ikheli le-imeyili",
+    "emailHint": "Sizothumela ikhodi yakho lapha",
+    "intro": "Bhalisa nge-imeyili yakho. Sizokuthumelela ikhodi enezinombolo eziyisi-6. Ayidingeki iphasiwedi.",
+    "verifyIntro": "Sithumele ikhodi enezinombolo eziyisi-6 ku-{email}."
   },
   "profile": {
     "title": "Mayelana nawe",
@@ -153,7 +155,8 @@
     "gradeInvalid": "Khetha ibanga kusukela ku-8 kuya ku-12.",
     "tooLong": "Lokho kude kakhulu.",
     "guardianSamePhone": "Sebenzisa inombolo yomzali noma yombheki wakho, hhayi eyakho.",
-    "generic": "Kukhona okungahambanga kahle. Sicela uzame futhi."
+    "generic": "Kukhona okungahambanga kahle. Sicela uzame futhi.",
+    "emailInvalid": "Faka ikheli le-imeyili elivumelekile, isib. you@gmail.com"
   },
   "guardian": {
     "title": "Umzali noma umbheki wakho",

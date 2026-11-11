@@ -104,3 +104,21 @@ describe("createKioskSessionSchema", () => {
     expect(createKioskSessionSchema.safeParse(world).success).toBe(false);
   });
 });
+
+import { maskEmail, normaliseEmail } from "./index";
+
+describe("email login (D-039)", () => {
+  it("normalises valid addresses to trimmed lowercase", () => {
+    expect(normaliseEmail("  Taylor.M@Gmail.com ")).toBe("taylor.m@gmail.com");
+    expect(normaliseEmail("a@b.co")).toBe("a@b.co");
+  });
+  it("rejects malformed addresses", () => {
+    for (const bad of ["", "no-at", "a@b", "a b@c.com", "@x.com", "x@y.", "x@.com"]) {
+      expect(normaliseEmail(bad)).toBeNull();
+    }
+  });
+  it("masks for display", () => {
+    expect(maskEmail("taylor@gmail.com")).toBe("ta***@gmail.com");
+    expect(maskEmail("a@b.com")).toBe("a***@b.com");
+  });
+});

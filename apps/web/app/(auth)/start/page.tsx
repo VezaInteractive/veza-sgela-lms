@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { PhoneForm } from "@/components/onboarding/phone-form";
+import { EmailForm } from "@/components/onboarding/email-form";
 import { StepHeader } from "@/components/onboarding/step-header";
 import { getCurrentSession } from "@/lib/auth/session";
 import { onboardingPath } from "@/lib/onboarding/steps";
@@ -19,7 +19,7 @@ export default async function StartPage() {
   return (
     <>
       <StepHeader title={t("title")} intro={t("intro")} step={1} total={4} />
-      <PhoneForm />
+      <EmailForm />
     </>
   );
 }

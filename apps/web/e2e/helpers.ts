@@ -9,6 +9,32 @@ export function randomPhone() {
   return { local: "082" + rest, e164: "+2782" + rest };
 }
 
+/** Random fictional email for sign-up (D-039). */
+export function randomEmail() {
+  return "e2e-" + Math.floor(Math.random() * 1_000_000_000).toString(36) + "@example.test";
+}
+
+/** Poll the dev outbox for the newest email code sent to an address. */
+export async function waitForOtpEmail(request: APIRequestContext, to: string): Promise<string> {
+  let code: string | undefined;
+  await expect
+    .poll(
+      async () => {
+        const res = await request.get("/api/dev/sms-outbox?to=" + encodeURIComponent(to));
+        const body = (await res.json()) as { messages: { channel: string; text: string }[] };
+        code = body.messages
+          .filter((m) => m.channel === "email")
+          .map((m) => m.text.match(/\b\d{6}\b/)?.[0])
+          .filter(Boolean)
+          .reverse()[0] as string | undefined;
+        return !!code;
+      },
+      { timeout: 15_000 },
+    )
+    .toBe(true);
+  return code!;
+}
+
 export function dobForAge(age: number) {
   return new Date().getUTCFullYear() - age + "-01-15";
 }
@@ -60,17 +86,16 @@ export async function expectNoA11yViolations(page: Page) {
 }
 
 /** Phone OTP sign-up up to the profile screen. */
-export async function signUpWithPhone(page: Page, request: APIRequestContext) {
-  const phone = randomPhone();
-  await page.getByLabel("Mobile number").fill(phone.local);
+export async function signUpWithEmail(page: Page, request: APIRequestContext) {
+  const email = randomEmail();
+  await page.getByLabel("Email address").fill(email);
   await page.getByRole("button", { name: "Send my code" }).click();
   await expect(page).toHaveURL(/\/start\/verify$/);
-  const sms = await waitForSms(request, phone.e164, /code is \d{6}/);
-  const code = sms.match(/\d{6}/)![0];
+  const code = await waitForOtpEmail(request, email);
   // Typing the 6th digit submits the form on its own.
   await page.getByLabel("6-digit code").pressSequentially(code);
   await expect(page).toHaveURL(/\/start\/profile$/);
-  return phone;
+  return email;
 }
 
 export async function fillProfile(

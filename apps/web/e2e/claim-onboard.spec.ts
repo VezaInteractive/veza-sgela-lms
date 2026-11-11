@@ -4,7 +4,7 @@ import {
   expectNoA11yViolations,
   fillProfile,
   randomPhone,
-  signUpWithPhone,
+  signUpWithEmail,
   waitForSms,
 } from "./helpers";
 
@@ -93,7 +93,7 @@ test("QR to claim to onboarding to guardian consent links the results", async ({
   // 3. Phone OTP sign-up and the two profile screens (16 years old).
   await expect(page).toHaveURL(/\/start$/);
   await expectNoA11yViolations(page);
-  await signUpWithPhone(page, request);
+  await signUpWithEmail(page, request);
   await expectNoA11yViolations(page);
   await fillProfile(page, {
     firstName: "Thandeka",
@@ -154,7 +154,7 @@ test("QR to claim to onboarding to guardian consent links the results", async ({
 test("organic sign-up without a code reaches the app (L-ON-8)", async ({ page, request }) => {
   await page.goto("/home");
   await expect(page).toHaveURL(/\/start$/);
-  await signUpWithPhone(page, request);
+  await signUpWithEmail(page, request);
   await fillProfile(page, {
     firstName: "Ayanda",
     age: 19,
