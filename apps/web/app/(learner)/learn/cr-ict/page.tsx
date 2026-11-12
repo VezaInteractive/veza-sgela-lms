@@ -38,6 +38,14 @@ export default async function IctBasicsPage() {
     standard: ti("standard"),
     topicDone: ti("topicDone"),
     pickOne: ti("pickOne"),
+    unitStandard: ti("unitStandard"),
+    purpose: ti("purpose"),
+    outcomes: ti("outcomes"),
+    sessions: ti("sessions"),
+    assessmentNote: ti("assessmentNote"),
+    nqf: ti("nqf"),
+    credits: ti("credits"),
+    provider: ti("provider"),
   };
 
   return (

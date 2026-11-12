@@ -383,7 +383,7 @@
     "learn": {
       "title": "My course progress",
       "intro": "Short courses with 3D models you can turn and take apart.",
-      "accredited": "Accredited via Bantu",
+      "accredited": "Accredited via Bantsho",
       "minutes": "{n} min",
       "progress": "{n}% done",
       "topics": "Topics",
@@ -501,7 +501,15 @@
       "minutes": "{n} min",
       "standard": "Content:",
       "topicDone": "Done",
-      "pickOne": "Choose..."
+      "pickOne": "Choose...",
+      "unitStandard": "Unit Standard",
+      "purpose": "Purpose:",
+      "outcomes": "What you will be able to do",
+      "sessions": "Sessions",
+      "assessmentNote": "Each session ends with assessment questions. Answer them all to complete this learning unit.",
+      "nqf": "NQF Level",
+      "credits": "credits",
+      "provider": "Accredited provider:"
     }
   },
   "help": {

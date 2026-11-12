@@ -8,6 +8,14 @@ const questions: Question[] = ICT_BASICS.topics.flatMap((t) =>
 describe("ICT Basics content", () => {
   it("has four topics and question ids are unique", () => {
     expect(ICT_BASICS.topics).toHaveLength(4);
+    expect(ICT_BASICS.topics.map((t) => t.session)).toEqual([
+      "Session 1",
+      "Session 2",
+      "Session 3",
+      "Session 4",
+    ]);
+    expect(ICT_BASICS.unit.id).toBe("14921");
+    expect(ICT_BASICS.unit.outcomes.length).toBeGreaterThan(0);
     const ids = questions.map((q) => q.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(totalQuestions()).toBe(questions.length);

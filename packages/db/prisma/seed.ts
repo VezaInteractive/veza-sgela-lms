@@ -1,7 +1,7 @@
 /**
  * Seed skeleton (M0-3). Idempotent upserts only. Full seed per PRD §18.1
  * (districts, schools, careers, courses, synthetic learners/signals) lands in M1–M7.
- * Sponsor/partner names must be fictional; Bantu and Veza are the only real orgs.
+ * Sponsor/partner names must be fictional; Bantsho and Veza are the only real orgs.
  */
 import "dotenv/config";
 import { existsSync, statSync } from "node:fs";
@@ -43,7 +43,7 @@ async function main() {
     { id: "org_veza", name: "Veza Interactive", type: "VEZA" as const },
     {
       id: "org_bantu",
-      name: "Bantu Marketing and Management Services",
+      name: "Bantsho – Management and Marketing Strategies",
       type: "ACCREDITATION_PARTNER" as const,
     },
   ];

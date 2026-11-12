@@ -1,7 +1,7 @@
 /**
  * Clickable-demo sample content (D-018). Shows every learner section before its milestone
  * (M2 Compass/Explore, M3 Learn, M4 credentials, M5 Opportunities) is built for real.
- * All sponsor and partner names are fictional; only Bantu and Veza are real organisations.
+ * All sponsor and partner names are fictional; only Bantsho and Veza are real organisations.
  * Replace each block with DB-backed data in its milestone.
  */
 export type WorldCode = "AVI" | "ENG" | "CUL" | "MED" | "AGR";
@@ -37,13 +37,13 @@ export const COURSES: Course[] = [
     code: "AGR-101",
     world: "AGR",
     title: "Sustainable Agriculture Foundations",
-    summary: "Soil, water, crops and hydroponics. Credit-bearing via Bantu.",
+    summary: "Soil, water, crops and hydroponics. Credit-bearing via Bantsho.",
     minutes: 300,
     accredited: true,
     progress: 40,
     level: "beginner",
     credits: 12,
-    provider: "Bantu (accredited partner)",
+    provider: "Bantsho (accredited partner)",
     resources: [
       "Soil testing kit guide (PDF)",
       "3D model: drip irrigation system",
@@ -127,13 +127,13 @@ export const COURSES: Course[] = [
     code: "CR-ICT",
     world: null,
     title: "Career-Ready: ICT Basics",
-    summary: "Email, documents and staying safe online. Bantu-aligned.",
+    summary: "Email, documents and staying safe online. Bantsho-aligned.",
     minutes: 90,
     accredited: true,
     progress: 0,
     level: "beginner",
     credits: 4,
-    provider: "Bantu (accredited partner)",
+    provider: "Bantsho (accredited partner)",
     resources: [
       "Email and documents cheat sheet (PDF)",
       "Staying safe online quiz",
@@ -200,7 +200,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     world: "AGR",
     provinces: "Limpopo, Mpumalanga",
     closes: "2027-03-15",
-    value: "R3,200 monthly stipend, NQF 2 credits via Bantu",
+    value: "R3,200 monthly stipend, NQF 2 credits via Bantsho",
     score: 61,
     reasons: ["Lives in Limpopo", "AGR-101 in progress"],
     gaps: ["Complete AGR-101 Topics 3-5", "Agricultural Sciences recommended"],

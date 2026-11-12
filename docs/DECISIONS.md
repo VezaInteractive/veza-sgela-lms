@@ -220,7 +220,7 @@ Format: ID, date, decision, alternatives, reason. Newest last. Change a decided 
 ## D-032 · 2026-11-09 · Career worlds and careers moved to the database (M2-1)
 
 - **Decision:** the five worlds and 24 careers (PRD §6.2) are seeded into `Industry` and `Career` and read through `apps/web/lib/explore/catalog.ts`; the sample `WORLDS`/`getWorld` left `apps/web/lib/demo/data.ts`. Schema (migration `m2_explore`): `Industry` gains `vrSummary`, `translations`, and relations to a sponsor `Organisation` and a hero `Asset3D`; `Career` gains `sortOrder` and a hero asset relation. Content is admin-edited English; optional per-locale overrides live in a `translations` JSON (`{ zu: {...}, st: {...} }`) and are overlaid field-by-field with English fallback (`lib/explore/content.ts`, unit-tested). World **names** still come from the `worlds` next-intl namespace (zu/st already translated), not the DB.
-- **Sponsors:** two fictional sponsors (Skylark Aviation Trust, Lumo Health Futures) seed the "presented by" credit line (L-EX-1). Only Bantu and Veza are real.
+- **Sponsors:** two fictional sponsors (Skylark Aviation Trust, Lumo Health Futures) seed the "presented by" credit line (L-EX-1). Only Bantsho and Veza are real.
 - **Reason:** M2-1 requires DB-backed, admin-editable worlds and careers while keeping the D-021/D-029 layouts.
 
 ## D-033 · 2026-11-09 · 3D stack and poster-first components (M2-2)

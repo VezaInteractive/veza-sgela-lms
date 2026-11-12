@@ -68,7 +68,7 @@ function ThemePanel({ theme }: { theme: "dark" | "light" }) {
           <CardDescription className="mt-1">5 topics, 3D jet engine, AR</CardDescription>
           <div className="mt-3 flex gap-2">
             <Badge tone="AVI">Aviation</Badge>
-            <Badge tone="lime">Accredited via Bantu</Badge>
+            <Badge tone="lime">Accredited via Bantsho</Badge>
           </div>
         </Card>
         <Card className="bg-surface-raised">

@@ -1,7 +1,7 @@
 /**
  * Career worlds and careers seed (PRD §6.1, §6.2; M2-1). Partners validate this content before
  * pilot. Salary notes are placeholders until partner data arrives. Sponsor names are fictional;
- * only Bantu and Veza are real organisations. Role models are composite, fictional stories.
+ * only Bantsho and Veza are real organisations. Role models are composite, fictional stories.
  */
 
 export type StudyRouteType = "TVET" | "UNIVERSITY" | "LEARNERSHIP" | "SHORT_COURSE";
@@ -199,7 +199,7 @@ export const CATALOG: SeedIndustry[] = [
     whyItMatters: [
       "Artisans such as electricians and fitters are on the national scarce-skills list.",
       "Renewable energy projects need technicians in every province.",
-      "Carpentry-related modules are offered through Bantu, an accredited partner.",
+      "Carpentry-related modules are offered through Bantsho, an accredited partner.",
     ],
     careers: [
       {
@@ -291,7 +291,10 @@ export const CATALOG: SeedIndustry[] = [
           "Check finishes and clean up safely.",
         ],
         studyRoutes: [
-          { type: "SHORT_COURSE", label: "Carpentry skills programme through Bantu (accredited)" },
+          {
+            type: "SHORT_COURSE",
+            label: "Carpentry skills programme through Bantsho (accredited)",
+          },
           { type: "LEARNERSHIP", label: "Apprenticeship ending in a trade test" },
         ],
         subjectsRequired: ["MATHEMATICS"],
@@ -521,7 +524,7 @@ export const CATALOG: SeedIndustry[] = [
     vrSummary:
       "Run a smart farm: test soil, set up irrigation, check a hydroponic system and harvest.",
     whyItMatters: [
-      "Credit-bearing through Bantu: the first accredited pathway on Sgela.",
+      "Credit-bearing through Bantsho: the first accredited pathway on Sgela.",
       "Smart farming creates jobs close to home in rural districts.",
       "Food security and climate change make sustainable farming a national priority.",
     ],
@@ -539,7 +542,7 @@ export const CATALOG: SeedIndustry[] = [
         studyRoutes: [
           {
             type: "SHORT_COURSE",
-            label: "Agricultural skills programme through Bantu (accredited)",
+            label: "Agricultural skills programme through Bantsho (accredited)",
           },
           { type: "UNIVERSITY", label: "Diploma in agriculture or agricultural management" },
         ],
@@ -550,7 +553,7 @@ export const CATALOG: SeedIndustry[] = [
           name: "Kagiso R.",
           place: "Bojanala",
           story:
-            "Kagiso took the Bantu agriculture programme after matric and now manages a 40-hectare co-op vegetable farm.",
+            "Kagiso took the Bantsho agriculture programme after matric and now manages a 40-hectare co-op vegetable farm.",
         },
       },
       {

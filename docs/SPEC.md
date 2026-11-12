@@ -21,12 +21,12 @@ The journey does not end at a certificate. Every learner path ends in a **real n
 
 **Value stack**
 
-| Layer         | What                                                                                            | Runs on                                                                 |
-| ------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 1 · Core      | Interactive 3D models, simulations, AR "place it in your room" — data visualisation is the hero | Web / mobile (WebGL, WebXR, AR Quick Look / Scene Viewer)               |
-| 2 · Extension | VR practice sessions — scored, deeper versions of the same tasks                                | Meta Quest 3S at kiosks, labs, partner sites                            |
-| 3 · Outcome   | Credits, credentials, portfolio                                                                 | Platform + accredited partner (Bantu Marketing and Management Services) |
-| Cross-cut     | Data: expo → registration → progress → credential, by industry, region and sponsor              | Analytics (internal now; sponsor dashboards later)                      |
+| Layer         | What                                                                                            | Runs on                                                                       |
+| ------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| 1 · Core      | Interactive 3D models, simulations, AR "place it in your room" — data visualisation is the hero | Web / mobile (WebGL, WebXR, AR Quick Look / Scene Viewer)                     |
+| 2 · Extension | VR practice sessions — scored, deeper versions of the same tasks                                | Meta Quest 3S at kiosks, labs, partner sites                                  |
+| 3 · Outcome   | Credits, credentials, portfolio                                                                 | Platform + accredited partner (Bantsho – Management and Marketing Strategies) |
+| Cross-cut     | Data: expo → registration → progress → credential, by industry, region and sponsor              | Analytics (internal now; sponsor dashboards later)                            |
 
 Veza is the spatial computing and data visualisation tech company. Accreditation sits with the partner.
 
@@ -37,14 +37,14 @@ Veza is the spatial computing and data visualisation tech company. Accreditation
 | #   | Industry                        | Example VR world (expo)                       | Example 3D/AR learning objects                                    | Accreditation path (initial)                                            |
 | --- | ------------------------------- | --------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | 1   | **Aviation**                    | Pre-flight walkaround / cockpit checks        | Exploded jet engine, aircraft systems, airport ops map            | Exposure track + Veza certificate of completion (seek aviation partner) |
-| 2   | **Engineering**                 | Wire & safety-test a panel; power-tool repair | Power tools with hotspots (as in ref screens), circuits, machines | Bantu: carpentry / related trades; seek engineering-trades partner      |
+| 2   | **Engineering**                 | Wire & safety-test a panel; power-tool repair | Power tools with hotspots (as in ref screens), circuits, machines | Bantsho: carpentry / related trades; seek engineering-trades partner    |
 | 3   | **Culinary skills**             | Commercial kitchen shift                      | Kitchen layout & HACCP zones, knife skills, equipment             | Exposure track + Veza certificate (seek hospitality partner)            |
 | 4   | **Medical & health facilities** | Clinic / ward walkthrough                     | Anatomy, hospital equipment, infection-control flows              | Exposure track + Veza certificate (seek health partner)                 |
-| 5   | **Sustainable agriculture**     | Smart-farm / hydroponics operation            | Soil, irrigation, crop cycles, farm digital twin                  | **Bantu: agricultural training — first fully accredited pathway**       |
+| 5   | **Sustainable agriculture**     | Smart-farm / hydroponics operation            | Soil, irrigation, crop cycles, farm digital twin                  | **Bantsho: agricultural training — first fully accredited pathway**     |
 
-Cross-cutting accredited tracks through Bantu: **ICT** and **business management** — offer these to every learner as "career-ready" add-ons.
+Cross-cutting accredited tracks through Bantsho: **ICT** and **business management** — offer these to every learner as "career-ready" add-ons.
 
-> ⚠️ Bantu's current scopes cover agriculture, ICT, business management and carpentry. Aviation, culinary and medical need either additional accredited partners or should launch as non-credit exposure tracks. The data model must support both (`credit_bearing: true/false`).
+> ⚠️ Bantsho's current scopes cover agriculture, ICT, business management and carpentry. Aviation, culinary and medical need either additional accredited partners or should launch as non-credit exposure tracks. The data model must support both (`credit_bearing: true/false`).
 
 ---
 
@@ -128,7 +128,7 @@ Each section lists the Knowledge Pele reference screen and what the Veza version
 | **Opportunity partner / employer** | Turns the funnel into a talent pipeline | Post opportunities, view matched (anonymised) talent pool, send invites, track applicants to placement                      |
 | **Industry content partner**       | Co-creates career worlds and modules    | Content review/approval, SME input, branding on co-created content                                                          |
 | **School / teacher**               | Brings classes; tracks learners         | Class roster, progress, subject-choice insights                                                                             |
-| **Assessor / moderator (Bantu)**   | Accreditation integrity                 | PoE review, assessment sign-off, learner records                                                                            |
+| **Assessor / moderator (Bantsho)** | Accreditation integrity                 | PoE review, assessment sign-off, learner records                                                                            |
 | **Veza admin / content**           | Runs the platform                       | Course & 3D asset authoring, industries, users, reporting                                                                   |
 
 ---
@@ -164,7 +164,7 @@ Each section lists the Knowledge Pele reference screen and what the Veza version
 - Content is co-produced with **industry leaders per career world** (e.g. an airline/aviation body for Aviation, a hospital group for Medical, an agri-business for Agriculture). Partners provide subject-matter experts, real procedures, equipment references and site access; Veza provides 3D, AR, VR and platform.
 - **One 3D asset, three layers:** each learning object is built once as a master 3D asset and reused across web 3D, AR and the Quest VR world.
 - Partner review and sign-off step before publishing; partner branding on co-created worlds.
-- Accredited content is aligned with Bantu (and future partners) so credit-bearing modules meet assessment requirements.
+- Accredited content is aligned with Bantsho (and future partners) so credit-bearing modules meet assessment requirements.
 
 ## 8. Platform economics & impact
 
@@ -202,15 +202,15 @@ Veza identity: **Sora** (headings), **Manrope** (body); lime **#ABCF37**, deep-s
 
 ## 11. Phasing
 
-| Phase       | Scope                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **MVP**     | Phone OTP sign-up + guardian consent · Expo QR claim · Career Compass · Explore (5 industries) · Learn with 3D viewer + AR blocks · quizzes · progress · certificate of completion · 1 full course (Agriculture, Bantu-aligned) + 1 showcase course (Engineering power tools) · **Opportunity board + rules-based matching + invitations** · **AI coach (English text, then isiZulu/Sesotho)** · **internal career-interest heatmap** |
-| **Phase 2** | VR result sync · portfolio & verifiable badges · PoE + assessor role · ICT & business management tracks · application tracker to placement · opportunity-partner portal · sponsor heatmap view · voice coach · Veza Pay                                                                                                                                                                                                               |
-| **Phase 3** | Sponsor dashboards · school/teacher views · public + SETA heatmap reports · more industries · full multilingual                                                                                                                                                                                                                                                                                                                       |
+| Phase       | Scope                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **MVP**     | Phone OTP sign-up + guardian consent · Expo QR claim · Career Compass · Explore (5 industries) · Learn with 3D viewer + AR blocks · quizzes · progress · certificate of completion · 1 full course (Agriculture, Bantsho-aligned) + 1 showcase course (Engineering power tools) · **Opportunity board + rules-based matching + invitations** · **AI coach (English text, then isiZulu/Sesotho)** · **internal career-interest heatmap** |
+| **Phase 2** | VR result sync · portfolio & verifiable badges · PoE + assessor role · ICT & business management tracks · application tracker to placement · opportunity-partner portal · sponsor heatmap view · voice coach · Veza Pay                                                                                                                                                                                                                 |
+| **Phase 3** | Sponsor dashboards · school/teacher views · public + SETA heatmap reports · more industries · full multilingual                                                                                                                                                                                                                                                                                                                         |
 
 ## 12. Open items
 
-1. Confirm which qualifications Bantu is accredited for under QCTO (legacy unit standards such as the one in the reference are being phased out).
+1. Confirm which qualifications Bantsho is accredited for under QCTO (legacy unit standards such as the one in the reference are being phased out).
 2. Accreditation partners for aviation, culinary, medical.
 3. Industry content partner per career world.
 4. Hosting region (POPIA) and data-sharing terms with sponsors and opportunity partners (aggregate/anonymised by default; named only with learner consent).

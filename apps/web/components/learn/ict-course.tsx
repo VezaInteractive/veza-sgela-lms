@@ -55,6 +55,14 @@ function makeLabels(t: (k: string) => string) {
     standard: t("standard"),
     topicDone: t("topicDone"),
     pickOne: t("pickOne"),
+    unitStandard: t("unitStandard"),
+    purpose: t("purpose"),
+    outcomes: t("outcomes"),
+    sessions: t("sessions"),
+    assessmentNote: t("assessmentNote"),
+    nqf: t("nqf"),
+    credits: t("credits"),
+    provider: t("provider"),
   };
 }
 
@@ -190,7 +198,7 @@ function Overview({
         <div className="flex flex-col gap-3">
           <span className="flex items-center gap-2 text-xs font-semibold tracking-wide uppercase opacity-80">
             <Sparkles aria-hidden="true" className="size-4" />
-            {ICT_BASICS.code}
+            {ICT_BASICS.code} · {ICT_BASICS.learningUnit}
           </span>
           <h1 className="font-heading text-2xl leading-tight font-bold md:text-4xl">
             {ICT_BASICS.title}
@@ -212,6 +220,44 @@ function Overview({
         </div>
       </div>
 
+      <section className="glass panel-accent flex flex-col gap-4 rounded-2xl p-5 md:p-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+            {L.unitStandard} {ICT_BASICS.unit.id}
+          </span>
+          <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
+            {L.nqf} {ICT_BASICS.unit.nqfLevel}
+          </span>
+          <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
+            {ICT_BASICS.unit.credits} {L.credits}
+          </span>
+        </div>
+        <h2 className="font-heading text-lg font-semibold">{ICT_BASICS.unit.title}</h2>
+        <p className="text-sm text-muted">
+          <span className="font-semibold text-foreground">{L.purpose} </span>
+          {ICT_BASICS.unit.purpose}
+        </p>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-sm font-semibold">{L.outcomes}</h3>
+          <ul className="flex flex-col gap-2">
+            {ICT_BASICS.unit.outcomes.map((o) => (
+              <li key={o} className="flex gap-2 text-sm">
+                <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-link" />
+                {o}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p className="flex items-start gap-2 rounded-xl bg-surface p-3 text-xs text-muted">
+          <CircleHelp aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-link" />
+          {L.assessmentNote}
+        </p>
+        <p className="text-xs text-muted">
+          {L.provider} {ICT_BASICS.unit.provider} · {ICT_BASICS.unit.qualification}
+        </p>
+      </section>
+
+      <h2 className="-mb-1 px-1 font-heading text-lg font-semibold">{L.sessions}</h2>
       <ol className="flex flex-col gap-4">
         {ICT_BASICS.topics.map((topic, i) => {
           const done = topicDone(topic, saved);
@@ -235,6 +281,9 @@ function Overview({
                   {done ? <Check className="size-6" /> : i + 1}
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+                    {topic.session}
+                  </span>
                   <span className="font-heading text-lg leading-snug font-semibold">
                     {topic.title}
                   </span>
@@ -323,6 +372,9 @@ function TopicView({
       </div>
 
       <div className="course-card panel-accent rounded-3xl p-6 md:p-8">
+        <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+          {topic.session}
+        </span>
         <h1 className="font-heading text-2xl font-bold md:text-3xl">{topic.title}</h1>
         <p className="mt-1 text-muted">{topic.summary}</p>
       </div>

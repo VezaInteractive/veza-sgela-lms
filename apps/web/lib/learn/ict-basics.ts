@@ -53,11 +53,26 @@ export interface Block {
 
 export interface Topic {
   slug: string;
+  /** "Session 1", etc. — this session's label in the learning unit. */
+  session: string;
   title: string;
   summary: string;
   /** minutes, shown on the card and for progress */
   minutes: number;
   blocks: Block[];
+}
+
+/** The SAQA unit standard this course delivers and assesses. */
+export interface UnitStandard {
+  id: string;
+  title: string;
+  nqfLevel: number;
+  credits: number;
+  qualification: string;
+  provider: string;
+  purpose: string;
+  /** Specific outcomes the learner is assessed against. */
+  outcomes: string[];
 }
 
 export interface IctCourse {
@@ -66,6 +81,9 @@ export interface IctCourse {
   title: string;
   intro: string;
   standard: string;
+  unit: UnitStandard;
+  /** Name for the one learning unit these sessions make up. */
+  learningUnit: string;
   topics: Topic[];
 }
 
@@ -74,11 +92,27 @@ export const ICT_BASICS: IctCourse = {
   code: "CR-ICT",
   title: "Career-Ready: ICT Basics",
   intro:
-    "Learn how computers are built, connected and used at work. Read each part, then answer the quick checks. Your answers are saved on this device as you go.",
+    "Work through the learning unit one session at a time. Read each part, then answer the assessment questions. Your answers are saved on this device as you go.",
   standard: "Based on SAQA Unit Standard 14921 — Demonstrate an understanding of computer systems.",
+  learningUnit: "Learning Unit 1 — Understanding computer systems",
+  unit: {
+    id: "14921",
+    title: "Demonstrate an understanding of computer systems",
+    nqfLevel: 4,
+    credits: 5,
+    qualification: "FETC: Information Technology (Technical Support)",
+    provider: "Bantsho – Management and Marketing Strategies",
+    purpose:
+      "This unit gives you conceptual knowledge of computer systems for working in, or entering, Information Systems & Technology. By the end you can describe how computers are configured and the main categories of computer applications.",
+    outcomes: [
+      "Describe past, present and future computer hardware configurations.",
+      "Describe the categories of computer system applications.",
+    ],
+  },
   topics: [
     {
       slug: "hardware-configurations",
+      session: "Session 1",
       title: "Computer hardware configurations",
       summary: "Stand-alone, networked, midrange and client-server computers.",
       minutes: 12,
@@ -166,6 +200,7 @@ export const ICT_BASICS: IctCourse = {
     },
     {
       slug: "network-topologies",
+      session: "Session 2",
       title: "Network topologies",
       summary: "How computers are wired together: bus, ring and star.",
       minutes: 12,
@@ -241,6 +276,7 @@ export const ICT_BASICS: IctCourse = {
     },
     {
       slug: "application-categories",
+      session: "Session 3",
       title: "Types of computer applications",
       summary: "Embedded, desktop, web, web services and console programs.",
       minutes: 12,
@@ -338,6 +374,7 @@ export const ICT_BASICS: IctCourse = {
     },
     {
       slug: "environments-and-information-systems",
+      session: "Session 4",
       title: "Environments & information systems",
       summary: "Development vs production environments, and what an information system is.",
       minutes: 10,
