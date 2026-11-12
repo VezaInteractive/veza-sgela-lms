@@ -2,18 +2,13 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { IctCourse, type IctLabels } from "@/components/learn/ict-course";
-import { requireLearnerPage } from "@/lib/auth/rbac";
-
-export async function generateMetadata() {
-  return { title: "Career-Ready: ICT Basics" };
-}
 
 /**
- * Interactive ICT Basics course (D-040), the first real Learn content. Built from SAQA Unit
- * Standard 14921. Reading + clickable questions with instant feedback; progress saved per device.
+ * The real interactive ICT Basics course (D-040), rendered for the `cr-ict` slug by the Learn
+ * course route. Kept as one component so there is a single route for this course (no static vs
+ * dynamic route ambiguity).
  */
-export default async function IctBasicsPage() {
-  await requireLearnerPage();
+export async function IctCourseSection() {
   const t = await getTranslations("demo");
   const ti = await getTranslations("demo.ict");
   const labels: IctLabels = {

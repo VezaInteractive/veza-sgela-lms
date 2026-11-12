@@ -88,7 +88,7 @@ export interface IctCourse {
 }
 
 export const ICT_BASICS: IctCourse = {
-  slug: "cr-ict",
+  slug: "ict-basics",
   code: "CR-ICT",
   title: "Career-Ready: ICT Basics",
   intro:

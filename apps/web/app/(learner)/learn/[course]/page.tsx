@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@sgela/ui";
+import { IctCourseSection } from "@/components/learn/ict-course-section";
 import { ColourBar } from "@/components/dashboard/parts";
 import { SampleNote } from "@/components/demo/ui";
 import { WORLD_COLOURS, WorldIcon, worldStyle } from "@/components/demo/world-visuals";
@@ -27,6 +28,7 @@ import { coursePhoto } from "@/lib/demo/photos";
 
 export async function generateMetadata({ params }: PageProps<"/learn/[course]">) {
   const { course } = await params;
+  if (course === "ict-basics") return { title: "Career-Ready: ICT Basics" };
   return { title: getCourse(course)?.title ?? "" };
 }
 
@@ -43,6 +45,8 @@ function resourceIcon(r: string): LucideIcon {
  */
 export default async function CoursePage({ params }: PageProps<"/learn/[course]">) {
   const { course: slug } = await params;
+  // The ICT Basics course is a real interactive course (D-040), not the demo detail shell.
+  if (slug === "ict-basics") return <IctCourseSection />;
   const c = getCourse(slug);
   if (!c) notFound();
   const t = await getTranslations("demo");
