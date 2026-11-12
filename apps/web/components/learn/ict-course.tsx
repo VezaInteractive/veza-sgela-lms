@@ -16,13 +16,25 @@ import {
 import { cn } from "@sgela/ui";
 import { ColourBar } from "@/components/dashboard/parts";
 import { track } from "@/lib/analytics/client";
-import { ICT_BASICS, isCorrect, totalQuestions, type Question } from "@/lib/learn/ict-basics";
+import {
+  ICT_BASICS,
+  isCorrect,
+  totalQuestions,
+  type Question,
+  type Topic,
+} from "@/lib/learn/ict-basics";
+import { Illus } from "@/components/learn/ict-illustrations";
 
 type AnswerValue = number | boolean | string | Record<string, string>;
 type Saved = Record<string, { value: AnswerValue; correct: boolean }>;
 
 const STORAGE_KEY = "sgela.learn.cr-ict";
-const TOPIC_COLOURS = ["#4FA3FF", "#FFB547", "#FF6B5A", "#ABCF37"];
+const TOPIC_COLOURS = ["#4FA3FF", "#FFB547", "#FF6B5A", "#ABCF37", "#3FD1B5", "#B98CFF"];
+
+/** Flat list of every session across all units, with the unit it belongs to. */
+const FLAT: { topic: Topic; unitName: string; unitIndex: number }[] = ICT_BASICS.units.flatMap(
+  (u, unitIndex) => u.topics.map((topic) => ({ topic, unitName: u.name, unitIndex })),
+);
 
 function load(): Saved {
   try {
@@ -38,9 +50,11 @@ function makeLabels(t: (k: string) => string) {
     start: t("start"),
     continue: t("continue"),
     check: t("check"),
+    save: t("save"),
     next: t("next"),
     back: t("back"),
     correct: t("correct"),
+    saved: t("savedNote"),
     tryAgain: t("tryAgain"),
     yes: t("true"),
     no: t("false"),
@@ -69,7 +83,8 @@ function makeLabels(t: (k: string) => string) {
 export type IctLabels = ReturnType<typeof makeLabels>;
 
 /**
- * Interactive ICT Basics course (D-040). Overview → per-topic reading + question blocks with
+ * Interactive ICT Basics course (D-040). Overview of two learning units → per-session reading +
+ * question blocks (choice, true/false, blank, match, number costing, short-answer fields) with
  * instant feedback → a done screen. Answers and progress persist per device in localStorage
  * (D-021 storage rule); nothing is sent to the server yet.
  */
@@ -77,7 +92,7 @@ export function IctCourse({ labels: L }: { labels: IctLabels }) {
   const total = totalQuestions();
   const [saved, setSaved] = useState<Saved>({});
   const [ready, setReady] = useState(false);
-  // view: -1 overview, 0..n-1 topics, n done
+  // view: -1 overview, 0..FLAT.length-1 a session, FLAT.length done
   const [view, setView] = useState<number>(-1);
 
   useEffect(() => {
@@ -127,14 +142,14 @@ export function IctCourse({ labels: L }: { labels: IctLabels }) {
         total={total}
         onOpen={(i) => {
           setView(i);
-          track("ict_topic_opened", { topic: ICT_BASICS.topics[i]!.slug });
+          track("ict_topic_opened", { topic: FLAT[i]!.topic.slug });
         }}
         onReset={reset}
       />
     );
   }
 
-  if (view >= ICT_BASICS.topics.length) {
+  if (view >= FLAT.length) {
     return (
       <Done
         L={L}
@@ -146,21 +161,22 @@ export function IctCourse({ labels: L }: { labels: IctLabels }) {
     );
   }
 
-  const topic = ICT_BASICS.topics[view]!;
+  const entry = FLAT[view]!;
   return (
     <TopicView
-      key={topic.slug}
+      key={entry.topic.slug}
       L={L}
-      topic={topic}
+      topic={entry.topic}
+      unitName={entry.unitName}
       colour={TOPIC_COLOURS[view % TOPIC_COLOURS.length]!}
       index={view}
-      count={ICT_BASICS.topics.length}
+      count={FLAT.length}
       saved={saved}
       onAnswer={record}
       onBack={() => setView(-1)}
       onDone={() => {
-        const last = view + 1 >= ICT_BASICS.topics.length;
-        track("ict_topic_completed", { topic: topic.slug });
+        const last = view + 1 >= FLAT.length;
+        track("ict_topic_completed", { topic: entry.topic.slug });
         if (last) track("ict_course_completed", { answered: answeredCount });
         setView(view + 1);
         window.scrollTo({ top: 0 });
@@ -169,7 +185,7 @@ export function IctCourse({ labels: L }: { labels: IctLabels }) {
   );
 }
 
-function topicDone(topic: (typeof ICT_BASICS.topics)[number], saved: Saved) {
+function topicDone(topic: Topic, saved: Saved) {
   const qs = topic.blocks.filter((b) => b.question).map((b) => b.question!);
   return qs.length > 0 && qs.every((q) => saved[q.id]?.correct);
 }
@@ -189,16 +205,16 @@ function Overview({
   onOpen: (i: number) => void;
   onReset: () => void;
 }) {
-  const pct = Math.round((answeredCount / total) * 100);
+  const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div className="hero-band fade-up rounded-3xl p-6 md:p-8">
         <span aria-hidden="true" className="hero-orb hero-orb-a" />
         <span aria-hidden="true" className="hero-orb hero-orb-b" />
         <div className="flex flex-col gap-3">
           <span className="flex items-center gap-2 text-xs font-semibold tracking-wide uppercase opacity-80">
             <Sparkles aria-hidden="true" className="size-4" />
-            {ICT_BASICS.code} · {ICT_BASICS.learningUnit}
+            {ICT_BASICS.code} · {ICT_BASICS.units.length} learning units
           </span>
           <h1 className="font-heading text-2xl leading-tight font-bold md:text-4xl">
             {ICT_BASICS.title}
@@ -220,103 +236,122 @@ function Overview({
         </div>
       </div>
 
-      <section className="glass panel-accent flex flex-col gap-4 rounded-2xl p-5 md:p-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-            {L.unitStandard} {ICT_BASICS.unit.id}
-          </span>
-          <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
-            {L.nqf} {ICT_BASICS.unit.nqfLevel}
-          </span>
-          <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
-            {ICT_BASICS.unit.credits} {L.credits}
-          </span>
-        </div>
-        <h2 className="font-heading text-lg font-semibold">{ICT_BASICS.unit.title}</h2>
-        <p className="text-sm text-muted">
-          <span className="font-semibold text-foreground">{L.purpose} </span>
-          {ICT_BASICS.unit.purpose}
-        </p>
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-semibold">{L.outcomes}</h3>
-          <ul className="flex flex-col gap-2">
-            {ICT_BASICS.unit.outcomes.map((o) => (
-              <li key={o} className="flex gap-2 text-sm">
-                <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-link" />
-                {o}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <p className="flex items-start gap-2 rounded-xl bg-surface p-3 text-xs text-muted">
-          <CircleHelp aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-link" />
-          {L.assessmentNote}
-        </p>
-        <p className="text-xs text-muted">
-          {L.provider} {ICT_BASICS.unit.provider} · {ICT_BASICS.unit.qualification}
-        </p>
-      </section>
+      {ICT_BASICS.units.map((u, unitIndex) => {
+        // global flat offset of this unit's first session
+        const offset = ICT_BASICS.units
+          .slice(0, unitIndex)
+          .reduce((n, prev) => n + prev.topics.length, 0);
+        return (
+          <section key={u.unit.id} className="flex flex-col gap-4">
+            <section className="glass panel-accent flex flex-col gap-4 rounded-2xl p-5 md:p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                  {L.unitStandard} {u.unit.id}
+                </span>
+                <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
+                  {L.nqf} {u.unit.nqfLevel}
+                </span>
+                <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
+                  {u.unit.credits} {L.credits}
+                </span>
+              </div>
+              <div>
+                <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+                  {u.name}
+                </span>
+                <h2 className="font-heading text-lg font-semibold">{u.unit.title}</h2>
+              </div>
+              <p className="text-sm text-muted">
+                <span className="font-semibold text-foreground">{L.purpose} </span>
+                {u.unit.purpose}
+              </p>
+              <div className="flex flex-col gap-2">
+                <h3 className="text-sm font-semibold">{L.outcomes}</h3>
+                <ul className="flex flex-col gap-2">
+                  {u.unit.outcomes.map((o) => (
+                    <li key={o} className="flex gap-2 text-sm">
+                      <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-link" />
+                      {o}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="flex items-start gap-2 rounded-xl bg-surface p-3 text-xs text-muted">
+                <CircleHelp aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-link" />
+                {L.assessmentNote}
+              </p>
+              <p className="text-xs text-muted">
+                {L.provider} {u.unit.provider} · {u.unit.qualification}
+              </p>
+            </section>
 
-      <h2 className="-mb-1 px-1 font-heading text-lg font-semibold">{L.sessions}</h2>
-      <ol className="flex flex-col gap-4">
-        {ICT_BASICS.topics.map((topic, i) => {
-          const done = topicDone(topic, saved);
-          const colour = TOPIC_COLOURS[i % TOPIC_COLOURS.length]!;
-          const started = topic.blocks.some((b) => b.question && saved[b.question.id]);
-          return (
-            <li key={topic.slug}>
-              <button
-                type="button"
-                onClick={() => onOpen(i)}
-                style={{ ["--w" as string]: colour }}
-                className="course-card lift group flex w-full items-center gap-4 rounded-2xl p-5 text-left"
-              >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "flex size-12 shrink-0 items-center justify-center rounded-2xl font-heading text-lg font-bold",
-                    done ? "bg-primary text-primary-foreground" : "course-card-icon",
-                  )}
-                >
-                  {done ? <Check className="size-6" /> : i + 1}
-                </span>
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="text-xs font-semibold tracking-wide text-muted uppercase">
-                    {topic.session}
-                  </span>
-                  <span className="font-heading text-lg leading-snug font-semibold">
-                    {topic.title}
-                  </span>
-                  <span className="text-sm text-muted">{topic.summary}</span>
-                  <span className="mt-1 flex items-center gap-3 text-xs font-semibold text-muted">
-                    <span className="flex items-center gap-1">
-                      <BookOpen aria-hidden="true" className="size-3.5" />
-                      {L.minutes.replace("{n}", String(topic.minutes))}
-                    </span>
-                    {done ? (
-                      <span className="rounded-full bg-primary px-2 py-0.5 text-primary-foreground">
-                        {L.topicDone}
+            <h3 className="-mb-1 px-1 font-heading text-base font-semibold">{L.sessions}</h3>
+            <ol className="flex flex-col gap-4">
+              {u.topics.map((topic, i) => {
+                const flatIndex = offset + i;
+                const done = topicDone(topic, saved);
+                const colour = TOPIC_COLOURS[flatIndex % TOPIC_COLOURS.length]!;
+                const started = topic.blocks.some((b) => b.question && saved[b.question.id]);
+                return (
+                  <li key={topic.slug}>
+                    <button
+                      type="button"
+                      onClick={() => onOpen(flatIndex)}
+                      style={{ ["--w" as string]: colour }}
+                      className="course-card lift group flex w-full items-center gap-4 rounded-2xl p-4 text-left"
+                    >
+                      <span aria-hidden="true" className="hidden h-20 w-32 shrink-0 sm:block">
+                        <Illus id={topic.illus} colour={colour} />
                       </span>
-                    ) : null}
-                  </span>
-                </span>
-                <span className="shrink-0 text-sm font-semibold text-link">
-                  {started && !done ? L.continue : done ? L.overview : L.start}
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="ml-1 inline size-4 transition-transform group-hover:translate-x-1"
-                  />
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "flex size-11 shrink-0 items-center justify-center rounded-2xl font-heading text-lg font-bold sm:hidden",
+                          done ? "bg-primary text-primary-foreground" : "course-card-icon",
+                        )}
+                      >
+                        {done ? <Check className="size-6" /> : i + 1}
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                        <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+                          {topic.session}
+                        </span>
+                        <span className="font-heading text-lg leading-snug font-semibold">
+                          {topic.title}
+                        </span>
+                        <span className="text-sm text-muted">{topic.summary}</span>
+                        <span className="mt-1 flex items-center gap-3 text-xs font-semibold text-muted">
+                          <span className="flex items-center gap-1">
+                            <BookOpen aria-hidden="true" className="size-3.5" />
+                            {L.minutes.replace("{n}", String(topic.minutes))}
+                          </span>
+                          {done ? (
+                            <span className="rounded-full bg-primary px-2 py-0.5 text-primary-foreground">
+                              {L.topicDone}
+                            </span>
+                          ) : null}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-sm font-semibold text-link">
+                        {started && !done ? L.continue : done ? L.overview : L.start}
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="ml-1 inline size-4 transition-transform group-hover:translate-x-1"
+                        />
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        );
+      })}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="flex items-center gap-2 text-xs text-muted">
           <CircleHelp aria-hidden="true" className="size-4" />
-          {L.standard} {ICT_BASICS.standard}
+          {L.standard}
         </p>
         {answeredCount > 0 ? (
           <button
@@ -336,6 +371,7 @@ function Overview({
 function TopicView({
   L,
   topic,
+  unitName,
   colour,
   index,
   count,
@@ -345,7 +381,8 @@ function TopicView({
   onDone,
 }: {
   L: IctLabels;
-  topic: (typeof ICT_BASICS.topics)[number];
+  topic: Topic;
+  unitName: string;
   colour: string;
   index: number;
   count: number;
@@ -371,12 +408,15 @@ function TopicView({
         </span>
       </div>
 
-      <div className="course-card panel-accent rounded-3xl p-6 md:p-8">
-        <span className="text-xs font-semibold tracking-wide text-muted uppercase">
-          {topic.session}
-        </span>
-        <h1 className="font-heading text-2xl font-bold md:text-3xl">{topic.title}</h1>
-        <p className="mt-1 text-muted">{topic.summary}</p>
+      <div className="course-card panel-accent overflow-hidden rounded-3xl">
+        <Illus id={topic.illus} colour={colour} />
+        <div className="p-6 md:p-8">
+          <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+            {unitName} · {topic.session}
+          </span>
+          <h1 className="font-heading text-2xl font-bold md:text-3xl">{topic.title}</h1>
+          <p className="mt-1 text-muted">{topic.summary}</p>
+        </div>
       </div>
 
       <ol className="flex flex-col gap-4">
@@ -393,6 +433,19 @@ function TopicView({
                   {block.define.meaning}
                 </p>
               </div>
+            ) : null}
+            {block.list ? (
+              <dl className="glass flex flex-col gap-1 rounded-2xl p-4 text-sm">
+                {block.list.map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-center justify-between gap-3 border-b border-border/60 py-1.5 last:border-0"
+                  >
+                    <dt className="text-muted">{row.label}</dt>
+                    <dd className="font-heading font-semibold tabular-nums">{row.value}</dd>
+                  </div>
+                ))}
+              </dl>
             ) : null}
             {block.question ? (
               <QuestionBlock
@@ -461,7 +514,11 @@ function QuestionBlock({
   const [picks, setPicks] = useState<Record<string, string>>(
     saved && q.kind === "match" ? (saved.value as Record<string, string>) : {},
   );
-  const [text, setText] = useState(saved && q.kind === "blank" ? (saved.value as string) : "");
+  const [text, setText] = useState(
+    saved && (q.kind === "blank" || q.kind === "number" || q.kind === "text")
+      ? String(saved.value)
+      : "",
+  );
   const [result, setResult] = useState<boolean | null>(saved ? saved.correct : null);
 
   const answer = (v: AnswerValue) => setResult(onAnswer(q, v));
@@ -531,7 +588,7 @@ function QuestionBlock({
         </div>
       ) : null}
 
-      {q.kind === "blank" ? (
+      {q.kind === "blank" || q.kind === "number" ? (
         <form
           className="flex flex-wrap items-center gap-2"
           onSubmit={(e) => {
@@ -539,10 +596,14 @@ function QuestionBlock({
             answer(text);
           }}
         >
+          {q.kind === "number" && q.prefix ? (
+            <span className="font-heading font-semibold text-muted">{q.prefix}</span>
+          ) : null}
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={q.placeholder}
+            inputMode={q.kind === "number" ? "numeric" : "text"}
             aria-label={L.yourAnswer}
             className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:outline-none"
           />
@@ -551,6 +612,31 @@ function QuestionBlock({
             className="min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground"
           >
             {L.check}
+          </button>
+        </form>
+      ) : null}
+
+      {q.kind === "text" ? (
+        <form
+          className="flex flex-col gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            answer(text);
+          }}
+        >
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={q.placeholder}
+            rows={3}
+            aria-label={L.yourAnswer}
+            className="w-full resize-y rounded-xl border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="min-h-11 self-start rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
+          >
+            {L.save}
           </button>
         </form>
       ) : null}
@@ -565,7 +651,21 @@ function QuestionBlock({
         />
       ) : null}
 
-      {result !== null ? <Feedback L={L} correct={result} explain={q.explain} /> : null}
+      {result !== null ? (
+        q.kind === "text" ? (
+          result ? (
+            <p role="status" className="mt-1 flex items-center gap-2 text-sm text-link">
+              <Check aria-hidden="true" className="size-4 shrink-0" />
+              <span>
+                <span className="font-semibold">{L.saved} </span>
+                {q.explain}
+              </span>
+            </p>
+          ) : null
+        ) : (
+          <Feedback L={L} correct={result} explain={q.explain} />
+        )
+      ) : null}
     </div>
   );
 }

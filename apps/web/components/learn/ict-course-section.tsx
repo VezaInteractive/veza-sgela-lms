@@ -16,6 +16,8 @@ export async function IctCourseSection() {
     start: ti("start"),
     continue: ti("continue"),
     check: ti("check"),
+    save: ti("save"),
+    saved: ti("savedNote"),
     next: ti("next"),
     back: ti("back"),
     correct: ti("correct"),
