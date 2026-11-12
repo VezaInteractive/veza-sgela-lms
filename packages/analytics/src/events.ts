@@ -67,6 +67,11 @@ export const EXPLORE_EVENTS = [
   "admin_career_created",
   "admin_career_updated",
   "admin_career_deleted",
+  "ict_topic_opened",
+  "ict_question_answered",
+  "ict_topic_completed",
+  "ict_course_completed",
+  "ict_course_reset",
 ] as const;
 
 export const EVENT_NAMES = [

@@ -479,6 +479,29 @@
       "introShort": "Live numbers from this server, updated on every visit.",
       "privacyChip": "Groups under 20 learners are hidden",
       "ofPrevious": "{pct}% of previous step"
+    },
+    "ict": {
+      "overview": "Course overview",
+      "start": "Start",
+      "continue": "Continue",
+      "check": "Check",
+      "next": "Next",
+      "back": "Back",
+      "correct": "Correct!",
+      "tryAgain": "Not quite —",
+      "true": "True",
+      "false": "False",
+      "yourAnswer": "Your answer",
+      "finishTopic": "Finish course",
+      "done": "Well done!",
+      "doneBody": "You worked through ICT Basics and got {done} of {total} checks right. Come back any time to review.",
+      "reset": "Start over",
+      "progress": "Progress",
+      "answered": "{done} of {total} checks correct",
+      "minutes": "{n} min",
+      "standard": "Content:",
+      "topicDone": "Done",
+      "pickOne": "Choose..."
     }
   },
   "help": {
